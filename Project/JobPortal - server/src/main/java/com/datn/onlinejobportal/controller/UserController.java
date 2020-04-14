@@ -24,6 +24,8 @@ public class UserController {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
     }
 	
+	
+	
 	//@GetMapping("/employer/me")
    // @PreAuthorize("hasRole('Employer')")
    

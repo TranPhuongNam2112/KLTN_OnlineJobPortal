@@ -17,16 +17,19 @@ import javax.persistence.Table;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.datn.onlinejobportal.model.audit.UserDateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
 @Table(name = "job_post")
-public class JobPost {
+public class JobPost extends UserDateAudit {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	private String job_title;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "posted_by", nullable = false)
@@ -42,7 +45,6 @@ public class JobPost {
 
 	private String industry;
 
-	private Date created_date;
 
 	private String job_description;
 	
@@ -51,15 +53,34 @@ public class JobPost {
 	
 	private Date expired_date;
 
-	private Long salary;
-
-	public JobPost(String industry, Date created_date, String job_description, Date expired_date, Long salary) {
-		this.industry = industry;
-		this.created_date = created_date;
-		this.job_description = job_description;
-		this.expired_date = expired_date;
-		this.salary = salary;
+	private Long min_salary;
+	
+	private Long max_salary;
+	
+	public JobPost() {
+		super();
 	}
+	
+
+	public String getJob_title() {
+		return job_title;
+	}
+
+
+	public void setJob_title(String job_title) {
+		this.job_title = job_title;
+	}
+
+
+	public Set<SavedJobPost> getSavedjobpost() {
+		return savedjobpost;
+	}
+
+
+	public void setSavedjobpost(Set<SavedJobPost> savedjobpost) {
+		this.savedjobpost = savedjobpost;
+	}
+
 
 	public Long getId() {
 		return id;
@@ -93,13 +114,6 @@ public class JobPost {
 		this.industry = industry;
 	}
 
-	public Date getCreated_date() {
-		return created_date;
-	}
-
-	public void setCreated_date(Date created_date) {
-		this.created_date = created_date;
-	}
 
 	public String getJob_description() {
 		return job_description;
@@ -117,12 +131,26 @@ public class JobPost {
 		this.expired_date = expired_date;
 	}
 
-	public Long getSalary() {
-		return salary;
+
+	public Long getMin_salary() {
+		return min_salary;
 	}
 
-	public void setSalary(Long salary) {
-		this.salary = salary;
+
+	public void setMin_salary(Long min_salary) {
+		this.min_salary = min_salary;
 	}
+
+
+	public Long getMax_salary() {
+		return max_salary;
+	}
+
+
+	public void setMax_salary(Long max_salary) {
+		this.max_salary = max_salary;
+	}
+	
+	
 
 }
