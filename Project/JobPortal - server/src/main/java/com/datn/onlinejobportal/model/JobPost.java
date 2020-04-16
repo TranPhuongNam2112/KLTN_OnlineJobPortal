@@ -1,6 +1,6 @@
 package com.datn.onlinejobportal.model;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,18 +12,20 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import com.datn.onlinejobportal.model.audit.UserDateAudit;
+import com.datn.onlinejobportal.model.audit.DateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
 @Table(name = "job_post")
-public class JobPost extends UserDateAudit {
+public class JobPost extends DateAudit {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,13 +47,17 @@ public class JobPost extends UserDateAudit {
 
 	private String industry;
 
-
 	private String job_description;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "joblocation_id", referencedColumnName = "id")
+    private JobLocation joblocation;
 	
 	@OneToMany(mappedBy = "jobpost", cascade = CascadeType.ALL)
     private Set<SavedJobPost> savedjobpost;
 	
-	private Date expired_date;
+	@NotNull
+    private Instant expirationDateTime;
 
 	private Long min_salary;
 	
@@ -123,12 +129,23 @@ public class JobPost extends UserDateAudit {
 		this.job_description = job_description;
 	}
 
-	public Date getExpired_date() {
-		return expired_date;
+	public JobLocation getJoblocation() {
+		return joblocation;
 	}
 
-	public void setExpired_date(Date expired_date) {
-		this.expired_date = expired_date;
+
+	public void setJoblocation(JobLocation joblocation) {
+		this.joblocation = joblocation;
+	}
+
+
+	public Instant getExpirationDateTime() {
+		return expirationDateTime;
+	}
+
+
+	public void setExpirationDateTime(Instant expirationDateTime) {
+		this.expirationDateTime = expirationDateTime;
 	}
 
 
@@ -150,7 +167,5 @@ public class JobPost extends UserDateAudit {
 	public void setMax_salary(Long max_salary) {
 		this.max_salary = max_salary;
 	}
-	
-	
 
 }

@@ -4,35 +4,31 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="company_location")
-public class CompanyLocation {
-
+@Table(name = "joblocation")
+public class JobLocation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	private String street_address;
-
-	private String city_province;
-
-	@ManyToOne
-	@JoinColumn(name="company_id")
-	private Employer employer;
 	
-	public CompanyLocation() {
-		
-	}
+	private String city_province;
+	
+	@OneToOne(mappedBy = "joblocation")
+    private JobPost jobpost;
 
-	public CompanyLocation(String street_address, String city_province, Employer employer) {
+	public JobLocation(String street_address, String city_province) {
 		super();
 		this.street_address = street_address;
 		this.city_province = city_province;
-		this.employer = employer;
+	}
+
+	public JobLocation() {
+		super();
 	}
 
 	public Long getId() {
@@ -57,14 +53,6 @@ public class CompanyLocation {
 
 	public void setCity_province(String city_province) {
 		this.city_province = city_province;
-	}
-
-	public Employer getEmployer() {
-		return employer;
-	}
-
-	public void setEmployer(Employer employer) {
-		this.employer = employer;
 	}
 	
 	

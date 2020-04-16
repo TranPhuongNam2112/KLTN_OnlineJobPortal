@@ -3,48 +3,36 @@ package com.datn.onlinejobportal.service;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+
 import org.springframework.stereotype.Service;
 
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.JobPost;
-import com.datn.onlinejobportal.model.SavedCandidate;
 import com.datn.onlinejobportal.payload.JobPostRequest;
-import com.datn.onlinejobportal.payload.PagedResponse;
-import com.datn.onlinejobportal.payload.SavedCandidateResponse;
 import com.datn.onlinejobportal.repository.JobPostRepository;
-import com.datn.onlinejobportal.repository.SavedCandidateRepository;
-import com.datn.onlinejobportal.repository.UserRepository;
-import com.datn.onlinejobportal.security.UserPrincipal;
+
 
 @Service
 public class EmployerService {
 	
-	@Autowired
-	private UserRepository userRepository;
 	
 	@Autowired
 	private JobPostRepository jobPostRepository;
 	
-	@Autowired
-	private SavedCandidateRepository savedCandidateRepository;
 	
-	private JobPost createJobPost(JobPostRequest jobPostRequest) {
+	public JobPost createJobPost(JobPostRequest jobPostRequest) {
 		JobPost jobpost = new JobPost();
 		jobpost.setJob_title(jobPostRequest.getJobtitle());
 		jobpost.setJob_description(jobPostRequest.getJobdescription());
 		jobpost.setIndustry(jobPostRequest.getIndustry());
 		jobpost.setMin_salary(jobPostRequest.getMinSalary());
 		jobpost.setMax_salary(jobPostRequest.getMaxSalary());
-		jobpost.setExpired_date(jobPostRequest.getExpiredDate());
+		jobpost.setExpirationDateTime(jobPostRequest.getExpiredDate());
 		
 		return jobPostRepository.save(jobpost);
 	}
 	
-	private JobPost updateJobPost(Long jobpostid, JobPostRequest jobPostRequest) {
+	public JobPost updateJobPost(Long jobpostid, JobPostRequest jobPostRequest) {
 		JobPost jobpost = jobPostRepository.findById(jobpostid)
 				.orElseThrow(() -> new ResourceNotFoundException("Job post", "id", jobpostid));
 		jobpost.setJob_title(jobPostRequest.getJobtitle());
@@ -52,8 +40,13 @@ public class EmployerService {
 		jobpost.setIndustry(jobPostRequest.getIndustry());
 		jobpost.setMin_salary(jobPostRequest.getMinSalary());
 		jobpost.setMax_salary(jobPostRequest.getMaxSalary());
-		jobpost.setExpired_date(jobPostRequest.getExpiredDate());
+		jobpost.setExpirationDateTime(jobPostRequest.getExpiredDate());
 		
 		return jobPostRepository.save(jobpost);
 	}
+	/*
+	public Page<Candidate> getCandidatesSavedBy(Long id, UserPrincipal currentUser, int page, int size) {
+		
+	}
+	*/
 }

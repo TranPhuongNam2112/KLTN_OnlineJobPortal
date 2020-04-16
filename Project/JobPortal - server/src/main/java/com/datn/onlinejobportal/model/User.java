@@ -66,6 +66,9 @@ public class User extends DateAudit{
     
     @OneToOne(mappedBy = "user")
     private Employer employer;
+    
+    @Column(name = "confirmation_token")
+	private String confirmationToken;
 
 	public Long getId() {
 		return id;
@@ -131,7 +134,6 @@ public class User extends DateAudit{
 		this.providerId = providerId;
 	}
 
-	
 
 	public Set<Role> getRoles() {
 		return roles;
@@ -156,24 +158,17 @@ public class User extends DateAudit{
 	public void setEmployer(Employer employer) {
 		this.employer = employer;
 	}
+	
+	public String getConfirmationToken() {
+		return confirmationToken;
+	}
 
-	
-	
+	public void setConfirmationToken(String confirmationToken) {
+		this.confirmationToken = confirmationToken;
+	}
+
 	public User() {
 		
 	}
-
-	public User(String name, @Email String email, String imageUrl, Boolean emailVerified, String password,
-			@NotNull AuthProvider provider, String providerId) {
-		super();
-		this.name = name;
-		this.email = email;
-		this.imageUrl = imageUrl;
-		this.emailVerified = emailVerified;
-		this.password = password;
-		this.provider = provider;
-		this.providerId = providerId;
-	}
-    
     
 }

@@ -65,10 +65,7 @@ public class Employer {
 	@OneToMany(mappedBy = "employer", cascade = CascadeType.ALL)
 	private Set<SavedCandidate> savedCandidates = new HashSet<>();
 	
-	@OneToMany(mappedBy = "employer", cascade = CascadeType.ALL)
-	private Set<CompanyLocation> companylocations = new HashSet<>();
 	
-
 	public Employer() {
 		super();
 	}
@@ -156,7 +153,4 @@ public class Employer {
 	public void setIndustry(String industry) {
 		this.industry = industry;
 	}
-
-	
-	
 }

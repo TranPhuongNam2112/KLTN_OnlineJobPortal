@@ -16,7 +16,6 @@ public class SignUpRequest {
 	@NotBlank
 	private String password;
 
-	@NotBlank
 	private Set<String> roles;
 
 	public String getName() {

@@ -10,10 +10,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
+import com.datn.onlinejobportal.model.audit.DateAudit;
+
 
 @Entity
 @Table(name="saved_candidate")
-public class SavedCandidate {
+public class SavedCandidate extends DateAudit {
 	
 	@EmbeddedId
 	private SavedCandidateId savedCandidateId;
@@ -26,8 +28,6 @@ public class SavedCandidate {
 	@MapsId("employerId")
 	private Employer employer;
 
-	@Column
-	private Date saved_date;
 
 	public SavedCandidate() {
 
@@ -54,16 +54,4 @@ public class SavedCandidate {
 		this.candidate = candidate;
 	}
 
-	public Date getSaved_date() {
-		return saved_date;
-	}
-
-	public void setSaved_date(Date saved_date) {
-		this.saved_date = saved_date;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(employer.getId(), candidate.getId(), saved_date);
-	}
 }

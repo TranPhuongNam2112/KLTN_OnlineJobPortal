@@ -1,6 +1,6 @@
 package com.datn.onlinejobportal.payload;
 
-import java.util.Date;
+import java.time.Instant;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -29,7 +29,13 @@ public class JobPostRequest {
 	private Long maxSalary;
 	
 	@NotNull
-	private Date expiredDate;
+	private Instant expiredDate;
+	
+	@NotBlank
+	private String street_address;
+	
+	@NotBlank
+	private String city_province;
 
 	public String getJobtitle() {
 		return jobtitle;
@@ -71,11 +77,11 @@ public class JobPostRequest {
 		this.maxSalary = maxSalary;
 	}
 
-	public Date getExpiredDate() {
+	public Instant getExpiredDate() {
 		return expiredDate;
 	}
 
-	public void setExpiredDate(Date expiredDate) {
+	public void setExpiredDate(Instant expiredDate) {
 		this.expiredDate = expiredDate;
 	}
 
@@ -85,6 +91,22 @@ public class JobPostRequest {
 
 	public void setIndustry(String industry) {
 		this.industry = industry;
+	}
+
+	public String getStreet_address() {
+		return street_address;
+	}
+
+	public void setStreet_address(String street_address) {
+		this.street_address = street_address;
+	}
+
+	public String getCity_province() {
+		return city_province;
+	}
+
+	public void setCity_province(String city_province) {
+		this.city_province = city_province;
 	}
 
 }

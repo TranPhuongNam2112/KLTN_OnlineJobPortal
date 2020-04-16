@@ -15,6 +15,8 @@ import com.datn.onlinejobportal.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+	
+	User findByConfirmationToken(String confirmationToken);
 
     Optional<User> findByEmail(String email);
 
@@ -24,10 +26,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	List<User> findByRoles_Name(ERole name);
 	
-	@Query("SELECT u from User u where u.roles.role_id = 1")
+	@Query(value="SELECT u from User u where u.roles.role_id = 1", nativeQuery=true)
 	Page<User> findAllCandidates(Pageable pageable);
 	
-	@Query("SELECT u from User u where u.roles.role_id = 2")
+	@Query(value="SELECT u from User u where u.roles.role_id = 2", nativeQuery = true)
 	Page<User> findAllEmployers(Pageable pageable);
 
 }

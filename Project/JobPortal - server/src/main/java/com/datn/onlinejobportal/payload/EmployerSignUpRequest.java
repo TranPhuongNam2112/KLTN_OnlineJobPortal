@@ -23,10 +23,6 @@ public class EmployerSignUpRequest {
 	
 	@NotBlank
 	private String industry;
-	
-	@NotBlank
-	private String city_province;
-		
 
 	public String getName() {
 		return name;
@@ -74,14 +70,6 @@ public class EmployerSignUpRequest {
 
 	public void setIndustry(String industry) {
 		this.industry = industry;
-	}
-
-	public String getCity_province() {
-		return city_province;
-	}
-
-	public void setCity_province(String city_province) {
-		this.city_province = city_province;
 	}
 
 	

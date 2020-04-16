@@ -8,13 +8,15 @@ import com.datn.onlinejobportal.model.Role;
 public class UserProfile {
     private Long id;
     private String name;
+    private Instant joinedAt;
     private Set<Role> role;
 
 
-    public UserProfile(Long id, String name, Set<Role> role) {
+    public UserProfile(Long id, String name, Set<Role> role, Instant joinedAt) {
         this.id = id;
         this.name = name;
         this.role = role;
+        this.joinedAt = joinedAt;
     }
 
     public Long getId() {
@@ -40,6 +42,16 @@ public class UserProfile {
 	public void setRole(Set<Role> role) {
 		this.role = role;
 	}
+
+	public Instant getJoinedAt() {
+		return joinedAt;
+	}
+
+	public void setJoinedAt(Instant joinedAt) {
+		this.joinedAt = joinedAt;
+	}
+	
+	
     
     
 }

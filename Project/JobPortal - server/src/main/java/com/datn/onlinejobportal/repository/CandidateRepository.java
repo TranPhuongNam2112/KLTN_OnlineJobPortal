@@ -12,20 +12,23 @@ import com.datn.onlinejobportal.model.Candidate;
 
 public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 
-Page<Candidate> findCandidateByGender(String gender, Pageable paging);
-	
+	Page<Candidate> findCandidateByGender(String gender, Pageable paging);
+
 	@Query(value ="SELECT c FROM Candidate c JOIN c.account_id a WHERE " +
-            "LOWER(a.email) LIKE LOWER(CONCAT('%',:email, '%'))", nativeQuery = true)
-    Page<Candidate> findByEmail(@Param("email") String email, Pageable pageable);
-	
+			"LOWER(a.email) LIKE LOWER(CONCAT('%',:email, '%'))", nativeQuery = true)
+	Page<Candidate> findByEmail(@Param("email") String email, Pageable pageable);
+
 	@Query("SELECT c FROM Candidate c WHERE " +
-            "LOWER(c.phone_number) LIKE LOWER(CONCAT('%',:phone_number, '%'))")
+			"LOWER(c.phone_number) LIKE LOWER(CONCAT('%',:phone_number, '%'))")
 	Page<Candidate> findByPhoneNumber(@Param("phone_number") String phone_number, Pageable pageable);
-	
+
 	@Query("SELECT COUNT(c) FROM Candidate c")
-    Long numberofCandidates();
-	
+	Long numberofCandidates();
+
 	Page<Candidate> findAllByDoBBetween(Date startDate,
-		      Date endDate, Pageable pageable);
-	
+			Date endDate, Pageable pageable);
+
+	@Query(value="Select c from Candidate c where c.savedCandidates.employer_id = :employer_id", nativeQuery=true)
+	Page<Candidate> getCandidatesSavedBy(@Param("employer_id") Long employer_id, Pageable pageable);
+
 }

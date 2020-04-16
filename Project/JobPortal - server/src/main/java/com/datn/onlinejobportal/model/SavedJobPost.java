@@ -11,11 +11,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
+import com.datn.onlinejobportal.model.audit.DateAudit;
+
 
 
 @Entity
 @Table(name="saved_job_post")
-public class SavedJobPost implements Serializable {
+public class SavedJobPost extends DateAudit {
 
 	/**
 	 * 
@@ -32,10 +34,6 @@ public class SavedJobPost implements Serializable {
 	@ManyToOne
 	@MapsId("jobpostId")
 	private JobPost jobpost;
-	
-	@Column
-	private Date saveddate;
-
 
 	public SavedJobPost() {
 		
@@ -47,10 +45,6 @@ public class SavedJobPost implements Serializable {
 		this.jobpost = jobpost;
 	}
 	
-	@Override
-    public int hashCode() {
-        return Objects.hash(candidate.getId(), jobpost.getId(), saveddate);
-    }
 
 
 	public Candidate getCandidate() {
@@ -73,13 +67,5 @@ public class SavedJobPost implements Serializable {
 	}
 
 
-	public Date getSaveddate() {
-		return saveddate;
-	}
-
-
-	public void setSaveddate(Date saveddate) {
-		this.saveddate = saveddate;
-	}
 	
 }

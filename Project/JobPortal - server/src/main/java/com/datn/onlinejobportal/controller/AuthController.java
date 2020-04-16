@@ -3,27 +3,30 @@ package com.datn.onlinejobportal.controller;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
-
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.datn.onlinejobportal.exception.BadRequestException;
 import com.datn.onlinejobportal.model.AuthProvider;
 import com.datn.onlinejobportal.model.Candidate;
-import com.datn.onlinejobportal.model.CompanyLocation;
 import com.datn.onlinejobportal.model.ERole;
 import com.datn.onlinejobportal.model.Employer;
 import com.datn.onlinejobportal.model.Role;
@@ -35,11 +38,11 @@ import com.datn.onlinejobportal.payload.EmployerSignUpRequest;
 import com.datn.onlinejobportal.payload.LoginRequest;
 import com.datn.onlinejobportal.payload.SignUpRequest;
 import com.datn.onlinejobportal.repository.CandidateRepository;
-import com.datn.onlinejobportal.repository.CompanyLocationRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.RoleRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
 import com.datn.onlinejobportal.security.TokenProvider;
+import com.datn.onlinejobportal.service.EmailService;
 
 @RestController
 @RequestMapping("/auth")
@@ -50,7 +53,7 @@ public class AuthController {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private RoleRepository roleRepository;
 
@@ -59,16 +62,17 @@ public class AuthController {
 
 	@Autowired
 	private TokenProvider tokenProvider;
-	
+
 	@Autowired
 	private EmployerRepository employerRepository;
-	
-	@Autowired
-	private CompanyLocationRepository companyLocationRepository;
-	
+
+
 	@Autowired
 	private CandidateRepository candidateRepository;
 	
+	@Autowired
+	private EmailService emailService;
+
 
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -85,7 +89,7 @@ public class AuthController {
 		String token = tokenProvider.createToken(authentication);
 		return ResponseEntity.ok(new AuthResponse(token));
 	}
-	
+
 	@PostMapping("/signupforemployer")
 	public ResponseEntity<?> registerEmployer(@Valid @RequestBody EmployerSignUpRequest employersignUpRequest) {
 		if(userRepository.existsByEmail(employersignUpRequest.getEmail())) {
@@ -105,19 +109,14 @@ public class AuthController {
 		roles.add(adminRole);
 		user.setRoles(roles);
 		User result = userRepository.save(user);
-		
+
 		Employer company = new Employer();
 		company.setCompanyname(employersignUpRequest.getCompanyname());
 		company.setPhone_number(employersignUpRequest.getPhonenumber());
 		company.setIndustry(employersignUpRequest.getIndustry());
 		company.setUser(user);
 		employerRepository.save(company);
-		
-		CompanyLocation companyLocation = new CompanyLocation();
-		companyLocation.setCity_province(employersignUpRequest.getCity_province());
-		companyLocation.setEmployer(company);
-		companyLocationRepository.save(companyLocation);
-		
+
 
 		URI location = ServletUriComponentsBuilder
 				.fromCurrentContextPath().path("/user/me")
@@ -126,9 +125,9 @@ public class AuthController {
 		return ResponseEntity.created(location)
 				.body(new ApiResponse(true, "User registered successfully!"));
 	}
-	
+
 	@PostMapping("/signupforcandidate")
-	public ResponseEntity<?> registerCandidate(@Valid @RequestBody CandidateSignUpRequest candidatesignUpRequest) {
+	public ResponseEntity<?> registerCandidate(@Valid @RequestBody CandidateSignUpRequest candidatesignUpRequest, HttpServletRequest request) {
 		if(userRepository.existsByEmail(candidatesignUpRequest.getEmail())) {
 			throw new BadRequestException("Email address already in use.");
 		}
@@ -145,11 +144,30 @@ public class AuthController {
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(candidateRole);
 		user.setRoles(roles);
+		user.setEmailVerified(false);
+
+		// Generate random 36-character string token for confirmation link
+		user.setConfirmationToken(UUID.randomUUID().toString());
+
 		User result = userRepository.save(user);
-		
+
+		String appUrl = request.getScheme() + "://" + request.getServerName() + ":8080";
+
+		SimpleMailMessage registrationEmail = new SimpleMailMessage();
+		registrationEmail.setTo(user.getEmail());
+		registrationEmail.setSubject("Registration Confirmation");
+		registrationEmail.setText("To confirm your e-mail address, please click the link below:\n"
+				+ appUrl + "/auth/confirm?token=" + user.getConfirmationToken());
+		registrationEmail.setFrom("no-reply@memorynotfound.com");
+
+		emailService.sendEmail(registrationEmail);
+
+
 		Candidate candidate = new Candidate();
 		candidate.setUser(user);
 		candidateRepository.save(candidate);
+
+		
 
 		URI location = ServletUriComponentsBuilder
 				.fromCurrentContextPath().path("/candidate/me")
@@ -157,6 +175,18 @@ public class AuthController {
 
 		return ResponseEntity.created(location)
 				.body(new ApiResponse(true, "User registered successfully!"));
+	}
+	
+	@GetMapping("/confirm")
+	public String processConfirmationPage(@RequestParam("token") String token) {
+		User user = userRepository.findByConfirmationToken(token);
+		if (user == null) {
+			return "Oops!  This is an invalid confirmation link.";
+		} else {
+			user.setEmailVerified(true);
+			userRepository.save(user);
+			return "Success!";
+		}
 	}
 
 
@@ -210,7 +240,7 @@ public class AuthController {
 		user.setRoles(roles);
 		User result = userRepository.save(user);
 
-		
+
 
 		URI location = ServletUriComponentsBuilder
 				.fromCurrentContextPath().path("/user/me")

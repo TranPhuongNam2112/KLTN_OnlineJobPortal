@@ -1,4 +1,16 @@
 spring:
+    mail:
+        host: smtp.gmail.com
+        password: 
+        port: 587
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+        username: 
+
     datasource:
         url: jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
         username: root
