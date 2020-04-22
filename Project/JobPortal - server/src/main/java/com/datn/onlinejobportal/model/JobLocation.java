@@ -54,6 +54,15 @@ public class JobLocation {
 	public void setCity_province(String city_province) {
 		this.city_province = city_province;
 	}
+
+	public JobPost getJobpost() {
+		return jobpost;
+	}
+
+	public void setJobpost(JobPost jobpost) {
+		this.jobpost = jobpost;
+	}
+	
 	
 	
 }

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -21,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.payload.UploadFileResponse;
+import com.datn.onlinejobportal.security.UserPrincipal;
 import com.datn.onlinejobportal.service.DBFileStorageService;
 
 @RestController
@@ -31,8 +31,8 @@ public class FileController {
     private DBFileStorageService dbFileStorageService;
 
     @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
-        DBFile dbFile = dbFileStorageService.storeFile(file);
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, UserPrincipal currentUser) {
+        DBFile dbFile = dbFileStorageService.storeFile(file, currentUser);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
@@ -42,6 +42,7 @@ public class FileController {
         return new UploadFileResponse(dbFile.getFileName(), fileDownloadUri,
                 file.getContentType(), file.getSize());
     }
+    /*
 
     @PostMapping("/uploadMultipleFiles")
     public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
@@ -50,7 +51,7 @@ public class FileController {
                 .map(file -> uploadFile(file))
                 .collect(Collectors.toList());
     }
-
+*/
     @GetMapping("/downloadFile/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileId) {
         // Load file from database

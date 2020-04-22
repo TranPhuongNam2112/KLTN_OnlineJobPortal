@@ -31,4 +31,11 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 	@Query(value="Select c from Candidate c where c.savedCandidates.employer_id = :employer_id", nativeQuery=true)
 	Page<Candidate> getCandidatesSavedBy(@Param("employer_id") Long employer_id, Pageable pageable);
 
+	@Query(value="Select c from Candidate c where c.user.id = :account_id")
+	Candidate getCandidateByUserId(@Param("account_id") Long account_id);
+	
+	
+	@Query(value="Select c.id from Candidate c where c.user.id = :account_id")
+	Long getCandidateIdByUserId(@Param("account_id") Long account_id);
+	
 }

@@ -20,12 +20,13 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import com.datn.onlinejobportal.model.audit.DateAudit;
+import com.datn.onlinejobportal.model.audit.UserDateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
 @Table(name = "job_post")
-public class JobPost extends DateAudit {
+public class JobPost extends UserDateAudit {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,9 +1,12 @@
 package com.datn.onlinejobportal.controller;
 
 import java.net.URI;
+import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -35,13 +38,16 @@ import com.datn.onlinejobportal.payload.ApiResponse;
 import com.datn.onlinejobportal.payload.AuthResponse;
 import com.datn.onlinejobportal.payload.CandidateSignUpRequest;
 import com.datn.onlinejobportal.payload.EmployerSignUpRequest;
+import com.datn.onlinejobportal.payload.JwtResponse;
 import com.datn.onlinejobportal.payload.LoginRequest;
 import com.datn.onlinejobportal.payload.SignUpRequest;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.RoleRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
+import com.datn.onlinejobportal.security.CustomUserDetailsService;
 import com.datn.onlinejobportal.security.TokenProvider;
+import com.datn.onlinejobportal.security.UserPrincipal;
 import com.datn.onlinejobportal.service.EmailService;
 
 @RestController
@@ -87,7 +93,18 @@ public class AuthController {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		String token = tokenProvider.createToken(authentication);
-		return ResponseEntity.ok(new AuthResponse(token));
+		
+		UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
+		List<String> roles = userDetails.getAuthorities().stream()
+				.map(item -> item.getAuthority())
+				.collect(Collectors.toList());
+
+		
+		return ResponseEntity.ok(new JwtResponse(token, 
+												 userDetails.getId(), 
+												 userDetails.getFullname(), 
+												 userDetails.getEmail(), 
+												 roles));
 	}
 
 	@PostMapping("/signupforemployer")
@@ -108,6 +125,7 @@ public class AuthController {
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(adminRole);
 		user.setRoles(roles);
+		user.setCreatedAt(Instant.now());
 		User result = userRepository.save(user);
 
 		Employer company = new Employer();
@@ -144,6 +162,8 @@ public class AuthController {
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(candidateRole);
 		user.setRoles(roles);
+		user.setCreatedAt(Instant.now());
+
 		user.setEmailVerified(false);
 
 		// Generate random 36-character string token for confirmation link

@@ -32,7 +32,7 @@ public class Education {
 
 	private Date completion_date;
 
-	private int gpa;
+	private Long gpa;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "candidate_id", nullable = false)
@@ -44,7 +44,7 @@ public class Education {
 
 	}
 
-	public Education(String university_college, String major, Date start_date, Date completion_date, int gpa) {
+	public Education(String university_college, String major, Date start_date, Date completion_date, Long gpa) {
 		super();
 		this.university_college = university_college;
 		this.major = major;
@@ -85,11 +85,11 @@ public class Education {
 		this.completion_date = completion_date;
 	}
 
-	public int getGpa() {
+	public Long getGpa() {
 		return gpa;
 	}
 
-	public void setGpa(int gpa) {
+	public void setGpa(Long gpa) {
 		this.gpa = gpa;
 	}
 

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,12 +43,23 @@ public class Candidate {
 
 	@OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL)
 	private Set<SavedJobPost> savedJobPosts = new HashSet<>();
-	
-	@OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL)
-	private Set<CandidateFile> candidatefiles = new HashSet<>();
-	
+
 	@OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL)
 	private Set<SavedCandidate> savedCandidates = new HashSet<>();
+
+	@OneToMany(
+			mappedBy = "candidate",
+			cascade = CascadeType.ALL
+			)
+
+	private Set<Education> educations = new HashSet<>();
+	
+	@OneToMany(
+			mappedBy = "candidate",
+			cascade = CascadeType.ALL
+			)
+
+	private Set<Experience> experiences = new HashSet<>();
 
 	public Candidate() {
 		super();
@@ -109,13 +121,6 @@ public class Candidate {
 		this.savedJobPosts = savedJobPosts;
 	}
 
-	public Set<CandidateFile> getCandidatefiles() {
-		return candidatefiles;
-	}
-
-	public void setCandidatefiles(Set<CandidateFile> candidatefiles) {
-		this.candidatefiles = candidatefiles;
-	}
 
 	public Set<SavedCandidate> getSavedCandidates() {
 		return savedCandidates;
@@ -125,5 +130,24 @@ public class Candidate {
 		this.savedCandidates = savedCandidates;
 	}
 
-	
+	public void addEducation(Education education) {
+		educations.add(education);
+		education.setCandidate(this);
+	}
+
+	public void removeEducation(Education education) {
+		educations.remove(education);
+		education.setCandidate(null);
+	}
+
+	public void addExperience(Experience experience) {
+		experiences.add(experience);
+		experience.setCandidate(this);
+	}
+
+	public void removeExperience(Experience experience) {
+		experiences.remove(experience);
+		experience.setCandidate(null);
+	}
+
 }

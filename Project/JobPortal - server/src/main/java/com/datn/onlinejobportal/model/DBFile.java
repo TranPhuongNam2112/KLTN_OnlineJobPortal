@@ -24,10 +24,7 @@ public class DBFile {
 	private byte[] data;
 	
 	@OneToMany(mappedBy = "files", cascade = CascadeType.ALL)
-	private Set<EmployerFile> employerfiles = new HashSet<>();
-	
-	@OneToMany(mappedBy = "files", cascade = CascadeType.ALL)
-	private Set<CandidateFile> candidatefiles = new HashSet<>();
+	private Set<UserFile> userfiles = new HashSet<>();
 
 	public DBFile() {
 

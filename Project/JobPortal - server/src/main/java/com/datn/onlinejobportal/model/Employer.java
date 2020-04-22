@@ -46,17 +46,6 @@ public class Employer {
 	public void setPhone_number(String phone_number) {
 		this.phone_number = phone_number;
 	}
-
-	public Set<EmployerFile> getEmployerfiles() {
-		return employerfiles;
-	}
-
-	public void setEmployerfiles(Set<EmployerFile> employerfiles) {
-		this.employerfiles = employerfiles;
-	}
-
-	@OneToMany(mappedBy = "employer", cascade = CascadeType.ALL)
-	private Set<EmployerFile> employerfiles = new HashSet<>();
 	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id", referencedColumnName = "id")

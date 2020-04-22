@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 
-public class EmployerFileId implements Serializable {
+public class UserFileId implements Serializable {
 	
 	/**
 	 * 
@@ -14,6 +14,6 @@ public class EmployerFileId implements Serializable {
 	@Column(name="file_id")
 	private String fileId;
 	
-	@Column(name="employer_id")
-	private Long employerId;
+	@Column(name="user_id")
+	private Long userId;
 }
