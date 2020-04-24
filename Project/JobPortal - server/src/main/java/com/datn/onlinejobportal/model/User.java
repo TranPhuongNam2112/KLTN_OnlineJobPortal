@@ -72,8 +72,10 @@ public class User extends DateAudit{
     @Column(name = "confirmation_token")
 	private String confirmationToken;
     
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private Set<UserFile> userfiles = new HashSet<>();
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "profileimage_id", referencedColumnName = "id")
+	private DBFile files;
 
 	public Long getId() {
 		return id;
@@ -175,5 +177,15 @@ public class User extends DateAudit{
 	public User() {
 		
 	}
+
+	public DBFile getFiles() {
+		return files;
+	}
+
+	public void setFiles(DBFile files) {
+		this.files = files;
+	}
+	
+	
     
 }

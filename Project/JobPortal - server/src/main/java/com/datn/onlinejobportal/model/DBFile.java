@@ -8,9 +8,11 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.datn.onlinejobportal.model.audit.DateAudit;
+
 @Entity
 @Table(name = "files")
-public class DBFile {
+public class DBFile extends DateAudit {
 	@Id
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -23,8 +25,12 @@ public class DBFile {
 	@Lob
 	private byte[] data;
 	
-	@OneToMany(mappedBy = "files", cascade = CascadeType.ALL)
-	private Set<UserFile> userfiles = new HashSet<>();
+	
+    @OneToOne(mappedBy = "files")
+    private Candidate candidate;
+    
+    @OneToOne(mappedBy = "files")
+    private User user;
 
 	public DBFile() {
 

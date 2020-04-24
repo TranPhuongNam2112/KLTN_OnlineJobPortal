@@ -1,40 +1,33 @@
 package com.datn.onlinejobportal.controller;
 
-import java.net.URI;
-import java.time.Instant;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Candidate;
+import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Education;
-import com.datn.onlinejobportal.model.Employer;
 import com.datn.onlinejobportal.model.Experience;
-import com.datn.onlinejobportal.model.JobLocation;
 import com.datn.onlinejobportal.model.JobPost;
-import com.datn.onlinejobportal.payload.ApiResponse;
+import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.CandidateProfileRequest;
-import com.datn.onlinejobportal.payload.EmployerRequest;
-import com.datn.onlinejobportal.payload.JobPostRequest;
-import com.datn.onlinejobportal.payload.PagedResponse;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
 import com.datn.onlinejobportal.security.CurrentUser;
 import com.datn.onlinejobportal.security.UserPrincipal;
+import com.datn.onlinejobportal.service.DBFileStorageService;
 
 @RestController
 @RequestMapping("/candidate/mydashboard")
@@ -49,6 +42,9 @@ public class CandidateDashboardController {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private DBFileStorageService dbFileStorageService;
+	
 /*
 	@GetMapping("/mysavedjobposts/{jobpostId}")
 	public PagedResponse<SavedJobPostResponse> getAllSavedJobPosts(@CurrentUser UserPrincipal currentUser) {
@@ -59,11 +55,15 @@ public class CandidateDashboardController {
 	@PutMapping("/myprofile")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Candidate updateProfile(@CurrentUser UserPrincipal currentUser,
-			@Valid @RequestBody CandidateProfileRequest candidateProfileRequest) {
+			@Valid @RequestBody CandidateProfileRequest candidateProfileRequest, @RequestParam("profileimage") MultipartFile imagefile, @RequestParam("CV") MultipartFile CVfile) {
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
 		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(
 				() -> new ResourceNotFoundException("Candidate", "id", candidateId));
-		
+		DBFile cv = dbFileStorageService.storeFile(CVfile);
+		User user = userRepository.getOne(currentUser.getId());
+		DBFile profileimage = dbFileStorageService.storeFile(imagefile);
+		user.setFiles(profileimage);
+		candidate.setFiles(cv);
 		candidate.setDoB(candidateProfileRequest.getDoB());
 		candidate.setGender(candidateProfileRequest.getGender());
 		candidate.setHomeaddress(candidateProfileRequest.getHomeaddress());
@@ -74,6 +74,7 @@ public class CandidateDashboardController {
 		candidateProfileRequest.getExperiences().forEach(experienceRequest -> {
 			 candidate.addExperience(new Experience(experienceRequest.getCompanyname(), experienceRequest.getJobtitle(), experienceRequest.getStartdate(), experienceRequest.getEnddate()));
 		});
+		userRepository.save(user);
 		
 		Candidate newCandidate = candidateRepository.save(candidate);
 		   

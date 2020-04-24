@@ -58,9 +58,13 @@ public class Candidate {
 			mappedBy = "candidate",
 			cascade = CascadeType.ALL
 			)
-
 	private Set<Experience> experiences = new HashSet<>();
-
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "CV_id", referencedColumnName = "id")
+	private DBFile files;
+	
+	
 	public Candidate() {
 		super();
 	}
@@ -150,4 +154,29 @@ public class Candidate {
 		experience.setCandidate(null);
 	}
 
+	public Set<Education> getEducations() {
+		return educations;
+	}
+
+	public void setEducations(Set<Education> educations) {
+		this.educations = educations;
+	}
+
+	public Set<Experience> getExperiences() {
+		return experiences;
+	}
+
+	public void setExperiences(Set<Experience> experiences) {
+		this.experiences = experiences;
+	}
+
+	public DBFile getFiles() {
+		return files;
+	}
+
+	public void setFiles(DBFile files) {
+		this.files = files;
+	}
+
+	
 }
