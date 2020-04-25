@@ -1,6 +1,7 @@
 package com.datn.onlinejobportal.controller;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.datn.onlinejobportal.exception.BadRequestException;
+import com.datn.onlinejobportal.exception.OAuth2AuthenticationProcessingException;
 import com.datn.onlinejobportal.model.AuthProvider;
 import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.ERole;
@@ -41,6 +46,7 @@ import com.datn.onlinejobportal.payload.EmployerSignUpRequest;
 import com.datn.onlinejobportal.payload.JwtResponse;
 import com.datn.onlinejobportal.payload.LoginRequest;
 import com.datn.onlinejobportal.payload.SignUpRequest;
+import com.datn.onlinejobportal.payload.SocialResponse;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.RoleRepository;
@@ -48,7 +54,9 @@ import com.datn.onlinejobportal.repository.UserRepository;
 import com.datn.onlinejobportal.security.CustomUserDetailsService;
 import com.datn.onlinejobportal.security.TokenProvider;
 import com.datn.onlinejobportal.security.UserPrincipal;
+import com.datn.onlinejobportal.security.oauth2.user.OAuth2UserInfo;
 import com.datn.onlinejobportal.service.EmailService;
+import com.datn.onlinejobportal.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
@@ -79,6 +87,8 @@ public class AuthController {
 	@Autowired
 	private EmailService emailService;
 
+	@Autowired
+	private UserService userService;
 
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -106,7 +116,173 @@ public class AuthController {
 												 userDetails.getEmail(), 
 												 roles));
 	}
+	@PostMapping("/loginGGForCandidate")
+	public ResponseEntity<?> loginGGForCandidate(@Valid @RequestBody OAuth2UserInfo oAuth2UserInfo,
+			HttpServletRequest request) {
+		if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
+			throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
+		}
+		if (userRepository.existsByEmail(oAuth2UserInfo.getEmail())) {
+			User user = userService.getUserByEmail(oAuth2UserInfo.getEmail());
+			Role candidateRole = roleRepository.findByName(ERole.ROLE_CANDIDATE)
+					.orElseThrow(() -> new BadRequestException("Error: Role is not found."));
+			if (user.getRoles().contains(candidateRole)) {
+				user.setName(oAuth2UserInfo.getName());
+				user.setImageUrl(oAuth2UserInfo.getPhotoUrl());
+				user.setUpdatedAt(Instant.now());
+				User result = userRepository.save(user);
+				return ResponseEntity.ok(new SocialResponse(user.getRoles(), user.getName()));
 
+			} else
+				throw new BadRequestException("Look like you are loging in as employer user");
+		}
+		// Creating user's account
+		User user = new User();
+		user.setName(oAuth2UserInfo.getName());
+		user.setEmail(oAuth2UserInfo.getEmail());
+		user.setProviderId(oAuth2UserInfo.getId());
+		user.setProvider(AuthProvider.google);
+		user.setImageUrl(oAuth2UserInfo.getPhotoUrl());
+		Set<Role> roles = new HashSet<>();
+		Role candidateRole = roleRepository.findByName(ERole.ROLE_CANDIDATE)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+		roles.add(candidateRole);
+		user.setRoles(roles);
+		user.setCreatedAt(Instant.now());
+		user.setEmailVerified(true);
+		user.setConfirmationToken(UUID.randomUUID().toString());
+		User result = userRepository.save(user);
+		Candidate candidate = new Candidate();
+		candidate.setUser(user);
+		candidateRepository.save(candidate);
+		return ResponseEntity.ok(new SocialResponse(user.getRoles(), user.getName()));
+	}
+
+	@PostMapping("/loginGGForEmployer")
+	public ResponseEntity<?> loginGGForEmployer(@Valid @RequestBody OAuth2UserInfo oAuth2UserInfo,
+			HttpServletRequest request) {
+		if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
+			throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
+		}
+		if (userRepository.existsByEmail(oAuth2UserInfo.getEmail())) {
+			User user = userService.getUserByEmail(oAuth2UserInfo.getEmail());
+			;
+			Role employerRole = roleRepository.findByName(ERole.ROLE_EMPLOYER)
+					.orElseThrow(() -> new BadRequestException("Error: Role is not found."));
+			if (user.getRoles().contains(employerRole)) {
+				user.setName(oAuth2UserInfo.getName());
+				user.setImageUrl(oAuth2UserInfo.getPhotoUrl());
+				user.setUpdatedAt(Instant.now());
+				User result = userRepository.save(user);
+				return ResponseEntity.ok(new SocialResponse(user.getRoles(), user.getName()));
+			} else
+				throw new BadRequestException("Look like you are loging in as candidate user");
+		}
+		// Creating user's account
+		User user = new User();
+		user.setName(oAuth2UserInfo.getName());
+		user.setEmail(oAuth2UserInfo.getEmail());
+		user.setProviderId(oAuth2UserInfo.getId());
+		user.setProvider(AuthProvider.google);
+		user.setImageUrl(oAuth2UserInfo.getPhotoUrl());
+		Set<Role> roles = new HashSet<>();
+		Role employerRole = roleRepository.findByName(ERole.ROLE_EMPLOYER)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+		roles.add(employerRole);
+		user.setRoles(roles);
+		user.setCreatedAt(Instant.now());
+		user.setEmailVerified(true);
+		user.setConfirmationToken(UUID.randomUUID().toString());
+		User result = userRepository.save(user);
+		Employer employer = new Employer();
+		employer.setUser(user);
+		employerRepository.save(employer);
+		return ResponseEntity.ok(new SocialResponse(user.getRoles(), user.getName()));
+
+	}
+
+	@PostMapping("/loginFBForCandidate")
+	public ResponseEntity<?> loginFBForCandidate(@Valid @RequestBody OAuth2UserInfo oAuth2UserInfo,
+			HttpServletRequest request) {
+		if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
+			throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
+		}
+		if (userRepository.existsByEmail(oAuth2UserInfo.getEmail())) {
+			User user = userService.getUserByEmail(oAuth2UserInfo.getEmail());
+			;
+			Role candidateRole = roleRepository.findByName(ERole.ROLE_CANDIDATE)
+					.orElseThrow(() -> new BadRequestException("Error: Role is not found."));
+			if (user.getRoles().contains(candidateRole)) {
+				user.setName(oAuth2UserInfo.getName());
+				user.setImageUrl(oAuth2UserInfo.getPhotoUrl());
+				user.setUpdatedAt(Instant.now());
+				User result = userRepository.save(user);
+				return ResponseEntity.ok(new SocialResponse(user.getRoles(), user.getName()));
+			} else
+				throw new BadRequestException("Look like you are loging in as employer user");
+		}
+		User user = new User();
+		user.setName(oAuth2UserInfo.getName());
+		user.setEmail(oAuth2UserInfo.getEmail());
+		user.setProviderId(oAuth2UserInfo.getId());
+		user.setProvider(AuthProvider.facebook);
+		user.setImageUrl(oAuth2UserInfo.getPhotoUrl());
+		Set<Role> roles = new HashSet<>();
+		Role candidateRole = roleRepository.findByName(ERole.ROLE_CANDIDATE)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+		roles.add(candidateRole);
+		user.setRoles(roles);
+		user.setCreatedAt(Instant.now());
+		user.setEmailVerified(true);
+		user.setConfirmationToken(UUID.randomUUID().toString());
+		User result = userRepository.save(user);
+		Candidate candidate = new Candidate();
+		candidate.setUser(user);
+		candidateRepository.save(candidate);
+		return ResponseEntity.ok(new SocialResponse(user.getRoles(), user.getName()));
+	}
+
+	@PostMapping("/loginFBForEmployer")
+	public ResponseEntity<?> loginFBForEmployer(@Valid @RequestBody OAuth2UserInfo oAuth2UserInfo,
+			HttpServletRequest request) {
+		if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
+			throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
+		}
+		if (userRepository.existsByEmail(oAuth2UserInfo.getEmail())) {
+			User user = userService.getUserByEmail(oAuth2UserInfo.getEmail());
+			;
+			Role employerRole = roleRepository.findByName(ERole.ROLE_EMPLOYER)
+					.orElseThrow(() -> new BadRequestException("Error: Role is not found."));
+			if (user.getRoles().contains(employerRole)) {
+				user.setName(oAuth2UserInfo.getName());
+				user.setImageUrl(oAuth2UserInfo.getPhotoUrl());
+				user.setUpdatedAt(Instant.now());
+				User result = userRepository.save(user);
+				return ResponseEntity.ok(new SocialResponse(user.getRoles(), user.getName()));
+			} else
+				throw new BadRequestException("Look like you are loging in as candidate user");
+		}
+		User user = new User();
+		user.setName(oAuth2UserInfo.getName());
+		user.setEmail(oAuth2UserInfo.getEmail());
+		user.setProviderId(oAuth2UserInfo.getId());
+		user.setProvider(AuthProvider.facebook);
+		user.setImageUrl(oAuth2UserInfo.getPhotoUrl());
+		Set<Role> roles = new HashSet<>();
+		Role employerRole = roleRepository.findByName(ERole.ROLE_EMPLOYER)
+				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+		roles.add(employerRole);
+		user.setRoles(roles);
+		user.setCreatedAt(Instant.now());
+		user.setEmailVerified(true);
+		user.setConfirmationToken(UUID.randomUUID().toString());
+		User result = userRepository.save(user);
+		Employer employer = new Employer();
+		employer.setUser(user);
+		employerRepository.save(employer);
+		return ResponseEntity.ok(new SocialResponse(user.getRoles(), user.getName()));
+	}
+	
 	@PostMapping("/signupforemployer")
 	public ResponseEntity<?> registerEmployer(@Valid @RequestBody EmployerSignUpRequest employersignUpRequest) {
 		if(userRepository.existsByEmail(employersignUpRequest.getEmail())) {
@@ -121,9 +297,9 @@ public class AuthController {
 		user.setProvider(AuthProvider.local);
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		Set<Role> roles = new HashSet<>();
-		Role adminRole = roleRepository.findByName(ERole.ROLE_EMPLOYER)
+		Role employerRole = roleRepository.findByName(ERole.ROLE_EMPLOYER)
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-		roles.add(adminRole);
+		roles.add(employerRole);
 		user.setRoles(roles);
 		user.setCreatedAt(Instant.now());
 		User result = userRepository.save(user);
@@ -198,14 +374,21 @@ public class AuthController {
 	}
 	
 	@GetMapping("/confirm")
-	public String processConfirmationPage(@RequestParam("token") String token) {
+	public ResponseEntity<Object> processConfirmationPage(@RequestParam("token") String token)
+			throws URISyntaxException {
 		User user = userRepository.findByConfirmationToken(token);
+		URI notfoundURL = new URI("http://localhost:4200/notfound");
+		URI verifyURL = new URI("http://localhost:4200/guest/validate");
+		HttpHeaders httpHeaders = new HttpHeaders();
+
 		if (user == null) {
-			return "Oops!  This is an invalid confirmation link.";
+			httpHeaders.setLocation(notfoundURL);
+			return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
 		} else {
 			user.setEmailVerified(true);
 			userRepository.save(user);
-			return "Success!";
+			httpHeaders.setLocation(verifyURL);
+			return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
 		}
 	}
 

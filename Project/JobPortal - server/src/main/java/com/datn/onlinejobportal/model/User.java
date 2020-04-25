@@ -64,6 +64,7 @@ public class User extends DateAudit{
 	private Set<Role> roles = new HashSet<>();
     
     @OneToOne(mappedBy = "user")
+    @JsonIgnore
     private Candidate candidate;
     
     @OneToOne(mappedBy = "user")
