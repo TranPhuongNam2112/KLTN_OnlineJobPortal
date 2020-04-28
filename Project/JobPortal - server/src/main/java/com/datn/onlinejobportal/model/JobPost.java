@@ -1,6 +1,7 @@
 package com.datn.onlinejobportal.model;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -19,7 +20,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import com.datn.onlinejobportal.model.audit.DateAudit;
 import com.datn.onlinejobportal.model.audit.UserDateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -58,7 +58,7 @@ public class JobPost extends UserDateAudit {
     private Set<SavedJobPost> savedjobpost;
 	
 	@NotNull
-    private Instant expirationDateTime;
+    private Date expirationDate;
 
 	private Long min_salary;
 	
@@ -139,14 +139,13 @@ public class JobPost extends UserDateAudit {
 		this.joblocation = joblocation;
 	}
 
-
-	public Instant getExpirationDateTime() {
-		return expirationDateTime;
+	public Date getExpirationDate() {
+		return expirationDate;
 	}
 
 
-	public void setExpirationDateTime(Instant expirationDateTime) {
-		this.expirationDateTime = expirationDateTime;
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 
 

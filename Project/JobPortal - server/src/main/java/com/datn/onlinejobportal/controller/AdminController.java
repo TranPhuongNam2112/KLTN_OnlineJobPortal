@@ -79,7 +79,7 @@ public class AdminController {
 		  User user = userRepository.findByName(name)
 	                .orElseThrow(() -> new ResourceNotFoundException("User", "name", name));
 
-	        UserProfile userProfile = new UserProfile(user.getId(), user.getName(), user.getRoles(), user.getCreatedAt());
+	        UserProfile userProfile = new UserProfile(user.getId(), user.getName(), user.getCreatedAt(),  user.getRoles());
 
 	        return userProfile;
 	}

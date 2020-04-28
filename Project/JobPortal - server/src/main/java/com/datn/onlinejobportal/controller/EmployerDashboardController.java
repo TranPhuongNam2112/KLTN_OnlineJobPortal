@@ -1,11 +1,15 @@
 package com.datn.onlinejobportal.controller;
 
 import java.net.URI;
-import java.time.Instant;
+import java.time.LocalDate;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,22 +24,27 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.datn.onlinejobportal.dto.CandidateSummary;
+import com.datn.onlinejobportal.dto.JobPostSummary;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Employer;
 import com.datn.onlinejobportal.model.JobLocation;
 import com.datn.onlinejobportal.model.JobPost;
+import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.ApiResponse;
 import com.datn.onlinejobportal.payload.EmployerRequest;
 import com.datn.onlinejobportal.payload.JobPostRequest;
-import com.datn.onlinejobportal.payload.PagedResponse;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.JobLocationRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
+import com.datn.onlinejobportal.repository.SavedCandidateRepository;
+import com.datn.onlinejobportal.repository.UserRepository;
 import com.datn.onlinejobportal.security.CurrentUser;
 import com.datn.onlinejobportal.security.UserPrincipal;
 import com.datn.onlinejobportal.service.DBFileStorageService;
 import com.datn.onlinejobportal.service.JobPostService;
+import com.datn.onlinejobportal.util.AppConstants;
 
 @RestController
 @RequestMapping("/employer/mydashboard")
@@ -56,8 +65,12 @@ public class EmployerDashboardController {
     @Autowired
     private DBFileStorageService dbFileStorageService;
 
-
-
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private SavedCandidateRepository savedCandidateRepository;
+    
 	@PostMapping("/createpost")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public ResponseEntity<?> createJobPost(@Valid @RequestBody JobPostRequest jobPostRequest) {
@@ -92,8 +105,8 @@ public class EmployerDashboardController {
 		jobpost.setJoblocation(joblocation);
 		jobpost.setIndustry(jobPostRequest.getIndustry());
 		jobpost.setJob_description(jobPostRequest.getJobdescription());
-		jobpost.setCreatedAt(Instant.now());
-		jobpost.setExpirationDateTime(jobPostRequest.getExpiredDate());     
+		jobpost.setCreatedAt(LocalDate.now());
+		jobpost.setExpirationDate(jobPostRequest.getExpiredDate());     
 
 		JobPost updatedJobPost = jobPostRepository.save(jobpost);
 		return updatedJobPost;
@@ -115,9 +128,11 @@ public class EmployerDashboardController {
 	public Employer updateProfile(@CurrentUser UserPrincipal currentUser, 
 			@Valid @RequestBody EmployerRequest employerRequest, @RequestParam("file") MultipartFile file) {
 		Employer employer = employerRepository.getEmployerByAccount_Id(currentUser.getId());
-
-		DBFile dbFile = dbFileStorageService.storeFile(file, currentUser);
-
+		
+		User user = userRepository.getOne(currentUser.getId());
+		DBFile dbFile = dbFileStorageService.storeFile(file);
+		
+		user.setFiles(dbFile);
 		employer.setCompanyname(employerRequest.getCompanyname());
 		employer.setDescription(employerRequest.getDescription());
 		employer.setEstablishmentdate(employerRequest.getEstablishmentdate());
@@ -126,9 +141,26 @@ public class EmployerDashboardController {
 		employer.setPhone_number(employerRequest.getPhone_number());
 		employer.setWebsiteurl(employerRequest.getWebsite_url());
 
+		userRepository.save(user);
 		Employer updatedEmployer = employerRepository.save(employer);
 		return updatedEmployer;
 	}
-
-
+	
+	@GetMapping("/savedcandidates")
+	public Page<CandidateSummary> getAllSavedCandidates(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "created_at") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+		Long employerId = employerRepository.getEmployerIdByAccount_Id(currentUser.getId());
+		return savedCandidateRepository.findSavedCandidatesByEmployerId(employerId, pageable);
+	}
+	
+	@GetMapping("/myjobposts")
+	public Page<JobPostSummary> getAllJobPosts(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+		Long employerId = employerRepository.getEmployerIdByAccount_Id(currentUser.getId());
+		return jobPostRepository.getAllJobPostByEmployerId(employerId, pageable);
+	}
 }

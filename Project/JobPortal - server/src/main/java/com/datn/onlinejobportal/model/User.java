@@ -69,8 +69,6 @@ public class User extends DateAudit{
     @OneToOne(mappedBy = "user")
     private Employer employer;
     
-    @Column(name = "confirmation_token")
-	private String confirmationToken;
     
 	
 	@OneToOne(cascade = CascadeType.ALL)
@@ -166,13 +164,6 @@ public class User extends DateAudit{
 		this.employer = employer;
 	}
 	
-	public String getConfirmationToken() {
-		return confirmationToken;
-	}
-
-	public void setConfirmationToken(String confirmationToken) {
-		this.confirmationToken = confirmationToken;
-	}
 
 	public User() {
 		

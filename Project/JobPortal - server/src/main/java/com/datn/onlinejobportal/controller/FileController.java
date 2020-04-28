@@ -31,8 +31,8 @@ public class FileController {
     private DBFileStorageService dbFileStorageService;
 
     @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, UserPrincipal currentUser) {
-        DBFile dbFile = dbFileStorageService.storeFile(file, currentUser);
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
+        DBFile dbFile = dbFileStorageService.storeFile(file);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")

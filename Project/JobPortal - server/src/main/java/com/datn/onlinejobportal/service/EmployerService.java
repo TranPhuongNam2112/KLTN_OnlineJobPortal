@@ -1,15 +1,16 @@
 package com.datn.onlinejobportal.service;
 
-import java.util.Collections;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import com.datn.onlinejobportal.dto.CandidateSummary;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.payload.JobPostRequest;
+import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
+import com.datn.onlinejobportal.security.UserPrincipal;
 
 
 @Service
@@ -19,6 +20,9 @@ public class EmployerService {
 	@Autowired
 	private JobPostRepository jobPostRepository;
 	
+	@Autowired
+	private EmployerRepository employerRepository;
+	
 	
 	public JobPost createJobPost(JobPostRequest jobPostRequest) {
 		JobPost jobpost = new JobPost();
@@ -27,7 +31,7 @@ public class EmployerService {
 		jobpost.setIndustry(jobPostRequest.getIndustry());
 		jobpost.setMin_salary(jobPostRequest.getMinSalary());
 		jobpost.setMax_salary(jobPostRequest.getMaxSalary());
-		jobpost.setExpirationDateTime(jobPostRequest.getExpiredDate());
+		jobpost.setExpirationDate(jobPostRequest.getExpiredDate());
 		
 		return jobPostRepository.save(jobpost);
 	}
@@ -40,13 +44,10 @@ public class EmployerService {
 		jobpost.setIndustry(jobPostRequest.getIndustry());
 		jobpost.setMin_salary(jobPostRequest.getMinSalary());
 		jobpost.setMax_salary(jobPostRequest.getMaxSalary());
-		jobpost.setExpirationDateTime(jobPostRequest.getExpiredDate());
+		jobpost.setExpirationDate(jobPostRequest.getExpiredDate());
 		
 		return jobPostRepository.save(jobpost);
 	}
-	/*
-	public Page<Candidate> getCandidatesSavedBy(Long id, UserPrincipal currentUser, int page, int size) {
-		
-	}
-	*/
+	
+	
 }

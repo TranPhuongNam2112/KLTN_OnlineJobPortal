@@ -38,7 +38,6 @@ public class DBFileStorageService {
             
 
             DBFile dbFile = new DBFile(fileName, file.getContentType(), file.getBytes());
-            User user = userRepository.getOne(currentUser.getId());
 
 
             return dbFileRepository.save(dbFile);

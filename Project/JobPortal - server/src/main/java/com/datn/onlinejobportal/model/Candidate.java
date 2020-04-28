@@ -12,10 +12,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import com.datn.onlinejobportal.model.audit.DateAudit;
+import com.datn.onlinejobportal.model.audit.UserDateAudit;
 
 
 @Entity
@@ -23,7 +28,7 @@ import javax.persistence.UniqueConstraint;
 uniqueConstraints = { 
 		@UniqueConstraint(columnNames = "phone_number") 
 })
-public class Candidate {
+public class Candidate extends DateAudit {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,18 +58,53 @@ public class Candidate {
 			)
 
 	private Set<Education> educations = new HashSet<>();
-	
+
 	@OneToMany(
 			mappedBy = "candidate",
 			cascade = CascadeType.ALL
 			)
 	private Set<Experience> experiences = new HashSet<>();
-	
+
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "CV_id", referencedColumnName = "id")
 	private DBFile files;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "candidate_job_type", 
+	joinColumns = @JoinColumn(name = "candidate_id"), 
+	inverseJoinColumns = @JoinColumn(name = "jobtype_id"))
+	private Set<JobType> jobtypes = new HashSet<>();
+
+	private String work_title;
+	
+	private String city_province;
 	
 	
+
+	public String getCity_province() {
+		return city_province;
+	}
+
+	public void setCity_province(String city_province) {
+		this.city_province = city_province;
+	}
+
+	public Set<JobType> getJobtypes() {
+		return jobtypes;
+	}
+
+	public void setJobtypes(Set<JobType> jobtypes) {
+		this.jobtypes = jobtypes;
+	}
+
+	public String getWork_title() {
+		return work_title;
+	}
+
+	public void setWork_title(String work_title) {
+		this.work_title = work_title;
+	}
+
 	public Candidate() {
 		super();
 	}
@@ -178,5 +218,5 @@ public class Candidate {
 		this.files = files;
 	}
 
-	
+
 }

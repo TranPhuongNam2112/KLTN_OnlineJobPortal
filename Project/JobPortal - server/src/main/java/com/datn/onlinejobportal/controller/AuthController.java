@@ -2,6 +2,7 @@ package com.datn.onlinejobportal.controller;
 
 import java.net.URI;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,22 +31,26 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.datn.onlinejobportal.exception.BadRequestException;
 import com.datn.onlinejobportal.model.AuthProvider;
 import com.datn.onlinejobportal.model.Candidate;
+import com.datn.onlinejobportal.model.ConfirmationToken;
 import com.datn.onlinejobportal.model.ERole;
 import com.datn.onlinejobportal.model.Employer;
+import com.datn.onlinejobportal.model.PasswordResetToken;
 import com.datn.onlinejobportal.model.Role;
 import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.ApiResponse;
-import com.datn.onlinejobportal.payload.AuthResponse;
 import com.datn.onlinejobportal.payload.CandidateSignUpRequest;
+import com.datn.onlinejobportal.payload.EmailPasswordResetRequest;
 import com.datn.onlinejobportal.payload.EmployerSignUpRequest;
 import com.datn.onlinejobportal.payload.JwtResponse;
 import com.datn.onlinejobportal.payload.LoginRequest;
+import com.datn.onlinejobportal.payload.ResetPasswordRequest;
 import com.datn.onlinejobportal.payload.SignUpRequest;
 import com.datn.onlinejobportal.repository.CandidateRepository;
+import com.datn.onlinejobportal.repository.ConfirmationTokenRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
+import com.datn.onlinejobportal.repository.PasswordResetTokenRepository;
 import com.datn.onlinejobportal.repository.RoleRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
-import com.datn.onlinejobportal.security.CustomUserDetailsService;
 import com.datn.onlinejobportal.security.TokenProvider;
 import com.datn.onlinejobportal.security.UserPrincipal;
 import com.datn.onlinejobportal.service.EmailService;
@@ -68,6 +73,12 @@ public class AuthController {
 
 	@Autowired
 	private TokenProvider tokenProvider;
+	
+	@Autowired
+	private PasswordResetTokenRepository tokenRepository;
+	
+	@Autowired
+	private ConfirmationTokenRepository confirmationTokenRepository;
 
 	@Autowired
 	private EmployerRepository employerRepository;
@@ -125,7 +136,7 @@ public class AuthController {
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(adminRole);
 		user.setRoles(roles);
-		user.setCreatedAt(Instant.now());
+		user.setCreatedAt(LocalDate.now());
 		User result = userRepository.save(user);
 
 		Employer company = new Employer();
@@ -162,13 +173,15 @@ public class AuthController {
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(candidateRole);
 		user.setRoles(roles);
-		user.setCreatedAt(Instant.now());
+		user.setCreatedAt(LocalDate.now());
 
 		user.setEmailVerified(false);
 
 		// Generate random 36-character string token for confirmation link
-		user.setConfirmationToken(UUID.randomUUID().toString());
-
+		ConfirmationToken token = new ConfirmationToken();
+		token.setConfirmationToken(UUID.randomUUID().toString());
+        token.setUser(user);
+        confirmationTokenRepository.save(token);
 		User result = userRepository.save(user);
 
 		String appUrl = request.getScheme() + "://" + request.getServerName() + ":8080";
@@ -177,7 +190,7 @@ public class AuthController {
 		registrationEmail.setTo(user.getEmail());
 		registrationEmail.setSubject("Registration Confirmation");
 		registrationEmail.setText("To confirm your e-mail address, please click the link below:\n"
-				+ appUrl + "/auth/confirm?token=" + user.getConfirmationToken());
+				+ appUrl + "/auth/confirm?token=" + token.getConfirmationToken());
 		registrationEmail.setFrom("no-reply@memorynotfound.com");
 
 		emailService.sendEmail(registrationEmail);
@@ -269,5 +282,52 @@ public class AuthController {
 		return ResponseEntity.created(location)
 				.body(new ApiResponse(true, "User registered successfully!"));
 	}
+	
+	@PostMapping("/forgotpassword")
+	public ResponseEntity<?> resetUserPassword(@Valid @RequestBody EmailPasswordResetRequest emailPasswordResetRequest, HttpServletRequest request) {
+		String appUrl = request.getScheme() + "://" + request.getServerName() + ":8080";
+		
+		User user = userRepository.findByEmail(emailPasswordResetRequest.getEmail());
+
+		if (user == null)
+		{
+			return ResponseEntity.ok("We couldn't find your account with the email you have typed in!");
+		}
+		
+		PasswordResetToken token = new PasswordResetToken();
+		token.setToken(UUID.randomUUID().toString());
+        token.setUser(user);
+        token.setExpiryDate(30);
+        tokenRepository.save(token);
+		SimpleMailMessage registrationEmail = new SimpleMailMessage();
+		registrationEmail.setTo(emailPasswordResetRequest.getEmail());
+		registrationEmail.setSubject("Password reset request");
+		registrationEmail.setText("To reset yourpassword, please click the link below:\n"
+				+ appUrl + "/auth/resetpassword?token=" + token.getToken());
+		registrationEmail.setFrom("no-reply@memorynotfound.com");
+
+		emailService.sendEmail(registrationEmail);
+		
+		return ResponseEntity.ok("Please check your email for further instructions.");
+	}
+	
+	@PostMapping("/resetpassword")
+	public ResponseEntity<?> resetPassword(@RequestParam("token") String token, @RequestBody ResetPasswordRequest resetPasswordRequest)
+	{
+		if (!resetPasswordRequest.getNewpassword().equals(resetPasswordRequest.getReenterednewpassword()))
+		{
+			return ResponseEntity.ok(new BadRequestException("Bad!"));
+		}
+		else {
+			PasswordResetToken usertoken = tokenRepository.findByToken(token);
+	        User user = usertoken.getUser();
+	        String updatedPassword = passwordEncoder.encode(resetPasswordRequest.getNewpassword());
+	        userRepository.updatePassword(updatedPassword, user.getId());
+	        tokenRepository.delete(usertoken);
+	        return ResponseEntity.ok("Password updated successfully!");
+		}
+	}
+	
+	
 
 }
