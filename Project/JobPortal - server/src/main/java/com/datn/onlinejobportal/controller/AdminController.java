@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.datn.onlinejobportal.dto.UserProfile;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.ERole;
 import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.PagedResponse;
-import com.datn.onlinejobportal.payload.UserProfile;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.SavedJobPostRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
@@ -44,35 +44,37 @@ public class AdminController {
 	
 	
 	@GetMapping("/users")
-	@RolesAllowed("ROLE_ADMIN")
-	public Page<User> getAllUsers(@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+	@RolesAllowed("ROLE_CANDIDATE")
+	public Page<UserProfile> getAllUsers(@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "createdAt") String sortBy
 			) {
 		  Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-		return userRepository.findAll(pageable);
+		return userRepository.getAllUsers(pageable);
 	}
 	
+
+	
 	@GetMapping("/users/candidates")
-	@RolesAllowed("ROLE_ADMIN")
+	@RolesAllowed("ROLE_CANDIDATE")
 	public Page<User> getAllCandidates(@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
-			@RequestParam(defaultValue = "created_at") String sortBy
+			@RequestParam(defaultValue = "createdAt") String sortBy
 			) {
 		  Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 		return userRepository.findAllCandidates(pageable);
 	}
 
 	@GetMapping("/users/employers")
-	@RolesAllowed("ROLE_ADMIN")
+	@RolesAllowed("ROLE_CANDIDATE")
 	public Page<User> getAllEmployers(@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
-			@RequestParam(defaultValue = "created_at") String sortBy
+			@RequestParam(defaultValue = "createdAt") String sortBy
 			) {
 		  Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 		return userRepository.findAllEmployers(pageable);
 	}
-	
+	/*
 	@GetMapping("/users/{name}")
 	@RolesAllowed("ROLE_ADMIN")
 	public UserProfile getUserProfile(@PathVariable(value = "name") String name) {
@@ -83,6 +85,6 @@ public class AdminController {
 
 	        return userProfile;
 	}
-	
+	*/
 	
 }

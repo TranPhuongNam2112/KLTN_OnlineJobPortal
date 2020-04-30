@@ -12,10 +12,10 @@ public class UserService {
 	@Autowired
 	UserRepository userRepository;
 	 public User getUserByEmail(String email) throws ResourceNotFoundException {
-			Optional<User> user = userRepository.findByEmail(email);
+			User user = userRepository.findByEmail(email);
 
-			if (user.isPresent()) {
-				return user.get();
+			if (user != null) {
+				return user;
 			} else {
 				throw new ResourceNotFoundException("User", "email", email);
 			}

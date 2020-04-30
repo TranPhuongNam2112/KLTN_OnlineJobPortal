@@ -140,7 +140,7 @@ public class AuthController {
 			if (user.getRoles().contains(candidateRole)) {
 				user.setName(oAuth2UserInfo.getName());
 				user.setImageUrl(oAuth2UserInfo.getPhotoUrl());
-				user.setUpdatedAt(Instant.now());
+				user.setUpdatedAt(LocalDate.now());
 				User result = userRepository.save(user);
 				return ResponseEntity.ok(new SocialResponse(user.getRoles(), user.getName()));
 
@@ -159,9 +159,8 @@ public class AuthController {
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(candidateRole);
 		user.setRoles(roles);
-		user.setCreatedAt(Instant.now());
+		user.setCreatedAt(LocalDate.now());
 		user.setEmailVerified(true);
-		user.setConfirmationToken(UUID.randomUUID().toString());
 		User result = userRepository.save(user);
 		Candidate candidate = new Candidate();
 		candidate.setUser(user);
@@ -183,7 +182,7 @@ public class AuthController {
 			if (user.getRoles().contains(employerRole)) {
 				user.setName(oAuth2UserInfo.getName());
 				user.setImageUrl(oAuth2UserInfo.getPhotoUrl());
-				user.setUpdatedAt(Instant.now());
+				user.setUpdatedAt(LocalDate.now());
 				User result = userRepository.save(user);
 				return ResponseEntity.ok(new SocialResponse(user.getRoles(), user.getName()));
 			} else
@@ -201,9 +200,8 @@ public class AuthController {
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(employerRole);
 		user.setRoles(roles);
-		user.setCreatedAt(Instant.now());
+		user.setCreatedAt(LocalDate.now());
 		user.setEmailVerified(true);
-		user.setConfirmationToken(UUID.randomUUID().toString());
 		User result = userRepository.save(user);
 		Employer employer = new Employer();
 		employer.setUser(user);
@@ -226,7 +224,7 @@ public class AuthController {
 			if (user.getRoles().contains(candidateRole)) {
 				user.setName(oAuth2UserInfo.getName());
 				user.setImageUrl(oAuth2UserInfo.getPhotoUrl());
-				user.setUpdatedAt(Instant.now());
+				user.setUpdatedAt(LocalDate.now());
 				User result = userRepository.save(user);
 				return ResponseEntity.ok(new SocialResponse(user.getRoles(), user.getName()));
 			} else
@@ -243,9 +241,8 @@ public class AuthController {
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(candidateRole);
 		user.setRoles(roles);
-		user.setCreatedAt(Instant.now());
+		user.setCreatedAt(LocalDate.now());
 		user.setEmailVerified(true);
-		user.setConfirmationToken(UUID.randomUUID().toString());
 		User result = userRepository.save(user);
 		Candidate candidate = new Candidate();
 		candidate.setUser(user);
@@ -267,7 +264,7 @@ public class AuthController {
 			if (user.getRoles().contains(employerRole)) {
 				user.setName(oAuth2UserInfo.getName());
 				user.setImageUrl(oAuth2UserInfo.getPhotoUrl());
-				user.setUpdatedAt(Instant.now());
+				user.setUpdatedAt(LocalDate.now());
 				User result = userRepository.save(user);
 				return ResponseEntity.ok(new SocialResponse(user.getRoles(), user.getName()));
 			} else
@@ -284,9 +281,8 @@ public class AuthController {
 				.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 		roles.add(employerRole);
 		user.setRoles(roles);
-		user.setCreatedAt(Instant.now());
+		user.setCreatedAt(LocalDate.now());
 		user.setEmailVerified(true);
-		user.setConfirmationToken(UUID.randomUUID().toString());
 		User result = userRepository.save(user);
 		Employer employer = new Employer();
 		employer.setUser(user);
@@ -352,13 +348,14 @@ public class AuthController {
 		user.setCreatedAt(LocalDate.now());
 
 		user.setEmailVerified(false);
+		User result = userRepository.save(user);
+
 
 		// Generate random 36-character string token for confirmation link
 		ConfirmationToken token = new ConfirmationToken();
 		token.setConfirmationToken(UUID.randomUUID().toString());
         token.setUser(user);
         confirmationTokenRepository.save(token);
-		User result = userRepository.save(user);
 
 		String appUrl = request.getScheme() + "://" + request.getServerName() + ":8080";
 

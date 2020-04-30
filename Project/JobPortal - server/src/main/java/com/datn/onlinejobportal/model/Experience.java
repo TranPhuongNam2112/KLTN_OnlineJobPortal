@@ -37,18 +37,36 @@ public class Experience {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JsonIgnore
 	private Candidate candidate;
+	
+	private String description;
+	
 
 	public Experience() {
 
 	}
 
-	public Experience(String company_name, String job_title, Date start_date, Date end_date) {
+	
+
+	public Experience(String company_name, String job_title, Date start_date, Date end_date, String description) {
 		super();
 		this.company_name = company_name;
 		this.job_title = job_title;
 		this.start_date = start_date;
 		this.end_date = end_date;
+		this.description = description;
 	}
+
+
+
+	public String getDescription() {
+		return description;
+	}
+
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 
 	public Long getId() {
 		return id;

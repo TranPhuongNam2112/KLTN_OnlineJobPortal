@@ -15,6 +15,8 @@ import com.datn.onlinejobportal.model.Candidate;
 public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 
 	Page<Candidate> findCandidateByGender(String gender, Pageable paging);
+	
+	
 
 	@Query(value ="SELECT c FROM Candidate c JOIN c.account_id a WHERE " +
 			"LOWER(a.email) LIKE LOWER(CONCAT('%',:email, '%'))", nativeQuery = true)
@@ -33,7 +35,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 	@Query(value="Select c From Candidate c Join c.user u where c.id in :candidateIds", nativeQuery=true)
 	List<Candidate> getByCandidateId(@Param("candidateIds") List<Long> candidateIds);
 
-	@Query(value="Select c from Candidate c where c.user.id = :account_id")
+	@Query("Select c from Candidate c where c.user.id = :account_id")
 	Candidate getCandidateByUserId(@Param("account_id") Long account_id);
 	
 	
@@ -43,4 +45,8 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 	@Query(value="Select c.name, c.city_province, c.work_title, c.updatedAt From Candidate c Join c.user u Where u.id = :userId and c.id in (Select sc.id From SavedCandidate sc)", nativeQuery = true)
 	Page<CandidateSummary> getCandidatesSavedBy(@Param("userId") Long userId, Pageable pageable);
 	
+	@Query(value="Select c from Candidate c"
+			+ "Join c.user u"
+			+ "Where u.name = :candidateName", nativeQuery=true)
+	Candidate getCandidateByName(@Param("candidateName") String candidateName);
 }

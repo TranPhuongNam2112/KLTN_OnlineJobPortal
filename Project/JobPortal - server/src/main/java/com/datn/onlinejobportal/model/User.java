@@ -70,7 +70,8 @@ public class User extends DateAudit{
     @OneToOne(mappedBy = "user")
     private Employer employer;
     
-    
+    @OneToOne(mappedBy = "user")
+    private ConfirmationToken confirmationtoken;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "profileimage_id", referencedColumnName = "id")

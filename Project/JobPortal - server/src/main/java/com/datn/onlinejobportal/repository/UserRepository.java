@@ -12,13 +12,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.datn.onlinejobportal.dto.UserProfile;
 import com.datn.onlinejobportal.model.ERole;
 import com.datn.onlinejobportal.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 	
-	@Query(value = "Select u from ConfimationToken ct JOIN ct.user u where ct.confirmationtoken = :token", nativeQuery=true)
+	@Query("Select u from ConfirmationToken ct LEFT JOIN ct.user u"
+			+ " where ct.confirmationToken = :token")
 	User findByConfirmationToken(@Param("token") String confirmationToken);
 
 	User findByEmail(String email);
@@ -29,10 +31,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	List<User> findByRoles_Name(ERole name);
 
-	@Query(value="SELECT u from User u where u.roles.role_id = 1", nativeQuery=true)
+	@Query("SELECT u from User u Where u.id IN (SELECT c.user FROM Candidate c)")
 	Page<User> findAllCandidates(Pageable pageable);
 
-	@Query(value="SELECT u from User u where u.roles.role_id = 2", nativeQuery = true)
+	@Query("SELECT u from User u Where u.id IN (SELECT e.user FROM Employer e)")
 	Page<User> findAllEmployers(Pageable pageable);
 
 	@Query(value="SELECT u.name FROM User u JOIN u.candidate c JOIN c.savedcandidates sc WHERE sc.candidateId in :candidateIds", nativeQuery = true)
@@ -42,6 +44,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("update User u set u.password = :password where u.id = :id")
 	void updatePassword(@Param("password") String password, @Param("id") Long id);
 
-	@Query(value = "Select u from User u Join u.employer e where e.comapnyname= :companyname ", nativeQuery = true)
-	User findUserByCompanyName(@Param("companyname") String companyname);
+	@Query("Select u from User u LEFT JOIN u.employer e Where e.companyname = ?1")
+	User findUserByCompanyName(String companyname);
+	
+	@Query("Select new com.datn.onlinejobportal.dto.UserProfile(u.name, f.data, u.createdAt) From User u LEFT JOIN u.files f")
+	Page<UserProfile> getAllUsers(Pageable pageable);
+
+	@Query("Select u.name From User u LEFT JOIN u.candidate c Where c.id = ?1")
+	String getNameByCandidateId(Long candidateId);
+	
+	@Query("Select f.data From User u LEFT JOIN u.files f Where u.id = ?1")
+	byte[] getImage(Long userId);
 }

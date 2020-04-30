@@ -25,16 +25,19 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.datn.onlinejobportal.dto.CandidateSummary;
-import com.datn.onlinejobportal.dto.JobPostSummary;
+import com.datn.onlinejobportal.dto.MyJobPostSummary;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
+import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Employer;
 import com.datn.onlinejobportal.model.JobLocation;
 import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.ApiResponse;
+import com.datn.onlinejobportal.payload.CandidateProfile;
 import com.datn.onlinejobportal.payload.EmployerRequest;
 import com.datn.onlinejobportal.payload.JobPostRequest;
+import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.JobLocationRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
@@ -52,6 +55,9 @@ public class EmployerDashboardController {
 
 	@Autowired
 	private EmployerRepository employerRepository;
+	
+	@Autowired
+	private CandidateRepository candidateRepository;
 
 	@Autowired
 	private JobPostRepository jobPostRepository;
@@ -90,7 +96,7 @@ public class EmployerDashboardController {
 		return jobPostService.getJobPostById(jobpostId, currentUser);
 	}
 
-	@PutMapping("/jobposts/{jobpostId}")
+	@PutMapping("/myjobposts/{jobpostId}")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public JobPost updateJobPost(@CurrentUser UserPrincipal currentUser, @PathVariable(value = "id") Long jobpostId,
 			@Valid @RequestBody JobPostRequest jobPostRequest) {
@@ -112,7 +118,7 @@ public class EmployerDashboardController {
 		return updatedJobPost;
 	}
 
-	@DeleteMapping("/jobposts/{jobpostId}")
+	@DeleteMapping("/myjobposts/{jobpostId}")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public ResponseEntity<?> deleteJobPost(@PathVariable(value = "jobpostId") Long jobpostId) {
 		JobPost jobpost = jobPostRepository.findById(jobpostId)
@@ -156,11 +162,20 @@ public class EmployerDashboardController {
 	}
 	
 	@GetMapping("/myjobposts")
-	public Page<JobPostSummary> getAllJobPosts(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+	public Page<MyJobPostSummary> getAllJobPosts(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 		Long employerId = employerRepository.getEmployerIdByAccount_Id(currentUser.getId());
 		return jobPostRepository.getAllJobPostByEmployerId(employerId, pageable);
 	}
+	/*
+	@GetMapping("/savedcandidates/{candidateName}")
+	public CandidateProfile getCandidateById(@PathVariable(value = "candidateName") String candidateName) {
+		
+		Candidate candidate = candidateRepository.getCandidateByName(candidateName);
+		
+		
+	}
+	*/
 }

@@ -20,7 +20,5 @@ public class HomeController {
 	@Autowired
 	private EmployerRepository employerRepository;
 	
-	//@GetMapping
-	//public PagedResponse<> getLatestJobPosts() 
-
+	
 }
