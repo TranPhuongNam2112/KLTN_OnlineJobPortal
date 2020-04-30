@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.datn.onlinejobportal.dto.UserProfile;
 import com.datn.onlinejobportal.model.ERole;
@@ -40,6 +41,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query(value="SELECT u.name FROM User u JOIN u.candidate c JOIN c.savedcandidates sc WHERE sc.candidateId in :candidateIds", nativeQuery = true)
 	List<String> getNameByCandidateIn(@Param("candidateIds") List<Long> candidateIds);
 
+	@Transactional
 	@Modifying
 	@Query("update User u set u.password = :password where u.id = :id")
 	void updatePassword(@Param("password") String password, @Param("id") Long id);
