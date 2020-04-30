@@ -97,10 +97,4 @@ public class CandidateProfile {
 	public void setEducations(List<Education> educations) {
 		this.educations = educations;
 	}
-
-	
-	
-	
-	
-
 }

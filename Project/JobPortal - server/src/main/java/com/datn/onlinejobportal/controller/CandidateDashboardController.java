@@ -1,7 +1,7 @@
 package com.datn.onlinejobportal.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -26,6 +26,7 @@ import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Education;
 import com.datn.onlinejobportal.model.Experience;
+import com.datn.onlinejobportal.model.JobType;
 import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.CandidateProfile;
 import com.datn.onlinejobportal.payload.CandidateProfileRequest;
@@ -33,6 +34,7 @@ import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EducationRepository;
 import com.datn.onlinejobportal.repository.ExperienceRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
+import com.datn.onlinejobportal.repository.JobTypeRepository;
 import com.datn.onlinejobportal.repository.SavedJobPostRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
 import com.datn.onlinejobportal.security.CurrentUser;
@@ -64,8 +66,13 @@ public class CandidateDashboardController {
 	
 	@Autowired
 	private EducationRepository educationRepository;
+	
+	@Autowired
+	private JobTypeRepository jobTypeRepository;
 
-	private List<String> jobtypes;
+	private Set<JobType> jobtypes;
+	
+	private List<String> types;
 /*
 	@GetMapping("/mysavedjobposts/{jobpostId}")
 	public PagedResponse<SavedJobPostResponse> getAllSavedJobPosts(@CurrentUser UserPrincipal currentUser) {
@@ -96,9 +103,9 @@ public class CandidateDashboardController {
 		candidateProfile.setAddress(candidate.getHomeaddress());
 		candidateProfile.setGender(candidate.getGender());
 		candidate.getJobtypes().forEach(jobtype -> {
-			jobtypes.add(jobtype.getJob_type_name());
+			types.add(jobtype.getJob_type_name());
 		});;
-		candidateProfile.setJobtypes(jobtypes);
+		candidateProfile.setJobtypes(types);
 		candidateProfile.setDoB(candidate.getDoB());
 		candidateProfile.setPhonenumber(candidate.getPhone_number());
 		candidateProfile.setWork_title(candidate.getWork_title());
@@ -113,19 +120,16 @@ public class CandidateDashboardController {
 	@PutMapping("/myprofile")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Candidate updateProfile(@CurrentUser UserPrincipal currentUser,
-			@Valid @RequestBody CandidateProfileRequest candidateProfileRequest, @RequestParam("profileimage") MultipartFile imagefile, @RequestParam("CV") MultipartFile CVfile) {
+			@Valid @RequestBody CandidateProfileRequest candidateProfileRequest, @RequestParam(value="profileimage", required=false) MultipartFile imagefile, @RequestParam(value="CV", required=false) MultipartFile CVfile) {
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
 		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(
 				() -> new ResourceNotFoundException("Candidate", "id", candidateId));
+		
 		DBFile cv = dbFileStorageService.storeFile(CVfile);
 		User user = userRepository.getOne(currentUser.getId());
 		DBFile profileimage = dbFileStorageService.storeFile(imagefile);
 		user.setFiles(profileimage);
-		candidate.setFiles(cv);
-		candidate.setDoB(candidateProfileRequest.getDoB());
-		candidate.setGender(candidateProfileRequest.getGender());
-		candidate.setHomeaddress(candidateProfileRequest.getHomeaddress());
-		candidate.setPhone_number(candidateProfileRequest.getPhone_number());
+		
 		candidateProfileRequest.getEducations().forEach(educationRequest -> {
 			 candidate.addEducation(new Education(educationRequest.getUniversity_college(), educationRequest.getMajor(), educationRequest.getStartdate(), educationRequest.getCompletiondate(), educationRequest.getGpa()));
 		});
@@ -134,8 +138,20 @@ public class CandidateDashboardController {
 		});
 		userRepository.save(user);
 		
+		candidate.setDoB(candidateProfileRequest.getDoB());
+		candidate.setGender(candidateProfileRequest.getGender());
+		candidate.setHomeaddress(candidateProfileRequest.getHomeaddress());
+		candidate.setCity_province(candidateProfileRequest.getCity_province());
+		candidate.setWork_title(candidateProfileRequest.getWork_title());
+		candidate.setPhone_number(candidateProfileRequest.getPhone_number());
+		candidateProfileRequest.getJobtypes().forEach(jobtype -> {
+			jobtypes.add(jobTypeRepository.findByJob_type_name(jobtype));
+		});
+		candidate.setJobtypes(jobtypes);
+		candidate.setFiles(cv);
 		Candidate newCandidate = candidateRepository.save(candidate);
-		   
+
+		 
 		return newCandidate;
 	}
 	

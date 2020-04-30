@@ -1,6 +1,7 @@
 package com.datn.onlinejobportal.payload;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -8,32 +9,51 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.datn.onlinejobportal.model.JobType;
+
 public class CandidateProfileRequest {
 	
 	@NotBlank
 	@Size(max=100)
 	private String fullname;
 	
-	@NotNull
 	private Date DoB;
 	
-	@NotBlank
 	private String gender;
 	
-	@NotBlank
 	private String homeaddress;
 	
-	@NotBlank
+	private String city_province;
+	
+	private String work_title;
+	
 	@Size(max=11)
 	private String phone_number;
 	
-	@NotNull
+	private List<String> jobtypes;
+	
 	@Valid
 	private Set<EducationRequest> educations;
 	
-	@NotNull
 	@Valid
 	private Set<ExperienceRequest> experiences;
+	
+
+	public String getCity_province() {
+		return city_province;
+	}
+
+	public void setCity_province(String city_province) {
+		this.city_province = city_province;
+	}
+
+	public String getWork_title() {
+		return work_title;
+	}
+
+	public void setWork_title(String work_title) {
+		this.work_title = work_title;
+	}
 
 	public String getFullname() {
 		return fullname;
@@ -90,5 +110,15 @@ public class CandidateProfileRequest {
 	public void setExperiences(Set<ExperienceRequest> experiences) {
 		this.experiences = experiences;
 	}
+
+	public List<String> getJobtypes() {
+		return jobtypes;
+	}
+
+	public void setJobtypes(List<String> jobtypes) {
+		this.jobtypes = jobtypes;
+	}
+	
+	
 	
 }
