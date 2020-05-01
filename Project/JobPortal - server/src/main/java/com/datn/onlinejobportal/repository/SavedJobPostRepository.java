@@ -13,14 +13,7 @@ public interface SavedJobPostRepository extends JpaRepository<SavedJobPost, Long
 	
 	Long countByCandidate_id(Long candidate_id);
 	
-	@Query(value="Select f.data, e.companyname, jp.job_title, jt.city_province, jt.jop_type_name, jp.expirationDate, jp.min_salary, jp.max_salary from JobPost jp"
-			+ "Join jp.employer e "
-			+ "Join e.user u "
-			+ "Join u.files f "
-			+ "Join jp.jobtype jt "
-			+ "Join jp.joblocation jl "
-			+ "Join jp.savedjobpost sjp"
-			+ "Where sjp.candidateId = :candidateId", nativeQuery=true)
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(f.data, e.companyname, j.job_title, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) From JobPost j LEFT JOIN j.employer e LEFT JOIN e.user u LEFT JOIN u.files f LEFT JOIN j.joblocation jl LEFT JOIN j.jobtype jt LEFT JOIN j.savedjobpost p Where p.candidate = :candidateId")
 	Page<JobPostSummary> getJobPostsSavedBy(@Param("candidateId") Long candidateId, Pageable pageable); 
 
 }

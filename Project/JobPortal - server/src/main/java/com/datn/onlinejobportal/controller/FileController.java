@@ -1,9 +1,5 @@
 package com.datn.onlinejobportal.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -20,7 +16,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.payload.UploadFileResponse;
-import com.datn.onlinejobportal.security.UserPrincipal;
 import com.datn.onlinejobportal.service.DBFileStorageService;
 
 @RestController

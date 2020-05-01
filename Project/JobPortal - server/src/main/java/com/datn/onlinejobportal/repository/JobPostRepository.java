@@ -13,15 +13,15 @@ import com.datn.onlinejobportal.model.JobPost;
 
 public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpecificationExecutor<JobPost> {
 
-	@Query(value="Select jp.job_title, jl.city_province, jt.job_type_name, jp.expirationDate, jp.min_salary, jp.max_salary "
-			+ "From JobPost jp"
-			+ "Join jp.savedjobpost sjp"
-			+ "Join jp.joblocation jl"
-			+ "Join jp.employer e"
-			+ "Join e.user u"
-			+ "Join u.files f"
-			+ "Join jp.jobtype jt"
-			+ "Where e.id = :employerId", nativeQuery=true)
+	@Query("Select new com.datn.onlinejobportal.dto.MyJobPostSummary(jp.job_title, jl.city_province, jt.job_type_name, jp.expirationDate, jp.min_salary, jp.max_salary) "
+			+ "From JobPost jp "
+			+ "LEFT JOIN jp.savedjobpost sjp "
+			+ "LEFT JOIN jp.joblocation jl "
+			+ "LEFT JOIN jp.employer e "
+			+ "LEFT JOIN e.user u "
+			+ "LEFT JOIN u.files f "
+			+ "LEFT JOIN jp.jobtype jt "
+			+ "Where e.id = :employerId")
 	Page<MyJobPostSummary> getAllJobPostByEmployerId(@Param("employerId") Long employerId, Pageable pageable);
 	
 }

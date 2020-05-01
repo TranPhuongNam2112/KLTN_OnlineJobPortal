@@ -2,7 +2,6 @@ package com.datn.onlinejobportal.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -23,7 +22,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.datn.onlinejobportal.exception.BadRequestException;
-import com.datn.onlinejobportal.exception.OAuth2AuthenticationProcessingException;
 import com.datn.onlinejobportal.model.AuthProvider;
 import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.ConfirmationToken;
@@ -50,7 +47,6 @@ import com.datn.onlinejobportal.payload.JwtResponse;
 import com.datn.onlinejobportal.payload.LoginRequest;
 import com.datn.onlinejobportal.payload.ResetPasswordRequest;
 import com.datn.onlinejobportal.payload.SignUpRequest;
-import com.datn.onlinejobportal.payload.SocialResponse;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.ConfirmationTokenRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
@@ -59,9 +55,7 @@ import com.datn.onlinejobportal.repository.RoleRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
 import com.datn.onlinejobportal.security.TokenProvider;
 import com.datn.onlinejobportal.security.UserPrincipal;
-import com.datn.onlinejobportal.security.oauth2.user.OAuth2UserInfo;
 import com.datn.onlinejobportal.service.EmailService;
-import com.datn.onlinejobportal.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
@@ -98,8 +92,6 @@ public class AuthController {
 	@Autowired
 	private EmailService emailService;
 
-	@Autowired
-	private UserService userService;
 
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {

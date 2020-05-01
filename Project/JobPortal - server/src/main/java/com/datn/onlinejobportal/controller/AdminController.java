@@ -1,6 +1,5 @@
 package com.datn.onlinejobportal.controller;
 
-import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -10,23 +9,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.datn.onlinejobportal.dto.UserProfile;
-import com.datn.onlinejobportal.exception.ResourceNotFoundException;
-import com.datn.onlinejobportal.model.Candidate;
-import com.datn.onlinejobportal.model.ERole;
 import com.datn.onlinejobportal.model.User;
-import com.datn.onlinejobportal.payload.PagedResponse;
-import com.datn.onlinejobportal.repository.CandidateRepository;
-import com.datn.onlinejobportal.repository.SavedJobPostRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
-import com.datn.onlinejobportal.security.CurrentUser;
-import com.datn.onlinejobportal.security.UserPrincipal;
-import com.datn.onlinejobportal.service.CandidateService;
 import com.datn.onlinejobportal.util.AppConstants;
 
 @RestController
@@ -35,14 +24,7 @@ public class AdminController {
 
 	@Autowired
 	private UserRepository userRepository;
-	
-	@Autowired
-	private SavedJobPostRepository savedJobPostRepository;
-	
-	@Autowired
-	private CandidateRepository candidateRepository;
-	
-	
+		
 	@GetMapping("/users")
 	@RolesAllowed("ROLE_CANDIDATE")
 	public Page<UserProfile> getAllUsers(@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,

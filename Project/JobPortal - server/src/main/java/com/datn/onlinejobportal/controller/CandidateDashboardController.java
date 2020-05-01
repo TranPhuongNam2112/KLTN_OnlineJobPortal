@@ -10,11 +10,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +27,9 @@ import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Education;
 import com.datn.onlinejobportal.model.Experience;
+import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.model.JobType;
+import com.datn.onlinejobportal.model.SavedJobPost;
 import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.CandidateProfile;
 import com.datn.onlinejobportal.payload.CandidateProfileRequest;
@@ -43,7 +46,6 @@ import com.datn.onlinejobportal.service.DBFileStorageService;
 import com.datn.onlinejobportal.util.AppConstants;
 
 @RestController
-@RequestMapping("/candidate/mydashboard")
 public class CandidateDashboardController {
 	
 	@Autowired
@@ -73,13 +75,7 @@ public class CandidateDashboardController {
 	private Set<JobType> jobtypes;
 	
 	private List<String> types;
-/*
-	@GetMapping("/mysavedjobposts/{jobpostId}")
-	public PagedResponse<SavedJobPostResponse> getAllSavedJobPosts(@CurrentUser UserPrincipal currentUser) {
-		
-	}
 
-*/
 	
 	@GetMapping("/myprofile")
 	@PreAuthorize("hasRole('CANDIDATE')")
@@ -155,7 +151,7 @@ public class CandidateDashboardController {
 		return newCandidate;
 	}
 	
-	@PutMapping("/savedjobposts")
+	@GetMapping("/savedjobposts")
 	public Page<JobPostSummary> getAllJobPosts(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
@@ -163,25 +159,16 @@ public class CandidateDashboardController {
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
 		return savedJobPostRepository.getJobPostsSavedBy(candidateId, pageable);
 	}
-/*
-	@PutMapping("/profile")
-	@PreAuthorize("hasRole('EMPLOYER')")
-	public Employer updateProfile(@CurrentUser UserPrincipal currentUser, 
-			@Valid @RequestBody EmployerRequest employerRequest) {
-
-		Employer employer = employerRepository.findByAccount_id(currentUser.getId());
-
-		employer.setCompanyname(employerRequest.getCompanyname());
-		employer.setDescription(employerRequest.getDescription());
-		employer.setEstablishmentdate(employerRequest.getEstablishmentdate());
-		employer.setIndustry(employerRequest.getIndustry());
-		employer.setMain_address(employerRequest.getMainaddress());
-		employer.setPhone_number(employerRequest.getPhone_number());
-		employer.setWebsiteurl(employerRequest.getWebsite_url());
-
-		Employer updatedEmployer = employerRepository.save(employer);
-		return updatedEmployer;
-	}
 	
-*/
+	@PostMapping("/{jobpostId}")
+	public ResponseEntity<?> saveJobPost(@RequestParam("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
+		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
+		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(() -> new ResourceNotFoundException("Job post", "jobpostId", jobpostId));
+		SavedJobPost sjp = new SavedJobPost();
+		sjp.setJobpost(jobpost);
+		sjp.setCandidate(candidate);
+		savedJobPostRepository.save(sjp);
+		return ResponseEntity.ok("Đã lưu bài đăng thành công!");
+	}
+
 }

@@ -9,12 +9,27 @@ public class JobPostSummary {
 	private byte[] image;
 	private String companyname;
 	private String jobtitle;
+	
 	private String city;
 	private String jobtype;
 	private Date expirationDate;
 	private Long minSalary;
 	private Long maxSalary;
 	
+	
+	
+	public JobPostSummary(byte[] image, String companyname, String jobtitle, String city, String jobtype,
+			Date expirationDate, Long minSalary, Long maxSalary) {
+		super();
+		this.image = image;
+		this.companyname = companyname;
+		this.jobtitle = jobtitle;
+		this.city = city;
+		this.jobtype = jobtype;
+		this.expirationDate = expirationDate;
+		this.minSalary = minSalary;
+		this.maxSalary = maxSalary;
+	}
 	public byte[] getImage() {
 		return image;
 	}

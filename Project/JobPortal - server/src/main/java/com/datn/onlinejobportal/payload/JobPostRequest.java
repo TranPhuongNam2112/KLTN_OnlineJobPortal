@@ -1,6 +1,5 @@
 package com.datn.onlinejobportal.payload;
 
-import java.time.Instant;
 import java.util.Date;
 
 import javax.validation.constraints.NotBlank;
@@ -15,6 +14,9 @@ public class JobPostRequest {
 	
 	@NotNull
 	private JobType jobType;
+	
+	@NotNull
+	private Long requiredexperience;
 	
 	@NotBlank
 	@Size(max=300)
@@ -37,6 +39,16 @@ public class JobPostRequest {
 	
 	@NotBlank
 	private String city_province;
+	
+	
+
+	public Long getRequiredexperience() {
+		return requiredexperience;
+	}
+
+	public void setRequiredexperience(Long requiredexperience) {
+		this.requiredexperience = requiredexperience;
+	}
 
 	public String getJobtitle() {
 		return jobtitle;

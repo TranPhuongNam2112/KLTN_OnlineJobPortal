@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,17 +26,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.datn.onlinejobportal.dto.CandidateSummary;
 import com.datn.onlinejobportal.dto.MyJobPostSummary;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
-import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Employer;
 import com.datn.onlinejobportal.model.JobLocation;
 import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.ApiResponse;
-import com.datn.onlinejobportal.payload.CandidateProfile;
 import com.datn.onlinejobportal.payload.EmployerRequest;
 import com.datn.onlinejobportal.payload.JobPostRequest;
-import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.JobLocationRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
@@ -50,14 +46,10 @@ import com.datn.onlinejobportal.service.JobPostService;
 import com.datn.onlinejobportal.util.AppConstants;
 
 @RestController
-@RequestMapping("/employer/mydashboard")
 public class EmployerDashboardController {
 
 	@Autowired
 	private EmployerRepository employerRepository;
-	
-	@Autowired
-	private CandidateRepository candidateRepository;
 
 	@Autowired
 	private JobPostRepository jobPostRepository;
@@ -169,13 +161,6 @@ public class EmployerDashboardController {
 		Long employerId = employerRepository.getEmployerIdByAccount_Id(currentUser.getId());
 		return jobPostRepository.getAllJobPostByEmployerId(employerId, pageable);
 	}
-	/*
-	@GetMapping("/savedcandidates/{candidateName}")
-	public CandidateProfile getCandidateById(@PathVariable(value = "candidateName") String candidateName) {
-		
-		Candidate candidate = candidateRepository.getCandidateByName(candidateName);
-		
-		
-	}
-	*/
+	
+	
 }

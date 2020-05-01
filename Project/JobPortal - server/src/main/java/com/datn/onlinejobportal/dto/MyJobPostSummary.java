@@ -11,6 +11,18 @@ public class MyJobPostSummary {
 	private Long minSalary;
 	private Long maxSalary;
 	
+	
+	
+	public MyJobPostSummary(String jobtitle, String city, String jobtype, Date expirationDate, Long minSalary,
+			Long maxSalary) {
+		super();
+		this.jobtitle = jobtitle;
+		this.city = city;
+		this.jobtype = jobtype;
+		this.expirationDate = expirationDate;
+		this.minSalary = minSalary;
+		this.maxSalary = maxSalary;
+	}
 	public String getJobtitle() {
 		return jobtitle;
 	}

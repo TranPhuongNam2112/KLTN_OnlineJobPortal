@@ -1,6 +1,5 @@
 package com.datn.onlinejobportal.model;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
 
@@ -57,6 +56,8 @@ public class JobPost extends UserDateAudit {
 	@OneToMany(mappedBy = "jobpost", cascade = CascadeType.ALL)
     private Set<SavedJobPost> savedjobpost;
 	
+	private Long requiredexpreienceyears;
+	
 	@NotNull
     private Date expirationDate;
 
@@ -68,6 +69,22 @@ public class JobPost extends UserDateAudit {
 		super();
 	}
 	
+	
+	
+
+	public Long getRequiredexpreienceyears() {
+		return requiredexpreienceyears;
+	}
+
+
+
+
+	public void setRequiredexpreienceyears(Long requiredexpreienceyears) {
+		this.requiredexpreienceyears = requiredexpreienceyears;
+	}
+
+
+
 
 	public String getJob_title() {
 		return job_title;
