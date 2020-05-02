@@ -155,7 +155,7 @@ public class CandidateDashboardController {
 	public Page<JobPostSummary> getAllJobPosts(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
-		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
 		return savedJobPostRepository.getJobPostsSavedBy(candidateId, pageable);
 	}

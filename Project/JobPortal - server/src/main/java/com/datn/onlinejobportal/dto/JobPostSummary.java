@@ -9,7 +9,7 @@ public class JobPostSummary {
 	private byte[] image;
 	private String companyname;
 	private String jobtitle;
-	
+	private Long experienceyears;
 	private String city;
 	private String jobtype;
 	private Date expirationDate;
@@ -17,19 +17,32 @@ public class JobPostSummary {
 	private Long maxSalary;
 	
 	
-	
-	public JobPostSummary(byte[] image, String companyname, String jobtitle, String city, String jobtype,
-			Date expirationDate, Long minSalary, Long maxSalary) {
+
+	public JobPostSummary(byte[] image, String companyname, String jobtitle, Long experienceyears, String city,
+			String jobtype, Date expirationDate, Long minSalary, Long maxSalary) {
 		super();
 		this.image = image;
 		this.companyname = companyname;
 		this.jobtitle = jobtitle;
+		this.experienceyears = experienceyears;
 		this.city = city;
 		this.jobtype = jobtype;
 		this.expirationDate = expirationDate;
 		this.minSalary = minSalary;
 		this.maxSalary = maxSalary;
 	}
+	
+	
+	public Long getExperienceyears() {
+		return experienceyears;
+	}
+
+
+	public void setExperienceyears(Long experienceyears) {
+		this.experienceyears = experienceyears;
+	}
+
+
 	public byte[] getImage() {
 		return image;
 	}

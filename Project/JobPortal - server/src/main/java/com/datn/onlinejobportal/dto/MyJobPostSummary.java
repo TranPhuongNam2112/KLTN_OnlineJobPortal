@@ -7,22 +7,37 @@ public class MyJobPostSummary {
 	private String jobtitle;
 	private String city;
 	private String jobtype;
+	private Long experienceyears;
 	private Date expirationDate;
 	private Long minSalary;
 	private Long maxSalary;
 	
 	
 	
-	public MyJobPostSummary(String jobtitle, String city, String jobtype, Date expirationDate, Long minSalary,
-			Long maxSalary) {
+	
+	public MyJobPostSummary(String jobtitle, String city, String jobtype, Long experienceyears, Date expirationDate,
+			Long minSalary, Long maxSalary) {
 		super();
 		this.jobtitle = jobtitle;
 		this.city = city;
 		this.jobtype = jobtype;
+		this.experienceyears = experienceyears;
 		this.expirationDate = expirationDate;
 		this.minSalary = minSalary;
 		this.maxSalary = maxSalary;
 	}
+	
+	
+	public Long getExperienceyears() {
+		return experienceyears;
+	}
+
+
+	public void setExperienceyears(Long experienceyears) {
+		this.experienceyears = experienceyears;
+	}
+
+
 	public String getJobtitle() {
 		return jobtitle;
 	}

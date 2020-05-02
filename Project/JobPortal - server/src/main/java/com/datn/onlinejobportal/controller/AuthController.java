@@ -111,6 +111,10 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
+		
+		if (!userRepository.findByEmail(userDetails.getEmail()).getEmailVerified()) {
+			throw new BadRequestException("Email của người dùng chưa được xác thực!");
+		}
 
 		
 		return ResponseEntity.ok(new JwtResponse(token, 

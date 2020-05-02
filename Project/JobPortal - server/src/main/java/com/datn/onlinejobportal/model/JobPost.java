@@ -56,7 +56,7 @@ public class JobPost extends UserDateAudit {
 	@OneToMany(mappedBy = "jobpost", cascade = CascadeType.ALL)
     private Set<SavedJobPost> savedjobpost;
 	
-	private Long requiredexpreienceyears;
+	private Long requiredexperienceyears;
 	
 	@NotNull
     private Date expirationDate;
@@ -73,14 +73,14 @@ public class JobPost extends UserDateAudit {
 	
 
 	public Long getRequiredexpreienceyears() {
-		return requiredexpreienceyears;
+		return requiredexperienceyears;
 	}
 
 
 
 
 	public void setRequiredexpreienceyears(Long requiredexpreienceyears) {
-		this.requiredexpreienceyears = requiredexpreienceyears;
+		this.requiredexperienceyears = requiredexpreienceyears;
 	}
 
 

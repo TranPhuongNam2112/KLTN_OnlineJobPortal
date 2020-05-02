@@ -79,7 +79,16 @@ public class Candidate extends DateAudit {
 	
 	private String city_province;
 	
+	private Long expectedsalary;
 	
+
+	public Long getExpectedsalary() {
+		return expectedsalary;
+	}
+
+	public void setExpectedsalary(Long expectedsalary) {
+		this.expectedsalary = expectedsalary;
+	}
 
 	public String getCity_province() {
 		return city_province;

@@ -13,7 +13,7 @@ import com.datn.onlinejobportal.model.JobPost;
 
 public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpecificationExecutor<JobPost> {
 
-	@Query("Select new com.datn.onlinejobportal.dto.MyJobPostSummary(jp.job_title, jl.city_province, jt.job_type_name, jp.expirationDate, jp.min_salary, jp.max_salary) "
+	@Query("Select new com.datn.onlinejobportal.dto.MyJobPostSummary(jp.job_title, jl.city_province, jt.job_type_name, jp.requiredexperienceyears, jp.expirationDate, jp.min_salary, jp.max_salary) "
 			+ "From JobPost jp "
 			+ "LEFT JOIN jp.savedjobpost sjp "
 			+ "LEFT JOIN jp.joblocation jl "
@@ -23,5 +23,27 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN jp.jobtype jt "
 			+ "Where e.id = :employerId")
 	Page<MyJobPostSummary> getAllJobPostByEmployerId(@Param("employerId") Long employerId, Pageable pageable);
+	
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(f.data, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
+			+ "From JobPost j "
+			+ "LEFT JOIN j.employer e "
+			+ "LEFT JOIN e.user u "
+			+ "LEFT JOIN u.files f "
+			+ "LEFT JOIN j.joblocation jl "
+			+ "LEFT JOIN j.jobtype jt "
+			+ "Where jt.job_type_name = :jobtypename")
+	Page<JobPostSummary> getJobPostsByJobType(@Param("jobtypename") String jobtypename, Pageable pageable); 
+	
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(f.data, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
+			+ "From JobPost j "
+			+ "LEFT JOIN j.employer e "
+			+ "LEFT JOIN e.user u "
+			+ "LEFT JOIN u.files f "
+			+ "LEFT JOIN j.joblocation jl "
+			+ "LEFT JOIN j.jobtype jt "
+			+ "Where jt.job_type_name IN (SELECT jt.job_type_name FROM Candidate c LEFT JOIN c.jobtypes jt WHERE c.id = :candidateId ) AND "
+			+ "j.max_salary <= (SELECT c.expectedsalary FROM Candidate c WHERE c.id = :candidateId) AND j.min_salary >= (SELECT c.expectedsalary FROM Candidate c WHERE c.id = :candidateId) "
+			+ "AND jl.city_province = (SELECT c.city_province FROM Candidate c WHERE c.id = :candidateId)")
+	Page<JobPostSummary> getRecommendedJobPostsByUser(@Param("candidateId") Long candidateId, Pageable pageable); 
 	
 }
