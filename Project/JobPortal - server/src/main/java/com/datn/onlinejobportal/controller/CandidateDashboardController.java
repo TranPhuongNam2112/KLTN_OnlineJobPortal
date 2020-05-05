@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.datn.onlinejobportal.dto.CandidateSummary;
 import com.datn.onlinejobportal.dto.JobPostSummary;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Candidate;
@@ -75,6 +76,8 @@ public class CandidateDashboardController {
 	private Set<JobType> jobtypes;
 
 	private List<String> types;
+	
+
 
 
 	@GetMapping("/myprofile")
@@ -140,6 +143,8 @@ public class CandidateDashboardController {
 			jobtypes.add(jobTypeRepository.findByJob_type_name(jobtype));
 		});
 		candidate.setJobtypes(jobtypes);
+		candidate.setProfile_visible(candidateProfileRequest.getProfile_visible());
+		candidate.setYearsofexperience(candidateProfileRequest.getExperiencedyears());
 		Candidate newCandidate = candidateRepository.save(candidate);
 
 

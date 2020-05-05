@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.datn.onlinejobportal.dto.CandidateSummary;
-import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.SavedCandidate;
 
 public interface SavedCandidateRepository extends JpaRepository<SavedCandidate, Long>{

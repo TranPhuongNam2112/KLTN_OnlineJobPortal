@@ -1,7 +1,5 @@
 package com.datn.onlinejobportal.repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +33,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN u.files f "
 			+ "LEFT JOIN j.joblocation jl "
 			+ "LEFT JOIN j.jobtype jt "
-			+ "Where jt.job_type_name = :jobtypename")
+			+ "Where jt.job_type_name = :jobtypename AND j.expirationDate <= CURRENT_DATE")
 	Page<JobPostSummary> getJobPostsByJobType(@Param("jobtypename") String jobtypename, Pageable pageable); 
 	
 	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(f.data, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
@@ -47,7 +45,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN j.jobtype jt "
 			+ "Where jt.job_type_name IN (SELECT jt.job_type_name FROM Candidate c LEFT JOIN c.jobtypes jt WHERE c.id = :candidateId ) AND "
 			+ "j.max_salary <= (SELECT c.expectedsalary FROM Candidate c WHERE c.id = :candidateId) AND j.min_salary >= (SELECT c.expectedsalary FROM Candidate c WHERE c.id = :candidateId) "
-			+ "AND jl.city_province = (SELECT c.city_province FROM Candidate c WHERE c.id = :candidateId)")
+			+ "AND jl.city_province = (SELECT c.city_province FROM Candidate c WHERE c.id = :candidateId) AND j.expirationDate <= CURRENT_DATE")
 	Page<JobPostSummary> getRecommendedJobPostsByUser(@Param("candidateId") Long candidateId, Pageable pageable); 
 	
 }

@@ -32,12 +32,31 @@ public class CandidateProfileRequest {
 	
 	private List<String> jobtypes;
 	
+	private Boolean profile_visible;
+	
+	private Long experiencedyears;
+	
 	@Valid
 	private Set<EducationRequest> educations;
 	
 	@Valid
 	private Set<ExperienceRequest> experiences;
-	
+
+	public Boolean getProfile_visible() {
+		return profile_visible;
+	}
+
+	public void setProfile_visible(Boolean profile_visible) {
+		this.profile_visible = profile_visible;
+	}
+
+	public Long getExperiencedyears() {
+		return experiencedyears;
+	}
+
+	public void setExperiencedyears(Long experiencedyears) {
+		this.experiencedyears = experiencedyears;
+	}
 
 	public String getCity_province() {
 		return city_province;

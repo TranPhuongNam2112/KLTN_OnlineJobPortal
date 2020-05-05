@@ -45,8 +45,6 @@ public class HomeController {
 	@Autowired
     private IJobPostDAO api;
 	
-	
-	
 	@GetMapping
 	public Page<JobPostSummary> getJobPostsByJobType(@RequestParam("jobtype") String jobtype, @CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,

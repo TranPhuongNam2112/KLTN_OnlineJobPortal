@@ -162,6 +162,13 @@ public class EmployerDashboardController {
 		Long employerId = employerRepository.getEmployerIdByAccount_Id(currentUser.getId());
 		return jobPostRepository.getAllJobPostByEmployerId(employerId, pageable);
 	}
+	/*
+	@GetMapping
+	@PreAuthorize("hasRole('EMPLOYER')")
+	public Page<CandidateSummary> getRecommendedCandidates(@CurrentUser UserPrincipal currrentUser) {
+		
+	}
+	*/
 	
 	
 }

@@ -81,6 +81,27 @@ public class Candidate extends DateAudit {
 	
 	private Long expectedsalary;
 	
+	private Long yearsofexperience;
+	
+	private Boolean profile_visible;
+	
+	public Long getYearsofexperience() {
+		return yearsofexperience;
+	}
+
+	public void setYearsofexperience(Long yearsofexperience) {
+		this.yearsofexperience = yearsofexperience;
+	}
+
+	
+
+	public Boolean getProfile_visible() {
+		return profile_visible;
+	}
+
+	public void setProfile_visible(Boolean profile_visible) {
+		this.profile_visible = profile_visible;
+	}
 
 	public Long getExpectedsalary() {
 		return expectedsalary;

@@ -1,7 +1,6 @@
 package com.datn.onlinejobportal.repository;
 
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,9 +31,6 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 	Page<Candidate> findAllByDoBBetween(Date startDate,
 			Date endDate, Pageable pageable);
 
-	@Query(value="Select c From Candidate c Join c.user u where c.id in :candidateIds", nativeQuery=true)
-	List<Candidate> getByCandidateId(@Param("candidateIds") List<Long> candidateIds);
-
 	@Query("Select c from Candidate c where c.user.id = :account_id")
 	Candidate getCandidateByUserId(@Param("account_id") Long account_id);
 	
@@ -42,11 +38,19 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 	@Query("Select c.id from Candidate c LEFT JOIN c.user u Where u.id = :account_id ")
 	Long getCandidateIdByUserId(@Param("account_id") Long account_id);
 	
-	@Query(value="Select c.name, c.city_province, c.work_title, c.updatedAt From Candidate c Join c.user u Where u.id = :userId and c.id in (Select sc.id From SavedCandidate sc)", nativeQuery = true)
-	Page<CandidateSummary> getCandidatesSavedBy(@Param("userId") Long userId, Pageable pageable);
 	
-	@Query(value="Select c from Candidate c"
-			+ "Join c.user u"
-			+ "Where u.name = :candidateName", nativeQuery=true)
-	Candidate getCandidateByName(@Param("candidateName") String candidateName);
+	@Query("Select new com.datn.onlinejobportal.dto.CandidateSummary(f.data, u.name, c.city_province, c.work_title, c.updatedAt) From Candidate c "
+			+ "LEFT JOIN c.savedCandidates sc "
+			+ "LEFT JOIN c.user u "
+			+ "LEFT JOIN u.files f "
+			+ "WHERE c.id NOT IN (SELECT sc.candidate FROM SavedCandidate sc WHERE sc.employer = :employerId) "
+			+ "AND c.city_province IN (SELECT jl.city_province FROM JobPost jp LEFT JOIN jp.joblocation jl LEFT JOIN jp.employer e Where e.id = :employerId) "
+			+ "AND (SELECT jt.job_type_name FROM JobPost jp LEFT JOIN jp.jobtype jt LEFT JOIN jp.employer e WHERE e.id = :employerId AND jp.id = :jobpostId) IN c.jobtypes "
+			+ "AND c.profile_visible = TRUE")
+	Page<CandidateSummary> getRecommendedCandidatesBasedOnJobPostAndEmployerId(@Param("employerId") Long employerId, @Param("jobpostId") Long jobpostId, Pageable pageable);
+
+	
+
+	
+	
 }
