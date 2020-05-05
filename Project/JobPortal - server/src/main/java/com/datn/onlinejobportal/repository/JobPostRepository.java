@@ -1,5 +1,8 @@
 package com.datn.onlinejobportal.repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +15,7 @@ import com.datn.onlinejobportal.dto.MyJobPostSummary;
 import com.datn.onlinejobportal.model.JobPost;
 
 public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpecificationExecutor<JobPost> {
+	
 
 	@Query("Select new com.datn.onlinejobportal.dto.MyJobPostSummary(jp.job_title, jl.city_province, jt.job_type_name, jp.requiredexperienceyears, jp.expirationDate, jp.min_salary, jp.max_salary) "
 			+ "From JobPost jp "

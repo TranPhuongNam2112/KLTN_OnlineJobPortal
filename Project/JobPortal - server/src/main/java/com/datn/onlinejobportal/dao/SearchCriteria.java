@@ -1,4 +1,4 @@
-package com.datn.onlinejobportal.specification;
+package com.datn.onlinejobportal.dao;
 
 public class SearchCriteria {
     private String key;
@@ -20,6 +20,12 @@ public class SearchCriteria {
 		return value;
 	}
 	public void setValue(Object value) {
+		this.value = value;
+	}
+	public SearchCriteria(String key, String operation, Object value) {
+		super();
+		this.key = key;
+		this.operation = operation;
 		this.value = value;
 	}
     

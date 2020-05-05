@@ -39,7 +39,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 	Candidate getCandidateByUserId(@Param("account_id") Long account_id);
 	
 	
-	@Query(value="Select c.id from Candidate c where c.user.id = :account_id")
+	@Query("Select c.id from Candidate c LEFT JOIN c.user u Where u.id = :account_id ")
 	Long getCandidateIdByUserId(@Param("account_id") Long account_id);
 	
 	@Query(value="Select c.name, c.city_province, c.work_title, c.updatedAt From Candidate c Join c.user u Where u.id = :userId and c.id in (Select sc.id From SavedCandidate sc)", nativeQuery = true)
