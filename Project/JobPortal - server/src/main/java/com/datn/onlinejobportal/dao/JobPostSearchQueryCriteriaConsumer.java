@@ -6,6 +6,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import com.datn.onlinejobportal.util.SearchCriteria;
+
 
 public class JobPostSearchQueryCriteriaConsumer implements Consumer<SearchCriteria>{
 

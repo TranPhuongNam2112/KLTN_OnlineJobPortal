@@ -10,6 +10,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
+import com.datn.onlinejobportal.util.*;
 
 import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.model.User;
