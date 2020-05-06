@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,6 +47,7 @@ import com.datn.onlinejobportal.service.JobPostService;
 import com.datn.onlinejobportal.util.AppConstants;
 
 @RestController
+@RequestMapping("/employer")
 public class EmployerDashboardController {
 
 	@Autowired
@@ -162,13 +164,20 @@ public class EmployerDashboardController {
 		Long employerId = employerRepository.getEmployerIdByAccount_Id(currentUser.getId());
 		return jobPostRepository.getAllJobPostByEmployerId(employerId, pageable);
 	}
-	/*
-	@GetMapping
-	@PreAuthorize("hasRole('EMPLOYER')")
-	public Page<CandidateSummary> getRecommendedCandidates(@CurrentUser UserPrincipal currrentUser) {
-		
-	}
-	*/
 	
+	@PostMapping("/uploadProfileImage")
+	public ResponseEntity<?> uploadProfileImage (@RequestParam("profileimage") MultipartFile profileimage, @CurrentUser UserPrincipal currentUser) {
+		User user = userRepository.getOne(currentUser.getId());
+		DBFile profile = dbFileStorageService.storeFile(profileimage);
+		if (profile.getCreatedAt() == null) {
+			profile.setCreatedAt(LocalDate.now());
+		} else {
+			profile.setUpdatedAt(LocalDate.now());
+		}
+		user.setFiles(profile);	
+		userRepository.save(user);
+
+		return ResponseEntity.ok("Uploaded successfully");
+	}
 	
 }

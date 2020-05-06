@@ -16,12 +16,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.datn.onlinejobportal.dto.CandidateSummary;
 import com.datn.onlinejobportal.dto.JobPostSummary;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Candidate;
@@ -47,6 +47,7 @@ import com.datn.onlinejobportal.service.DBFileStorageService;
 import com.datn.onlinejobportal.util.AppConstants;
 
 @RestController
+@RequestMapping("/candidate")
 public class CandidateDashboardController {
 
 	@Autowired
@@ -74,8 +75,6 @@ public class CandidateDashboardController {
 	private JobTypeRepository jobTypeRepository;
 
 	private Set<JobType> jobtypes;
-
-	private List<String> types;
 	
 
 
@@ -101,9 +100,7 @@ public class CandidateDashboardController {
 		candidateProfile.setName(currentUser.getFullname());
 		candidateProfile.setAddress(candidate.getHomeaddress());
 		candidateProfile.setGender(candidate.getGender());
-		candidate.getJobtypes().forEach(jobtype -> {
-			types.add(jobtype.getJob_type_name());
-		});;
+		List<String> types = jobTypeRepository.getAllCandidateJobTypeName(candidate.getId());
 		candidateProfile.setJobtypes(types);
 		candidateProfile.setDoB(candidate.getDoB());
 		candidateProfile.setPhonenumber(candidate.getPhone_number());
@@ -139,10 +136,7 @@ public class CandidateDashboardController {
 		candidate.setCity_province(candidateProfileRequest.getCity_province());
 		candidate.setWork_title(candidateProfileRequest.getWork_title());
 		candidate.setPhone_number(candidateProfileRequest.getPhone_number());
-		candidateProfileRequest.getJobtypes().forEach(jobtype -> {
-			jobtypes.add(jobTypeRepository.findByJob_type_name(jobtype));
-		});
-		candidate.setJobtypes(jobtypes);
+		candidate.setJobtypes(jobTypeRepository.getAllCandidateJobType(candidateProfileRequest.getJobtypes()));
 		candidate.setProfile_visible(candidateProfileRequest.getProfile_visible());
 		candidate.setYearsofexperience(candidateProfileRequest.getExperiencedyears());
 		Candidate newCandidate = candidateRepository.save(candidate);

@@ -48,4 +48,5 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "AND jl.city_province = (SELECT c.city_province FROM Candidate c WHERE c.id = :candidateId) AND j.expirationDate <= CURRENT_DATE")
 	Page<JobPostSummary> getRecommendedJobPostsByUser(@Param("candidateId") Long candidateId, Pageable pageable); 
 	
+	
 }

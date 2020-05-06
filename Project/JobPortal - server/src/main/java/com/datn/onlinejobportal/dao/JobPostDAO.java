@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import com.datn.onlinejobportal.util.*;
 
 import com.datn.onlinejobportal.model.JobPost;
-import com.datn.onlinejobportal.model.User;
 
 @Repository
 public class JobPostDAO implements IJobPostDAO{
@@ -25,6 +24,7 @@ public class JobPostDAO implements IJobPostDAO{
 	public List<JobPost> searchJobPost(List<SearchCriteria> params) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<JobPost> query = builder.createQuery(JobPost.class);
+		@SuppressWarnings("rawtypes")
 		Root r = query.from(JobPost.class);
 
 		Predicate predicate = builder.conjunction();

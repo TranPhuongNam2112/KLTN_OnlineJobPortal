@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.datn.onlinejobportal.model.Employer;
-import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.util.SearchOperation;
 import com.datn.onlinejobportal.util.SpecSearchCriteria;
 

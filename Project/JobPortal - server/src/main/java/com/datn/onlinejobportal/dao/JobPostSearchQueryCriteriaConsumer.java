@@ -13,8 +13,10 @@ public class JobPostSearchQueryCriteriaConsumer implements Consumer<SearchCriter
 
 	private Predicate predicate;
 	private CriteriaBuilder builder;
+	@SuppressWarnings("rawtypes")
 	private Root r;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void accept(SearchCriteria param) {
 		if (param.getOperation().equalsIgnoreCase(">")) {
@@ -34,7 +36,7 @@ public class JobPostSearchQueryCriteriaConsumer implements Consumer<SearchCriter
 		}
 	}
 
-	public JobPostSearchQueryCriteriaConsumer(Predicate predicate, CriteriaBuilder builder, Root r) {
+	public JobPostSearchQueryCriteriaConsumer(Predicate predicate, CriteriaBuilder builder, @SuppressWarnings("rawtypes") Root r) {
 		super();
 		this.predicate = predicate;
 		this.builder = builder;
@@ -57,11 +59,12 @@ public class JobPostSearchQueryCriteriaConsumer implements Consumer<SearchCriter
 		this.builder = builder;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Root getR() {
 		return r;
 	}
 
-	public void setR(Root r) {
+	public void setR(@SuppressWarnings("rawtypes") Root r) {
 		this.r = r;
 	}
 	

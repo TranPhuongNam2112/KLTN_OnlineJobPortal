@@ -32,4 +32,5 @@ public interface EmployerRepository extends JpaRepository<Employer, Long>, JpaSp
 	@Query(value="Select e FROM Employer e WHERE e.user.id = :account_id", nativeQuery=true)
 	Employer getEmployerByAccount_Id(@Param("account_id") Long accountId);
 
+	Page<Employer> findAll(Pageable pageable);
 }
