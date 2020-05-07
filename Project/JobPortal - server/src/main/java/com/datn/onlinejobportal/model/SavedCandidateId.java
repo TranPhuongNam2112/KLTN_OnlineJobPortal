@@ -19,6 +19,12 @@ public class SavedCandidateId implements Serializable {
 
 	@Column(name="employer_id")
 	private Long employerId;
+	
+	
+
+	public SavedCandidateId() {
+		super();
+	}
 
 	public SavedCandidateId(Long candidateId, Long employerId) {
 		super();

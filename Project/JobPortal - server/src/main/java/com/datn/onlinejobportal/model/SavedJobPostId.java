@@ -20,6 +20,12 @@ public class SavedJobPostId implements Serializable{
 	@Column(name="job_post_id")
 	private Long jobpostId;
 	
+	
+	
+	public SavedJobPostId() {
+		super();
+	}
+
 	public SavedJobPostId(Long candidateId, Long jobpostId) {
 		super();
 		this.candidateId = candidateId;
