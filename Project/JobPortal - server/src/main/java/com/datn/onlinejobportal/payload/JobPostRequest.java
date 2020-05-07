@@ -25,10 +25,10 @@ public class JobPostRequest {
 	@NotBlank
 	private String industry;
 	
-	@NotBlank
+    @NotNull(message = "Please enter the correct amount!")
 	private Long minSalary;
 	
-	@NotBlank
+    @NotNull(message = "Please enter the correct amount!")
 	private Long maxSalary;
 	
 	@NotNull
