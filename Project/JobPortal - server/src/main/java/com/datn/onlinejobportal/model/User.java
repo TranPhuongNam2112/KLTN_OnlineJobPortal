@@ -52,7 +52,6 @@ public class User extends DateAudit{
     private Boolean emailVerified = false;
 
     @JsonIgnore
-    @ValidPassword
     private String password;
 
     @NotNull

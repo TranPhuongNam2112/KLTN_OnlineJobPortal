@@ -4,6 +4,8 @@ package com.datn.onlinejobportal.payload;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
+import com.datn.onlinejobportal.constraint.ValidPassword;
+
 public class CandidateSignUpRequest {
 	@NotBlank
 	private String name;
@@ -13,6 +15,7 @@ public class CandidateSignUpRequest {
 	private String email;
 
 	@NotBlank
+	@ValidPassword
 	private String password;	
 
 	public String getName() {
