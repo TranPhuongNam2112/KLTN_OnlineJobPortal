@@ -34,6 +34,7 @@ public class SavedCandidate extends DateAudit {
 	public SavedCandidate(Employer employer, Candidate candidate) {
 		this.employer = employer;
 		this.candidate = candidate;
+		this.savedCandidateId = new SavedCandidateId(employer.getId(), candidate.getId());
 	}
 
 	public Employer getEmployer() {

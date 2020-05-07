@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
@@ -25,11 +26,11 @@ public class SavedJobPost extends DateAudit {
 	@EmbeddedId
 	private SavedJobPostId savedJobPostId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("candidateId")
 	private Candidate candidate;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("jobpostId")
 	private JobPost jobpost;
 
@@ -40,6 +41,7 @@ public class SavedJobPost extends DateAudit {
 	public SavedJobPost(Candidate candidate, JobPost jobpost) {
 		this.candidate = candidate;
 		this.jobpost = jobpost;
+		this.savedJobPostId = new SavedJobPostId(candidate.getId(), jobpost.getId());
 	}
 
 
