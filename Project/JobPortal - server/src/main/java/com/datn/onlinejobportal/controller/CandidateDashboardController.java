@@ -199,5 +199,7 @@ public class CandidateDashboardController {
 		candidateRepository.save(candidate);
 		return ResponseEntity.ok("Đã xóa bài đăng thành công!");
 	}
+	
+	
 
 }
