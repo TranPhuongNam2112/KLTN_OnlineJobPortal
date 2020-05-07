@@ -1,10 +1,8 @@
 package com.datn.onlinejobportal.model;
 
-import java.io.Serializable;
-import java.util.Date;
+
 import java.util.Objects;
 
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -39,12 +37,10 @@ public class SavedJobPost extends DateAudit {
 		
 	}
 
-	
 	public SavedJobPost(Candidate candidate, JobPost jobpost) {
 		this.candidate = candidate;
 		this.jobpost = jobpost;
 	}
-	
 
 
 	public Candidate getCandidate() {
@@ -65,6 +61,23 @@ public class SavedJobPost extends DateAudit {
 	public void setJobpost(JobPost jobpost) {
 		this.jobpost = jobpost;
 	}
+	
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+ 
+        if (o == null || getClass() != o.getClass())
+            return false;
+ 
+        SavedJobPost that = (SavedJobPost) o;
+        return Objects.equals(candidate, that.candidate) &&
+               Objects.equals(jobpost, that.jobpost);
+    }
+ 
+    @Override
+    public int hashCode() {
+        return Objects.hash(candidate, jobpost);
+    }
 
 
 	

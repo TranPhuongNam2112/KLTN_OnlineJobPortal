@@ -2,7 +2,6 @@ package com.datn.onlinejobportal.controller;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -29,8 +28,6 @@ import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Education;
 import com.datn.onlinejobportal.model.Experience;
 import com.datn.onlinejobportal.model.JobPost;
-import com.datn.onlinejobportal.model.JobType;
-import com.datn.onlinejobportal.model.SavedJobPost;
 import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.CandidateProfile;
 import com.datn.onlinejobportal.payload.CandidateProfileRequest;
@@ -73,8 +70,6 @@ public class CandidateDashboardController {
 
 	@Autowired
 	private JobTypeRepository jobTypeRepository;
-
-	private Set<JobType> jobtypes;
 	
 
 
@@ -185,15 +180,20 @@ public class CandidateDashboardController {
 		return savedJobPostRepository.getJobPostsSavedBy(candidateId, pageable);
 	}
 
-	@PostMapping("/{jobpostId}")
+	@PostMapping("/save/{jobpostId}")
 	public ResponseEntity<?> saveJobPost(@RequestParam("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
 		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
 		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(() -> new ResourceNotFoundException("Job post", "jobpostId", jobpostId));
-		SavedJobPost sjp = new SavedJobPost();
-		sjp.setJobpost(jobpost);
-		sjp.setCandidate(candidate);
-		savedJobPostRepository.save(sjp);
+		candidate.addJobPost(jobpost);
 		return ResponseEntity.ok("Đã lưu bài đăng thành công!");
+	}
+	
+	@PostMapping("/savedjobposts/{jobpostId}")
+	public ResponseEntity<?> removedSavedJobPost(@RequestParam("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
+		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
+		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(() -> new ResourceNotFoundException("Job post", "jobpostId", jobpostId));
+		candidate.removeJobPost(jobpost);
+		return ResponseEntity.ok("Đã xóa bài đăng thành công!");
 	}
 
 }

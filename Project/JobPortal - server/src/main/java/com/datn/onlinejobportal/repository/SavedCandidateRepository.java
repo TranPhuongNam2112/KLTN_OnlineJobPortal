@@ -15,7 +15,7 @@ public interface SavedCandidateRepository extends JpaRepository<SavedCandidate, 
 			+ "LEFT JOIN c.savedCandidates sc "
 			+ "LEFT JOIN c.user u "
 			+ "LEFT JOIN u.files f "
-			+ "Where sc.employer = :employerId")
+			+ "Where sc.employer.id = :employerId")
 	Page<CandidateSummary> findSavedCandidatesByEmployerId(@Param("employerId") Long employerId, Pageable pageable);
 	
 	

@@ -2,6 +2,7 @@ package com.datn.onlinejobportal.model;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 
@@ -142,4 +143,25 @@ public class Employer {
 	public void setIndustry(String industry) {
 		this.industry = industry;
 	}
+	
+	public void addCandidate(Candidate candidate) {
+        SavedCandidate savedCandidate = new SavedCandidate(this, candidate);
+        savedCandidates.add(savedCandidate);
+        candidate.getSavedCandidates().add(savedCandidate);
+    }
+ 
+    public void removeCandidate(Candidate candidate) {
+        for (Iterator<SavedCandidate> iterator = savedCandidates.iterator();
+             iterator.hasNext(); ) {
+            SavedCandidate savedCandidate = iterator.next();
+ 
+            if (savedCandidate.getEmployer().equals(this) &&
+                    savedCandidate.getCandidate().equals(candidate)) {
+                iterator.remove();
+                savedCandidate.getCandidate().getSavedCandidates().remove(savedCandidate);
+                savedCandidate.setEmployer(null);
+                savedCandidate.setCandidate(null);
+            }
+        }
+    }
 }

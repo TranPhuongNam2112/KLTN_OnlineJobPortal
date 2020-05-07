@@ -2,6 +2,7 @@ package com.datn.onlinejobportal.model;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 
@@ -20,7 +21,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.datn.onlinejobportal.model.audit.DateAudit;
-import com.datn.onlinejobportal.model.audit.UserDateAudit;
 
 
 @Entity
@@ -247,6 +247,27 @@ public class Candidate extends DateAudit {
 	public void setFiles(DBFile files) {
 		this.files = files;
 	}
+	
+	public void addJobPost(JobPost jobpost) {
+        SavedJobPost savedjobpost = new SavedJobPost(this, jobpost);
+        savedJobPosts.add(savedjobpost);
+        jobpost.getSavedjobpost().add(savedjobpost);
+    }
+ 
+    public void removeJobPost(JobPost jobpost) {
+        for (Iterator<SavedJobPost> iterator = savedJobPosts.iterator();
+             iterator.hasNext(); ) {
+            SavedJobPost savedjobpost = iterator.next();
+ 
+            if (savedjobpost.getCandidate().equals(this) &&
+                    savedjobpost.getJobpost().equals(jobpost)) {
+                iterator.remove();
+                savedjobpost.getJobpost().getSavedjobpost().remove(savedjobpost);
+                savedjobpost.setCandidate(null);
+                savedjobpost.setJobpost(null);
+            }
+        }
+    }
 
 
 }
