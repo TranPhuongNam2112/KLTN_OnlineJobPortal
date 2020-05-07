@@ -12,7 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -181,18 +183,20 @@ public class CandidateDashboardController {
 	}
 
 	@PostMapping("/save/{jobpostId}")
-	public ResponseEntity<?> saveJobPost(@RequestParam("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
+	public ResponseEntity<?> saveJobPost(@PathVariable("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
 		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
 		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(() -> new ResourceNotFoundException("Job post", "jobpostId", jobpostId));
 		candidate.addJobPost(jobpost);
+		candidateRepository.save(candidate);
 		return ResponseEntity.ok("Đã lưu bài đăng thành công!");
 	}
 	
-	@PostMapping("/savedjobposts/{jobpostId}")
-	public ResponseEntity<?> removedSavedJobPost(@RequestParam("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
+	@DeleteMapping("/savedjobposts/{jobpostId}")
+	public ResponseEntity<?> removedSavedJobPost(@PathVariable("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
 		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
 		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(() -> new ResourceNotFoundException("Job post", "jobpostId", jobpostId));
 		candidate.removeJobPost(jobpost);
+		candidateRepository.save(candidate);
 		return ResponseEntity.ok("Đã xóa bài đăng thành công!");
 	}
 

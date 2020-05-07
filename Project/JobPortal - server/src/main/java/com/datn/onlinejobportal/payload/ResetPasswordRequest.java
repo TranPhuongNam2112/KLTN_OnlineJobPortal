@@ -2,6 +2,10 @@ package com.datn.onlinejobportal.payload;
 
 import javax.validation.constraints.NotBlank;
 
+import com.datn.onlinejobportal.constraint.PasswordMatches;
+
+
+@PasswordMatches
 public class ResetPasswordRequest {
 	
 	@NotBlank

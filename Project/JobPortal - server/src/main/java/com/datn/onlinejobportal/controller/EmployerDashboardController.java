@@ -27,6 +27,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.datn.onlinejobportal.dto.CandidateSummary;
 import com.datn.onlinejobportal.dto.MyJobPostSummary;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
+import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Employer;
 import com.datn.onlinejobportal.model.JobLocation;
@@ -35,6 +36,7 @@ import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.ApiResponse;
 import com.datn.onlinejobportal.payload.EmployerRequest;
 import com.datn.onlinejobportal.payload.JobPostRequest;
+import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.JobLocationRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
@@ -70,6 +72,9 @@ public class EmployerDashboardController {
     
     @Autowired
     private SavedCandidateRepository savedCandidateRepository;
+    
+    @Autowired
+    private CandidateRepository candidateRepository;
     
 	@PostMapping("/createpost")
 	@PreAuthorize("hasRole('EMPLOYER')")
@@ -148,6 +153,7 @@ public class EmployerDashboardController {
 	}
 	
 	@GetMapping("/savedcandidates")
+	@PreAuthorize("hasRole('EMPLOYER')")
 	public Page<CandidateSummary> getAllSavedCandidates(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "created_at") String sortBy) {
@@ -157,6 +163,7 @@ public class EmployerDashboardController {
 	}
 	
 	@GetMapping("/myjobposts")
+	@PreAuthorize("hasRole('EMPLOYER')")
 	public Page<MyJobPostSummary> getAllJobPosts(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
@@ -166,6 +173,7 @@ public class EmployerDashboardController {
 	}
 	
 	@PostMapping("/uploadProfileImage")
+	@PreAuthorize("hasRole('EMPLOYER')")
 	public ResponseEntity<?> uploadProfileImage (@RequestParam("profileimage") MultipartFile profileimage, @CurrentUser UserPrincipal currentUser) {
 		User user = userRepository.getOne(currentUser.getId());
 		DBFile profile = dbFileStorageService.storeFile(profileimage);
@@ -180,4 +188,21 @@ public class EmployerDashboardController {
 		return ResponseEntity.ok("Uploaded successfully");
 	}
 	
+	@PostMapping("/save/{candidateId}")
+	@PreAuthorize("hasRole('EMPLOYER')")
+	public ResponseEntity<?> saveCandidate(@PathVariable("candidateId") Long candidateId, @CurrentUser UserPrincipal currentUser) {
+		Employer employer = employerRepository.getEmployerByAccount_Id(currentUser.getId());
+		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(() -> new ResourceNotFoundException("Candidate", "candidateId", candidateId));
+		employer.addCandidate(candidate);
+		return ResponseEntity.ok("Đã lưu hồ sơ ứng viên thành công!");
+	}
+	
+	@DeleteMapping("/savedcandidates/{candidateId}")
+	@PreAuthorize("hasRole('EMPLOYER')")
+	public ResponseEntity<?> removedSavedJobPost(@PathVariable("candidateId") Long candidateId, @CurrentUser UserPrincipal currentUser) {
+		Employer employer = employerRepository.getEmployerByAccount_Id(currentUser.getId());
+		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(() -> new ResourceNotFoundException("Candidate", "candidateId", candidateId));
+		employer.removeCandidate(candidate);
+		return ResponseEntity.ok("Đã xóa hồ sơ ứng viên thành công!");
+	}
 }

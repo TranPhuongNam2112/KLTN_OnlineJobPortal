@@ -21,6 +21,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
+import com.datn.onlinejobportal.constraint.ValidEmail;
+import com.datn.onlinejobportal.constraint.ValidPassword;
 import com.datn.onlinejobportal.model.audit.DateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -41,6 +43,7 @@ public class User extends DateAudit{
 
     @Email
     @Column(nullable = false)
+    @ValidEmail
     private String email;
 
     private String imageUrl;
@@ -49,6 +52,7 @@ public class User extends DateAudit{
     private Boolean emailVerified = false;
 
     @JsonIgnore
+    @ValidPassword
     private String password;
 
     @NotNull

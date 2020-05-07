@@ -26,10 +26,10 @@ public interface EmployerRepository extends JpaRepository<Employer, Long>, JpaSp
 	Page<Candidate> findAllByEstablishmentdateBetween(Date startDate,
 			Date endDate, Pageable pageable);
 
-	@Query(value="Select e.id FROM Employer e WHERE e.user.id = :account_id", nativeQuery=true)
+	@Query("Select e.id FROM Employer e LEFT JOIN e.user u WHERE u.id = :account_id")
 	Long getEmployerIdByAccount_Id(@Param("account_id") Long accountId);
 	
-	@Query(value="Select e FROM Employer e WHERE e.user.id = :account_id", nativeQuery=true)
+	@Query("Select e FROM Employer e LEFT JOIN e.user u WHERE u.id = :account_id")
 	Employer getEmployerByAccount_Id(@Param("account_id") Long accountId);
 
 	Page<Employer> findAll(Pageable pageable);
