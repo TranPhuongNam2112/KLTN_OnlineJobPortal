@@ -19,7 +19,7 @@ public class EducationRequest {
 	@NotNull
 	private Date completiondate;
 	
-	@NotBlank
+	@NotNull
 	private Long gpa;
 
 	public String getUniversity_college() {
