@@ -11,13 +11,14 @@ import com.datn.onlinejobportal.model.SavedCandidate;
 
 public interface SavedCandidateRepository extends JpaRepository<SavedCandidate, Long>{
 
-	@Query("Select new com.datn.onlinejobportal.dto.CandidateSummary(f.data, u.name, c.city_province, c.work_title, c.updatedAt) From Candidate c "
+	@Query("Select new com.datn.onlinejobportal.dto.CandidateSummary(c.id, f.data, u.name, c.city_province, c.work_title, c.updatedAt) From Candidate c "
 			+ "LEFT JOIN c.savedCandidates sc "
 			+ "LEFT JOIN c.user u "
 			+ "LEFT JOIN u.files f "
 			+ "Where sc.employer.id = :employerId")
 	Page<CandidateSummary> findSavedCandidatesByEmployerId(@Param("employerId") Long employerId, Pageable pageable);
 	
-	
+	@Query("Select sc From SavedCandidate sc Where sc.employer.id = :employerId And sc.candidate.id = :candidateId")
+	SavedCandidate getSavedCandidateByEmployerId(@Param("employerId") Long employerId, @Param("candidateId") Long candidateId);
 	
 }

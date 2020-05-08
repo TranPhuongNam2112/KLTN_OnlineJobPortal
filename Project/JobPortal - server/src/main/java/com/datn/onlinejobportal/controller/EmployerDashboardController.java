@@ -32,6 +32,7 @@ import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Employer;
 import com.datn.onlinejobportal.model.JobLocation;
 import com.datn.onlinejobportal.model.JobPost;
+import com.datn.onlinejobportal.model.SavedCandidate;
 import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.ApiResponse;
 import com.datn.onlinejobportal.payload.EmployerRequest;
@@ -40,6 +41,7 @@ import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.JobLocationRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
+import com.datn.onlinejobportal.repository.JobTypeRepository;
 import com.datn.onlinejobportal.repository.SavedCandidateRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
 import com.datn.onlinejobportal.security.CurrentUser;
@@ -76,6 +78,9 @@ public class EmployerDashboardController {
     @Autowired
     private CandidateRepository candidateRepository;
     
+    @Autowired
+    private JobTypeRepository jobTypeRepository;
+    
 	@PostMapping("/createpost")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public ResponseEntity<?> createJobPost(@Valid @RequestBody JobPostRequest jobPostRequest) {
@@ -106,7 +111,7 @@ public class EmployerDashboardController {
 		joblocation.setStreet_address(jobPostRequest.getStreet_address());
 		joblocation.setCity_province(jobPostRequest.getCity_province());
 		jobpost.setJob_title(jobPostRequest.getJobtitle());
-		jobpost.setJobtype(jobPostRequest.getJobType());
+		jobpost.setJobtype(jobTypeRepository.findByJob_type_name(jobPostRequest.getJobType()));
 		jobpost.setJoblocation(joblocation);
 		jobpost.setIndustry(jobPostRequest.getIndustry());
 		jobpost.setJob_description(jobPostRequest.getJobdescription());
@@ -188,12 +193,17 @@ public class EmployerDashboardController {
 		return ResponseEntity.ok("Uploaded successfully");
 	}
 	
-	@PostMapping("/save/{candidateId}")
+	@PostMapping("/{candidateId}/save")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public ResponseEntity<?> saveCandidate(@PathVariable("candidateId") Long candidateId, @CurrentUser UserPrincipal currentUser) {
 		Employer employer = employerRepository.getEmployerByAccount_Id(currentUser.getId());
 		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(() -> new ResourceNotFoundException("Candidate", "candidateId", candidateId));
-		employer.addCandidate(candidate);
+		SavedCandidate sc = new SavedCandidate(employer, candidate);
+		employer.getSavedCandidates().add(sc);
+		candidate.getSavedCandidates().add(sc);
+		savedCandidateRepository.save(sc);
+		candidateRepository.save(candidate);
+		employerRepository.save(employer);
 		return ResponseEntity.ok("Đã lưu hồ sơ ứng viên thành công!");
 	}
 	
@@ -202,7 +212,29 @@ public class EmployerDashboardController {
 	public ResponseEntity<?> removedSavedJobPost(@PathVariable("candidateId") Long candidateId, @CurrentUser UserPrincipal currentUser) {
 		Employer employer = employerRepository.getEmployerByAccount_Id(currentUser.getId());
 		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(() -> new ResourceNotFoundException("Candidate", "candidateId", candidateId));
+		SavedCandidate sc = savedCandidateRepository.getSavedCandidateByEmployerId(employer.getId(), candidateId);
 		employer.removeCandidate(candidate);
+		candidateRepository.save(candidate);
+		savedCandidateRepository.delete(sc);
 		return ResponseEntity.ok("Đã xóa hồ sơ ứng viên thành công!");
+	}
+	
+	@GetMapping("/recommendedcandidates")
+	@PreAuthorize("hasRole('EMPLOYER')")
+	public Page<CandidateSummary> getAllRecommendedCandidates(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "id") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+		Long employerId = employerRepository.getEmployerIdByAccount_Id(currentUser.getId());
+		return candidateRepository.getRecommendedCandidatesBasedOnJobPostAndEmployerId(employerId, pageable);
+	}
+	
+	@GetMapping("/candidates")
+	@PreAuthorize("hasRole('EMPLOYER')")
+	public Page<CandidateSummary> getAllCandidates(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "id") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+		return candidateRepository.getAllCandidates(pageable);
 	}
 }

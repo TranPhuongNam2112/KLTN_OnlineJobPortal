@@ -13,7 +13,7 @@ public class JobPostRequest {
 	private String jobtitle;
 	
 	@NotNull
-	private JobType jobType;
+	private String jobType;
 	
 	@NotNull
 	private Long requiredexperience;
@@ -58,11 +58,11 @@ public class JobPostRequest {
 		this.jobtitle = jobtitle;
 	}
 
-	public JobType getJobType() {
+	public String getJobType() {
 		return jobType;
 	}
 
-	public void setJobType(JobType jobType) {
+	public void setJobType(String jobType) {
 		this.jobType = jobType;
 	}
 

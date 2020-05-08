@@ -30,9 +30,12 @@ import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Education;
 import com.datn.onlinejobportal.model.Experience;
 import com.datn.onlinejobportal.model.JobPost;
+import com.datn.onlinejobportal.model.SavedJobPost;
 import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.CandidateProfile;
 import com.datn.onlinejobportal.payload.CandidateProfileRequest;
+import com.datn.onlinejobportal.payload.EducationsRequest;
+import com.datn.onlinejobportal.payload.ExperiencesRequest;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EducationRepository;
 import com.datn.onlinejobportal.repository.ExperienceRepository;
@@ -72,7 +75,7 @@ public class CandidateDashboardController {
 
 	@Autowired
 	private JobTypeRepository jobTypeRepository;
-	
+
 
 
 
@@ -108,6 +111,66 @@ public class CandidateDashboardController {
 		return candidateProfile;
 	}
 
+	@PostMapping("/myprofile/addEducation")
+	@PreAuthorize("hasRole('CANDIDATE')")
+	public ResponseEntity<?> addNewEducation(@CurrentUser UserPrincipal currentUser, 
+			@Valid @RequestBody EducationsRequest educationsRequest) {
+		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
+
+		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(
+				() -> new ResourceNotFoundException("Candidate", "id", candidateId));
+		educationsRequest.getEducations().forEach(educationRequest -> {
+			candidate.addEducation(new Education(educationRequest.getUniversity_college(), educationRequest.getMajor(), educationRequest.getStartdate(), educationRequest.getCompletiondate(), educationRequest.getGpa()));
+		});
+		candidateRepository.save(candidate);
+		return ResponseEntity.ok("Thêm thành công");
+	}
+	
+	@GetMapping("/myprofile/addEducation")
+	@PreAuthorize("hasRole('CANDIDATE')")
+	public ResponseEntity<?> addNewExperience(@CurrentUser UserPrincipal currentUser, 
+			@Valid @RequestBody ExperiencesRequest experiencesRequest) {
+		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
+
+		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(
+				() -> new ResourceNotFoundException("Candidate", "id", candidateId));
+		experiencesRequest.getExperiences().forEach(experienceRequest -> {
+			candidate.addExperience(new Experience(experienceRequest.getCompanyname(), experienceRequest.getJobtitle(), experienceRequest.getStartdate(), experienceRequest.getEnddate(), experienceRequest.getDescription()));
+		});
+		candidateRepository.save(candidate);
+		return ResponseEntity.ok("Thêm thành công");
+
+	}
+	
+	
+	@DeleteMapping("/myprofile/removeExperience/{experienceId}")
+	@PreAuthorize("hasRole('CANDIDATE')")
+	public ResponseEntity<?> removeExperience(@PathVariable("experienceId") Long experienceId ,@CurrentUser UserPrincipal currentUser) {
+		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
+
+		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(
+				() -> new ResourceNotFoundException("Candidate", "id", candidateId));
+		Experience experience = experienceRepository.getExperienceByUserIdAndExperienceId(currentUser.getId(), experienceId);
+		candidate.removeExperience(experience);
+		candidateRepository.save(candidate);
+		return ResponseEntity.ok("Xóa thành công");
+
+	}
+
+	@DeleteMapping("/myprofile/removeEducation/{educationId}")
+	@PreAuthorize("hasRole('CANDIDATE')")
+	public ResponseEntity<?> removeEducation(@PathVariable("educationId") Long educationId ,@CurrentUser UserPrincipal currentUser) {
+		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
+
+		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(
+				() -> new ResourceNotFoundException("Candidate", "id", candidateId));
+		Education education = educationRepository.getEducationByUserIdAndEducationId(currentUser.getId(), educationId);
+		candidate.removeEducation(education);
+		candidateRepository.save(candidate);
+		return ResponseEntity.ok("Xóa thành công");
+
+	}
+	
 	@PostMapping("/myprofile")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Candidate updateProfile(@CurrentUser UserPrincipal currentUser,
@@ -115,16 +178,6 @@ public class CandidateDashboardController {
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
 		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(
 				() -> new ResourceNotFoundException("Candidate", "id", candidateId));
-
-		User user = userRepository.getOne(currentUser.getId());
-
-		candidateProfileRequest.getEducations().forEach(educationRequest -> {
-			candidate.addEducation(new Education(educationRequest.getUniversity_college(), educationRequest.getMajor(), educationRequest.getStartdate(), educationRequest.getCompletiondate(), educationRequest.getGpa()));
-		});
-		candidateProfileRequest.getExperiences().forEach(experienceRequest -> {
-			candidate.addExperience(new Experience(experienceRequest.getCompanyname(), experienceRequest.getJobtitle(), experienceRequest.getStartdate(), experienceRequest.getEnddate(), experienceRequest.getDescription()));
-		});
-		userRepository.save(user);
 
 		candidate.setUpdatedAt(LocalDate.now());
 		candidate.setDoB(candidateProfileRequest.getDoB());
@@ -137,8 +190,6 @@ public class CandidateDashboardController {
 		candidate.setProfile_visible(candidateProfileRequest.getProfile_visible());
 		candidate.setYearsofexperience(candidateProfileRequest.getExperiencedyears());
 		Candidate newCandidate = candidateRepository.save(candidate);
-
-
 		return newCandidate;
 	}
 
@@ -182,24 +233,30 @@ public class CandidateDashboardController {
 		return savedJobPostRepository.getJobPostsSavedBy(candidateId, pageable);
 	}
 
-	@PostMapping("/save/{jobpostId}")
+	@PostMapping("/{jobpostId}/save")
 	public ResponseEntity<?> saveJobPost(@PathVariable("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
 		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
 		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(() -> new ResourceNotFoundException("Job post", "jobpostId", jobpostId));
-		candidate.addJobPost(jobpost);
+		SavedJobPost sjp = new SavedJobPost(candidate, jobpost);
+		candidate.getSavedJobPosts().add(sjp);
+		jobpost.getSavedjobpost().add(sjp);
+		savedJobPostRepository.save(sjp);
 		candidateRepository.save(candidate);
+		jobPostRepository.save(jobpost);
 		return ResponseEntity.ok("Đã lưu bài đăng thành công!");
 	}
-	
+
 	@DeleteMapping("/savedjobposts/{jobpostId}")
 	public ResponseEntity<?> removedSavedJobPost(@PathVariable("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
 		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
 		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(() -> new ResourceNotFoundException("Job post", "jobpostId", jobpostId));
+		SavedJobPost sjp = savedJobPostRepository.getSavedJobPostByJobPostId(candidate.getId(), jobpostId);
 		candidate.removeJobPost(jobpost);
 		candidateRepository.save(candidate);
+		savedJobPostRepository.delete(sjp);
 		return ResponseEntity.ok("Đã xóa bài đăng thành công!");
 	}
-	
-	
+
+
 
 }

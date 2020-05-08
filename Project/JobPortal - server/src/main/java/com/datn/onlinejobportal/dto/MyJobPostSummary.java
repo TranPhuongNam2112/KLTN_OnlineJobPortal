@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class MyJobPostSummary {
 
+	private Long id;
 	private String jobtitle;
 	private String city;
 	private String jobtype;
@@ -15,9 +16,10 @@ public class MyJobPostSummary {
 	
 	
 	
-	public MyJobPostSummary(String jobtitle, String city, String jobtype, Long experienceyears, Date expirationDate,
+	public MyJobPostSummary(Long id, String jobtitle, String city, String jobtype, Long experienceyears, Date expirationDate,
 			Long minSalary, Long maxSalary) {
 		super();
+		this.id = id;
 		this.jobtitle = jobtitle;
 		this.city = city;
 		this.jobtype = jobtype;
@@ -28,6 +30,16 @@ public class MyJobPostSummary {
 	}
 	
 	
+	public Long getId() {
+		return id;
+	}
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
 	public Long getExperienceyears() {
 		return experienceyears;
 	}

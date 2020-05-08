@@ -19,13 +19,13 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import com.datn.onlinejobportal.model.audit.UserDateAudit;
+import com.datn.onlinejobportal.model.audit.DateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
 @Table(name = "job_post")
-public class JobPost extends UserDateAudit {
+public class JobPost extends DateAudit {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,7 +53,7 @@ public class JobPost extends UserDateAudit {
     @JoinColumn(name = "joblocation_id", referencedColumnName = "id")
     private JobLocation joblocation;
 	
-	@OneToMany(mappedBy = "jobpost", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "jobpost", cascade = CascadeType.MERGE)
     private Set<SavedJobPost> savedjobpost;
 	
 	private Long requiredexperienceyears;

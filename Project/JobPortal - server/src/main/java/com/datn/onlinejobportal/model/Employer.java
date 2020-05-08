@@ -52,7 +52,7 @@ public class Employer {
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     private User user;
 	
-	@OneToMany(mappedBy = "employer", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "employer", cascade = CascadeType.MERGE)
 	private Set<SavedCandidate> savedCandidates = new HashSet<>();
 	
 	

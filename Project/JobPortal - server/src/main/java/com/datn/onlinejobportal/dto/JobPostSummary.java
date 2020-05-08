@@ -2,10 +2,10 @@ package com.datn.onlinejobportal.dto;
 
 import java.util.Date;
 
-import com.datn.onlinejobportal.model.JobType;
 
 public class JobPostSummary {
 	
+	private Long id;
 	private byte[] image;
 	private String companyname;
 	private String jobtitle;
@@ -17,10 +17,10 @@ public class JobPostSummary {
 	private Long maxSalary;
 	
 	
-
-	public JobPostSummary(byte[] image, String companyname, String jobtitle, Long experienceyears, String city,
+	public JobPostSummary(Long id, byte[] image, String companyname, String jobtitle, Long experienceyears, String city,
 			String jobtype, Date expirationDate, Long minSalary, Long maxSalary) {
 		super();
+		this.id = id;
 		this.image = image;
 		this.companyname = companyname;
 		this.jobtitle = jobtitle;
@@ -32,7 +32,14 @@ public class JobPostSummary {
 		this.maxSalary = maxSalary;
 	}
 	
-	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public Long getExperienceyears() {
 		return experienceyears;
 	}

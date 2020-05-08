@@ -36,11 +36,6 @@ public class CandidateProfileRequest {
 	
 	private Long experiencedyears;
 	
-	@Valid
-	private Set<EducationRequest> educations;
-	
-	@Valid
-	private Set<ExperienceRequest> experiences;
 
 	public Boolean getProfile_visible() {
 		return profile_visible;
@@ -113,23 +108,7 @@ public class CandidateProfileRequest {
 	public void setPhone_number(String phone_number) {
 		this.phone_number = phone_number;
 	}
-
-	public Set<EducationRequest> getEducations() {
-		return educations;
-	}
-
-	public void setEducations(Set<EducationRequest> educations) {
-		this.educations = educations;
-	}
-
-	public Set<ExperienceRequest> getExperiences() {
-		return experiences;
-	}
-
-	public void setExperiences(Set<ExperienceRequest> experiences) {
-		this.experiences = experiences;
-	}
-
+	
 	public List<String> getJobtypes() {
 		return jobtypes;
 	}

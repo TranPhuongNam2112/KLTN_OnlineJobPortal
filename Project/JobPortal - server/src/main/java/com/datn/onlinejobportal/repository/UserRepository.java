@@ -38,8 +38,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("SELECT u from User u Where u.id IN (SELECT e.user FROM Employer e)")
 	Page<User> findAllEmployers(Pageable pageable);
 
-	@Query(value="SELECT u.name FROM User u JOIN u.candidate c JOIN c.savedcandidates sc WHERE sc.candidateId in :candidateIds", nativeQuery = true)
-	List<String> getNameByCandidateIn(@Param("candidateIds") List<Long> candidateIds);
 
 	@Transactional
 	@Modifying
@@ -49,7 +47,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("Select u from User u LEFT JOIN u.employer e Where e.companyname = ?1")
 	User findUserByCompanyName(String companyname);
 	
-	@Query("Select new com.datn.onlinejobportal.dto.UserProfile(u.name, f.data, u.createdAt) From User u LEFT JOIN u.files f")
+	@Query("Select new com.datn.onlinejobportal.dto.UserProfile(u.id, u.name, f.data, u.createdAt) From User u LEFT JOIN u.files f")
 	Page<UserProfile> getAllUsers(Pageable pageable);
 
 	@Query("Select u.name From User u LEFT JOIN u.candidate c Where c.id = ?1")

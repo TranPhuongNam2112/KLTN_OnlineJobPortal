@@ -18,7 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
+import javax.transaction.Transactional;
 
 import com.datn.onlinejobportal.model.audit.DateAudit;
 
@@ -47,10 +47,10 @@ public class Candidate extends DateAudit {
 	@JoinColumn(name = "account_id", referencedColumnName = "id")
 	private User user;
 
-	@OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "candidate", cascade = CascadeType.MERGE)
 	private Set<SavedJobPost> savedJobPosts = new HashSet<>();
 
-	@OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "candidate", cascade = CascadeType.MERGE)
 	private Set<SavedCandidate> savedCandidates = new HashSet<>();
 
 	@OneToMany(
@@ -249,12 +249,14 @@ public class Candidate extends DateAudit {
 		this.files = files;
 	}
 	
+	@Transactional
 	public void addJobPost(JobPost jobpost) {
         SavedJobPost savedjobpost = new SavedJobPost(this, jobpost);
         savedJobPosts.add(savedjobpost);
         jobpost.getSavedjobpost().add(savedjobpost);
     }
  
+	@Transactional
     public void removeJobPost(JobPost jobpost) {
         for (Iterator<SavedJobPost> iterator = savedJobPosts.iterator();
              iterator.hasNext(); ) {

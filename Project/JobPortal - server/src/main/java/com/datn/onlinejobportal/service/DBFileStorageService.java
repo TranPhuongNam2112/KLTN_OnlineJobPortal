@@ -10,11 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.datn.onlinejobportal.exception.FileStorageException;
 import com.datn.onlinejobportal.exception.MyFileNotFoundException;
 import com.datn.onlinejobportal.model.DBFile;
-import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.repository.DBFileRepository;
-
-import com.datn.onlinejobportal.repository.UserRepository;
-import com.datn.onlinejobportal.security.UserPrincipal;
 
 @Service
 public class DBFileStorageService {
@@ -22,8 +18,6 @@ public class DBFileStorageService {
     @Autowired
     private DBFileRepository dbFileRepository;
     
-    @Autowired
-    private UserRepository userRepository;
     
 
     public DBFile storeFile(MultipartFile file) {

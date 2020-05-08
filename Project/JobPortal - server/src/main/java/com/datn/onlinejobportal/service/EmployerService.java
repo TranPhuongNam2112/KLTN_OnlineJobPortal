@@ -1,16 +1,12 @@
 package com.datn.onlinejobportal.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import com.datn.onlinejobportal.dto.CandidateSummary;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.payload.JobPostRequest;
-import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
-import com.datn.onlinejobportal.security.UserPrincipal;
 
 
 @Service
@@ -20,8 +16,7 @@ public class EmployerService {
 	@Autowired
 	private JobPostRepository jobPostRepository;
 	
-	@Autowired
-	private EmployerRepository employerRepository;
+
 	
 	
 	public JobPost createJobPost(JobPostRequest jobPostRequest) {

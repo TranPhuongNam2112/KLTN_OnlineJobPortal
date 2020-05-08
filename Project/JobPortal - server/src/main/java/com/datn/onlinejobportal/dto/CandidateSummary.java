@@ -1,10 +1,10 @@
 package com.datn.onlinejobportal.dto;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class CandidateSummary {
 	
+	private Long id;
 	private byte[] image;
 	private String name;
 	private String city;
@@ -12,13 +12,20 @@ public class CandidateSummary {
 	private LocalDate last_updated;
 	
 	
-	public CandidateSummary(byte[] image, String name, String city, String work_title, LocalDate last_updated) {
+	public CandidateSummary(Long id, byte[] image, String name, String city, String work_title, LocalDate last_updated) {
 		super();
+		this.id = id;
 		this.image = image;
 		this.name = name;
 		this.city = city;
 		this.work_title = work_title;
 		this.last_updated = last_updated;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 	public String getName() {
 		return name;

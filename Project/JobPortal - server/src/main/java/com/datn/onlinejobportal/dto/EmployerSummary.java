@@ -2,9 +2,19 @@ package com.datn.onlinejobportal.dto;
 
 public class EmployerSummary {
 	
+	private Long id;
 	private byte[] image;
 	private String companyname;
 	private String industry;
+	
+	
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public byte[] getImage() {
 		return image;
 	}
