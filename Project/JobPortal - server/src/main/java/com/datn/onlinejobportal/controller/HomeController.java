@@ -31,7 +31,7 @@ import com.google.common.base.Joiner;
 
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/home")
 public class HomeController {
 	
 	@Autowired
@@ -40,7 +40,7 @@ public class HomeController {
 	@Autowired
 	private EmployerRepository employerRepository;
 	
-	@GetMapping
+	@GetMapping("/{jobtype}")
 	public Page<JobPostSummary> getJobPostsByJobType(@RequestParam("jobtype") String jobtype, @CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
@@ -84,6 +84,14 @@ public class HomeController {
         Specification<Employer> spec = builder.build();
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
         return employerRepository.findAll(spec, pageable);
+    }
+    
+    @GetMapping("/alljobposts")
+    public Page<JobPostSummary> getAllJobPosts(@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+		return jobPostRepository.getAllJobPosts(pageable);
     }
 	
 }

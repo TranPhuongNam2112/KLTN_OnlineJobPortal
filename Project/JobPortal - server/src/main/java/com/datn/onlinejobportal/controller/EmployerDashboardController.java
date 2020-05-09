@@ -237,4 +237,6 @@ public class EmployerDashboardController {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 		return candidateRepository.getAllCandidates(pageable);
 	}
+	
+	
 }

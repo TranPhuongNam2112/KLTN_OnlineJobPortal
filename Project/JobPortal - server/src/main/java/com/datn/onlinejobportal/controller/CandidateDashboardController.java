@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -143,7 +144,7 @@ public class CandidateDashboardController {
 	}
 	
 	
-	@DeleteMapping("/myprofile/removeExperience/{experienceId}")
+	@DeleteMapping("/myprofile/experience/{experienceId}/remove")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> removeExperience(@PathVariable("experienceId") Long experienceId ,@CurrentUser UserPrincipal currentUser) {
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
@@ -151,13 +152,14 @@ public class CandidateDashboardController {
 		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(
 				() -> new ResourceNotFoundException("Candidate", "id", candidateId));
 		Experience experience = experienceRepository.getExperienceByUserIdAndExperienceId(currentUser.getId(), experienceId);
+		experienceRepository.delete(experience);
 		candidate.removeExperience(experience);
 		candidateRepository.save(candidate);
 		return ResponseEntity.ok("Xóa thành công");
 
 	}
 
-	@DeleteMapping("/myprofile/removeEducation/{educationId}")
+	@DeleteMapping("/myprofile/education/{educationId}/remove")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> removeEducation(@PathVariable("educationId") Long educationId ,@CurrentUser UserPrincipal currentUser) {
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
@@ -166,14 +168,15 @@ public class CandidateDashboardController {
 				() -> new ResourceNotFoundException("Candidate", "id", candidateId));
 		Education education = educationRepository.getEducationByUserIdAndEducationId(currentUser.getId(), educationId);
 		candidate.removeEducation(education);
+		educationRepository.delete(education);
 		candidateRepository.save(candidate);
 		return ResponseEntity.ok("Xóa thành công");
 
 	}
 	
-	@PostMapping("/myprofile")
+	@PutMapping("/myprofile")
 	@PreAuthorize("hasRole('CANDIDATE')")
-	public Candidate updateProfile(@CurrentUser UserPrincipal currentUser,
+	public ResponseEntity<?> updateProfile(@CurrentUser UserPrincipal currentUser,
 			@Valid @RequestBody CandidateProfileRequest candidateProfileRequest) {
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
 		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(
@@ -189,8 +192,8 @@ public class CandidateDashboardController {
 		candidate.setJobtypes(jobTypeRepository.getAllCandidateJobType(candidateProfileRequest.getJobtypes()));
 		candidate.setProfile_visible(candidateProfileRequest.getProfile_visible());
 		candidate.setYearsofexperience(candidateProfileRequest.getExperiencedyears());
-		Candidate newCandidate = candidateRepository.save(candidate);
-		return newCandidate;
+		candidateRepository.save(candidate);
+		return ResponseEntity.ok("Cập nhật thành công!");
 	}
 
 	@PostMapping("/uploadProfileImage")
