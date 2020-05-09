@@ -127,7 +127,7 @@ public class CandidateDashboardController {
 		return ResponseEntity.ok("Thêm thành công");
 	}
 	
-	@GetMapping("/myprofile/addEducation")
+	@PostMapping("/myprofile/addExperience")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> addNewExperience(@CurrentUser UserPrincipal currentUser, 
 			@Valid @RequestBody ExperiencesRequest experiencesRequest) {
