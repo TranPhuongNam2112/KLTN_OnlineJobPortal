@@ -23,6 +23,7 @@ import com.datn.onlinejobportal.model.audit.DateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "job_post")
 public class JobPost extends DateAudit {

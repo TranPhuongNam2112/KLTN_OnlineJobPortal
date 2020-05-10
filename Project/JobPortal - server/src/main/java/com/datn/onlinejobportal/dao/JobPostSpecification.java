@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.util.SpecSearchCriteria;
 
+@SuppressWarnings("serial")
 public class JobPostSpecification implements Specification<JobPost> {
  
 	private SpecSearchCriteria criteria;

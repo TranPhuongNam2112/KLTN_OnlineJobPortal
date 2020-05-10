@@ -23,6 +23,7 @@ import javax.transaction.Transactional;
 import com.datn.onlinejobportal.model.audit.DateAudit;
 
 
+@SuppressWarnings("serial")
 @Entity
 @Table(	name = "candidate", 
 uniqueConstraints = { 

@@ -111,6 +111,22 @@ public class CandidateDashboardController {
 
 		return candidateProfile;
 	}
+	
+	@GetMapping("/myprofile/education")
+	@PreAuthorize("hasRole('CANDIDATE')")
+	public List<Education> getEducation(@CurrentUser UserPrincipal currentUser) {
+		
+		return educationRepository.getEducationByUser(currentUser.getId());
+	}
+	
+	@GetMapping("/myprofile/experience")
+	@PreAuthorize("hasRole('CANDIDATE')")
+	public List<Experience> getExperience(@CurrentUser UserPrincipal currentUser) {
+		
+		return experienceRepository.getExperienceByUser(currentUser.getId());
+	}
+
+	
 
 	@PostMapping("/myprofile/addEducation")
 	@PreAuthorize("hasRole('CANDIDATE')")
@@ -181,7 +197,10 @@ public class CandidateDashboardController {
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
 		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(
 				() -> new ResourceNotFoundException("Candidate", "id", candidateId));
+		User user = userRepository.findById(currentUser.getId()).orElseThrow(
+				() -> new ResourceNotFoundException("User", "id", candidateId));
 
+		user.setName(candidateProfileRequest.getFullname());
 		candidate.setUpdatedAt(LocalDate.now());
 		candidate.setDoB(candidateProfileRequest.getDoB());
 		candidate.setGender(candidateProfileRequest.getGender());

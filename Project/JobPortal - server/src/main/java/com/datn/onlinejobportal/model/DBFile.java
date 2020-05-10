@@ -8,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import com.datn.onlinejobportal.model.audit.DateAudit;
 
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "files")
 public class DBFile extends DateAudit {

@@ -1,5 +1,6 @@
 package com.datn.onlinejobportal.exception;
 
+@SuppressWarnings("serial")
 public class FileStorageException extends RuntimeException {
     public FileStorageException(String message) {
         super(message);

@@ -22,7 +22,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 import com.datn.onlinejobportal.constraint.ValidEmail;
-import com.datn.onlinejobportal.constraint.ValidPassword;
 import com.datn.onlinejobportal.model.audit.DateAudit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

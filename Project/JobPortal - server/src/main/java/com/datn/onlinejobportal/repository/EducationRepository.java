@@ -15,4 +15,6 @@ public interface EducationRepository extends JpaRepository<Education, Long> {
 	
 	@Query("Select e From Education e LEFT JOIN e.candidate c LEFT JOIN c.user u Where u.id = :userId")
 	List<Education> getEducationByUser(@Param("userId") Long userId);
+	
+
 }
