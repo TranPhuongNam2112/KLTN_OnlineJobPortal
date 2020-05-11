@@ -278,6 +278,12 @@ public class CandidateDashboardController {
 		return jobTypeRepository.getAllJobTypes();
 	}
 	
+	@GetMapping("/jobposts/{jobpostId}")
+	public JobPost getJobPostById(@CurrentUser UserPrincipal currentUser, @PathVariable("jobpostId") Long jobpostId) {
+		
+		return jobPostRepository.findByJobPostId(jobpostId);
+	}
+	
 
 
 
