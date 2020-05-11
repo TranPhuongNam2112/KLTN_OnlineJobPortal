@@ -301,7 +301,7 @@ public class AuthController {
 	@PostMapping("/forgotpassword")
 	public ResponseEntity<?> resetUserPassword(@Valid @RequestBody EmailPasswordResetRequest emailPasswordResetRequest, HttpServletRequest request) {
 		String appUrl = request.getScheme() + "://" + request.getServerName() + ":8080";
-		
+		String redirectUrl = request.getScheme() + "://" + request.getServerName() + ":4200";
 		User user = userRepository.findByEmail(emailPasswordResetRequest.getEmail());
 
 		if (user == null)
@@ -318,7 +318,9 @@ public class AuthController {
 		registrationEmail.setTo(emailPasswordResetRequest.getEmail());
 		registrationEmail.setSubject("Password reset request");
 		registrationEmail.setText("To reset yourpassword, please click the link below:\n"
-				+ appUrl + "/auth/resetpassword?token=" + token.getToken());
+				+ redirectUrl + "/resetpassword?reset_token=" + token.getToken()
+				
+				);
 		registrationEmail.setFrom("no-reply@memorynotfound.com");
 
 		emailService.sendEmail(registrationEmail);
