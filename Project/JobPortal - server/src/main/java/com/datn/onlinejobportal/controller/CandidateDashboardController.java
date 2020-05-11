@@ -148,7 +148,7 @@ public class CandidateDashboardController {
 	}
 	
 	
-	@DeleteMapping("/myprofile/experience/{experienceId}/remove")
+	@DeleteMapping("/myprofile/experience/remove/{experienceId}")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> removeExperience(@PathVariable("experienceId") Long experienceId ,@CurrentUser UserPrincipal currentUser) {
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
@@ -163,7 +163,7 @@ public class CandidateDashboardController {
 
 	}
 
-	@DeleteMapping("/myprofile/education/{educationId}/remove")
+	@DeleteMapping("/myprofile/education/remove/{educationId}")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> removeEducation(@PathVariable("educationId") Long educationId ,@CurrentUser UserPrincipal currentUser) {
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
@@ -239,14 +239,14 @@ public class CandidateDashboardController {
 	@GetMapping("/savedjobposts")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getAllJobPosts(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
-			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "3")int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
 		return savedJobPostRepository.getJobPostsSavedBy(candidateId, pageable);
 	}
 
-	@PostMapping("/{jobpostId}/save")
+	@PostMapping("/savejobpost/{jobpostId}")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> saveJobPost(@PathVariable("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
 		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
