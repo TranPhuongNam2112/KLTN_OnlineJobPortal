@@ -58,6 +58,6 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN u.files f "
 			+ "LEFT JOIN j.joblocation jl "
 			+ "LEFT JOIN j.jobtype jt "
-			+ "Where j.expirationDate <= CURRENT_DATE")
+			+ "Where j.expirationDate >= CURRENT_DATE")
 	Page<JobPostSummary> getAllJobPosts(Pageable pageable); 
 }

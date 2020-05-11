@@ -216,6 +216,7 @@ public class CandidateDashboardController {
 	}
 
 	@PostMapping("/uploadProfileImage")
+	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> uploadProfileImage (@RequestParam("profileimage") MultipartFile profileimage, @CurrentUser UserPrincipal currentUser) {
 		User user = userRepository.getOne(currentUser.getId());
 		DBFile profile = dbFileStorageService.storeFile(profileimage);
@@ -231,6 +232,7 @@ public class CandidateDashboardController {
 	}
 
 	@PostMapping("/uploadCV")
+	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> uploadCV (@RequestParam("CV") MultipartFile CV, @CurrentUser UserPrincipal currentUser) {
 		Long candidateId = candidateRepository.getCandidateIdByUserId(currentUser.getId());
 		DBFile CVfile = dbFileStorageService.storeFile(CV);
@@ -247,6 +249,7 @@ public class CandidateDashboardController {
 	}
 
 	@GetMapping("/savedjobposts")
+	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getAllJobPosts(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
@@ -256,6 +259,7 @@ public class CandidateDashboardController {
 	}
 
 	@PostMapping("/{jobpostId}/save")
+	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> saveJobPost(@PathVariable("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
 		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
 		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(() -> new ResourceNotFoundException("Job post", "jobpostId", jobpostId));
@@ -269,6 +273,7 @@ public class CandidateDashboardController {
 	}
 
 	@DeleteMapping("/savedjobposts/{jobpostId}")
+	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> removedSavedJobPost(@PathVariable("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
 		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
 		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(() -> new ResourceNotFoundException("Job post", "jobpostId", jobpostId));
@@ -277,6 +282,12 @@ public class CandidateDashboardController {
 		candidateRepository.save(candidate);
 		savedJobPostRepository.delete(sjp);
 		return ResponseEntity.ok("Đã xóa bài đăng thành công!");
+	}
+	
+	@GetMapping("/jobtypes")
+	@PreAuthorize("hasRole('CANDIDATE')")
+	public List<String> getAllJobTypes(@CurrentUser UserPrincipal currentUser) {
+		return jobTypeRepository.getAllJobTypes();
 	}
 
 

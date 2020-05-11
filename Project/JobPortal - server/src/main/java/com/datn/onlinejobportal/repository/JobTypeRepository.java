@@ -19,6 +19,9 @@ public interface JobTypeRepository extends JpaRepository<JobType, Long> {
 	
 	@Query("Select j FROM JobType j WHERE j.job_type_name IN :jobtypenames")
 	Set<JobType> getAllCandidateJobType(@Param("jobtypenames") List<String> jobtypenames);
+	
+	@Query("Select j.job_type_name FROM JobType j")
+	List<String> getAllJobTypes();
 
 
 }

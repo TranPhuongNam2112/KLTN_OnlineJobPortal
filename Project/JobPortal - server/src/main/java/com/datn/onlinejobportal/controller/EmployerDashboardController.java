@@ -35,6 +35,7 @@ import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.model.SavedCandidate;
 import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.ApiResponse;
+import com.datn.onlinejobportal.payload.EmployerProfile;
 import com.datn.onlinejobportal.payload.EmployerRequest;
 import com.datn.onlinejobportal.payload.JobPostRequest;
 import com.datn.onlinejobportal.repository.CandidateRepository;
@@ -65,22 +66,22 @@ public class EmployerDashboardController {
 
 	@Autowired
 	private JobPostService jobPostService;
-	
-    @Autowired
-    private DBFileStorageService dbFileStorageService;
 
-    @Autowired
-    private UserRepository userRepository;
-    
-    @Autowired
-    private SavedCandidateRepository savedCandidateRepository;
-    
-    @Autowired
-    private CandidateRepository candidateRepository;
-    
-    @Autowired
-    private JobTypeRepository jobTypeRepository;
-    
+	@Autowired
+	private DBFileStorageService dbFileStorageService;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private SavedCandidateRepository savedCandidateRepository;
+
+	@Autowired
+	private CandidateRepository candidateRepository;
+
+	@Autowired
+	private JobTypeRepository jobTypeRepository;
+
 	@PostMapping("/createpost")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public ResponseEntity<?> createJobPost(@Valid @RequestBody JobPostRequest jobPostRequest) {
@@ -134,15 +135,37 @@ public class EmployerDashboardController {
 		return ResponseEntity.ok().build();
 	}
 
+	@GetMapping("/profile")
+	@PreAuthorize("hasRole('EMPLOYER')")
+	public EmployerProfile getProfile(@CurrentUser UserPrincipal currentUser) {
+		Employer employer = employerRepository.getEmployerByAccount_Id(currentUser.getId());
+		
+		EmployerProfile employerProfile = new EmployerProfile();
+		if (userRepository.getImage(currentUser.getId()) != null) {
+		employerProfile.setImage(userRepository.getImage(currentUser.getId()));
+		}
+		employerProfile.setId(employer.getId());
+		employerProfile.setCompanyname(employer.getCompanyname());
+		employerProfile.setEstablishmentdate(employer.getEstablishmentdate());
+		employerProfile.setIndustry(employer.getIndustry());
+		employerProfile.setDescription(employer.getDescription());
+		employerProfile.setMain_address(employer.getMain_address());
+		employerProfile.setPhone_number(employer.getPhone_number());
+		employerProfile.setWebsiteUrl(employer.getWebsiteurl());
+		
+		return employerProfile;
+	}
+
+
 	@PutMapping("/profile")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public Employer updateProfile(@CurrentUser UserPrincipal currentUser, 
 			@Valid @RequestBody EmployerRequest employerRequest, @RequestParam("file") MultipartFile file) {
 		Employer employer = employerRepository.getEmployerByAccount_Id(currentUser.getId());
-		
+
 		User user = userRepository.getOne(currentUser.getId());
 		DBFile dbFile = dbFileStorageService.storeFile(file);
-		
+
 		user.setFiles(dbFile);
 		employer.setCompanyname(employerRequest.getCompanyname());
 		employer.setDescription(employerRequest.getDescription());
@@ -156,7 +179,7 @@ public class EmployerDashboardController {
 		Employer updatedEmployer = employerRepository.save(employer);
 		return updatedEmployer;
 	}
-	
+
 	@GetMapping("/savedcandidates")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public Page<CandidateSummary> getAllSavedCandidates(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
@@ -166,7 +189,7 @@ public class EmployerDashboardController {
 		Long employerId = employerRepository.getEmployerIdByAccount_Id(currentUser.getId());
 		return savedCandidateRepository.findSavedCandidatesByEmployerId(employerId, pageable);
 	}
-	
+
 	@GetMapping("/myjobposts")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public Page<MyJobPostSummary> getAllJobPosts(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
@@ -176,7 +199,7 @@ public class EmployerDashboardController {
 		Long employerId = employerRepository.getEmployerIdByAccount_Id(currentUser.getId());
 		return jobPostRepository.getAllJobPostByEmployerId(employerId, pageable);
 	}
-	
+
 	@PostMapping("/uploadProfileImage")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public ResponseEntity<?> uploadProfileImage (@RequestParam("profileimage") MultipartFile profileimage, @CurrentUser UserPrincipal currentUser) {
@@ -192,7 +215,7 @@ public class EmployerDashboardController {
 
 		return ResponseEntity.ok("Uploaded successfully");
 	}
-	
+
 	@PostMapping("/{candidateId}/save")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public ResponseEntity<?> saveCandidate(@PathVariable("candidateId") Long candidateId, @CurrentUser UserPrincipal currentUser) {
@@ -206,7 +229,7 @@ public class EmployerDashboardController {
 		employerRepository.save(employer);
 		return ResponseEntity.ok("Đã lưu hồ sơ ứng viên thành công!");
 	}
-	
+
 	@DeleteMapping("/savedcandidates/{candidateId}")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public ResponseEntity<?> removedSavedJobPost(@PathVariable("candidateId") Long candidateId, @CurrentUser UserPrincipal currentUser) {
@@ -218,7 +241,7 @@ public class EmployerDashboardController {
 		savedCandidateRepository.delete(sc);
 		return ResponseEntity.ok("Đã xóa hồ sơ ứng viên thành công!");
 	}
-	
+
 	@GetMapping("/recommendedcandidates")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public Page<CandidateSummary> getAllRecommendedCandidates(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
@@ -228,7 +251,7 @@ public class EmployerDashboardController {
 		Long employerId = employerRepository.getEmployerIdByAccount_Id(currentUser.getId());
 		return candidateRepository.getRecommendedCandidatesBasedOnJobPostAndEmployerId(employerId, pageable);
 	}
-	
+
 	@GetMapping("/candidates")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public Page<CandidateSummary> getAllCandidates(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
@@ -237,6 +260,6 @@ public class EmployerDashboardController {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 		return candidateRepository.getAllCandidates(pageable);
 	}
-	
-	
+
+
 }
