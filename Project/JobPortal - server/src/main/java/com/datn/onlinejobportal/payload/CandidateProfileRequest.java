@@ -2,14 +2,12 @@ package com.datn.onlinejobportal.payload;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.datn.onlinejobportal.model.JobType;
+import org.springframework.format.annotation.DateTimeFormat;
+
 
 public class CandidateProfileRequest {
 	
@@ -17,6 +15,7 @@ public class CandidateProfileRequest {
 	@Size(max=100)
 	private String fullname;
 	
+	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date DoB;
 	
 	private String gender;

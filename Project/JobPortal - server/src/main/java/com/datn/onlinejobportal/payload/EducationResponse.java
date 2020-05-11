@@ -2,13 +2,28 @@ package com.datn.onlinejobportal.payload;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class EducationResponse {
 	
+	private Long id;
 	private String university_college;
 	private String major;
+	
+	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date start_date;
+	
+	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date completion_date;
 	private Long gpa;
+	
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public String getUniversity_college() {
 		return university_college;
 	}

@@ -6,7 +6,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.datn.onlinejobportal.model.JobType;
 
 public class JobPostRequest {
 	@NotBlank

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.datn.onlinejobportal.model.Education;
+import com.datn.onlinejobportal.payload.EducationResponse;
 
 public interface EducationRepository extends JpaRepository<Education, Long> {
 
@@ -14,7 +15,7 @@ public interface EducationRepository extends JpaRepository<Education, Long> {
 	Education getEducationByUserIdAndEducationId(@Param("userId") Long userId, @Param("educationId") Long educationId);
 	
 	@Query("Select e From Education e LEFT JOIN e.candidate c LEFT JOIN c.user u Where u.id = :userId")
-	List<Education> getEducationByUser(@Param("userId") Long userId);
+	List<EducationResponse> getEducationByUser(@Param("userId") Long userId);
 	
 
 }

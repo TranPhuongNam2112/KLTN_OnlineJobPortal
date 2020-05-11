@@ -3,21 +3,23 @@ package com.datn.onlinejobportal.payload;
 import java.util.Date;
 import java.util.List;
 
-import com.datn.onlinejobportal.model.Education;
-import com.datn.onlinejobportal.model.Experience;
+import org.springframework.format.annotation.DateTimeFormat;
+
 
 public class CandidateProfile {
 	
 	private byte[] image;
 	private String name;
 	private String gender;
+	
+	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date DoB;
 	private List<String> jobtypes;
 	private String phonenumber;
 	private String work_title;
 	private String address;
-	private List<Experience> experiences;
-	private List<Education> educations;
+	private List<ExperienceResponse> experiences;
+	private List<EducationResponse> educations;
 	private String CV_Uri;
 	
 	
@@ -81,20 +83,18 @@ public class CandidateProfile {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-
-	public List<Experience> getExperiences() {
+	public List<ExperienceResponse> getExperiences() {
 		return experiences;
 	}
-
-	public void setExperiences(List<Experience> experiences) {
+	public void setExperiences(List<ExperienceResponse> experiences) {
 		this.experiences = experiences;
 	}
-
-	public List<Education> getEducations() {
+	public List<EducationResponse> getEducations() {
 		return educations;
 	}
-
-	public void setEducations(List<Education> educations) {
+	public void setEducations(List<EducationResponse> educations) {
 		this.educations = educations;
 	}
+	
+	
 }

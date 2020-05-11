@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class EducationRequest {
 	
 	@NotBlank
@@ -14,9 +16,11 @@ public class EducationRequest {
 	private String major;
 	
 	@NotNull
+	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date startdate;
 	
 	@NotNull
+	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date completiondate;
 	
 	@NotNull

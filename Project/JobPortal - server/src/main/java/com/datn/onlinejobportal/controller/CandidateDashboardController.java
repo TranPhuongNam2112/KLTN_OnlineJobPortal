@@ -35,7 +35,9 @@ import com.datn.onlinejobportal.model.SavedJobPost;
 import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.CandidateProfile;
 import com.datn.onlinejobportal.payload.CandidateProfileRequest;
+import com.datn.onlinejobportal.payload.EducationResponse;
 import com.datn.onlinejobportal.payload.EducationsRequest;
+import com.datn.onlinejobportal.payload.ExperienceResponse;
 import com.datn.onlinejobportal.payload.ExperiencesRequest;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EducationRepository;
@@ -85,8 +87,8 @@ public class CandidateDashboardController {
 	public CandidateProfile getMyProfile(@CurrentUser UserPrincipal currentUser) {
 
 		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
-		List<Experience> experiences = experienceRepository.getExperienceByUser(currentUser.getId());
-		List<Education> educations = educationRepository.getEducationByUser(currentUser.getId());
+		List<ExperienceResponse> experiences = experienceRepository.getExperienceByUser(currentUser.getId());
+		List<EducationResponse> educations = educationRepository.getEducationByUser(currentUser.getId());
 		CandidateProfile candidateProfile = new CandidateProfile();
 		if (userRepository.getImage(currentUser.getId()) != null) {
 			candidateProfile.setImage(userRepository.getImage(currentUser.getId()));
@@ -112,20 +114,6 @@ public class CandidateDashboardController {
 		return candidateProfile;
 	}
 	
-	@GetMapping("/myprofile/education")
-	@PreAuthorize("hasRole('CANDIDATE')")
-	public List<Education> getEducation(@CurrentUser UserPrincipal currentUser) {
-		
-		return educationRepository.getEducationByUser(currentUser.getId());
-	}
-	
-	@GetMapping("/myprofile/experience")
-	@PreAuthorize("hasRole('CANDIDATE')")
-	public List<Experience> getExperience(@CurrentUser UserPrincipal currentUser) {
-		
-		return experienceRepository.getExperienceByUser(currentUser.getId());
-	}
-
 	
 
 	@PostMapping("/myprofile/addEducation")

@@ -1,6 +1,5 @@
 package com.datn.onlinejobportal.payload;
 
-import java.util.List;
 import java.util.Set;
 
 import com.datn.onlinejobportal.model.Role;

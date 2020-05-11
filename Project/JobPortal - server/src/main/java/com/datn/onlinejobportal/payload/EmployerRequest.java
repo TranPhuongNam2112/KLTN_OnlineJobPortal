@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class EmployerRequest {
 	
 	@NotBlank
@@ -16,6 +18,7 @@ public class EmployerRequest {
 	private String description;
 	
 	@NotBlank
+	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date establishmentdate;
 	
 	@NotBlank

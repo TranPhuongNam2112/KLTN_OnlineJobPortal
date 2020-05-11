@@ -2,13 +2,27 @@ package com.datn.onlinejobportal.payload;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class ExperienceResponse {
 	
+	private Long id;
 	private String companyname;
 	private String job_title;
+	
+	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date start_date;
+	
+	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date end_date;
 	private String description;
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public String getCompanyname() {
 		return companyname;
 	}
