@@ -14,6 +14,7 @@ public class CandidateProfile {
 	
 	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date DoB;
+	
 	private List<String> jobtypes;
 	private String phonenumber;
 	private String work_title;

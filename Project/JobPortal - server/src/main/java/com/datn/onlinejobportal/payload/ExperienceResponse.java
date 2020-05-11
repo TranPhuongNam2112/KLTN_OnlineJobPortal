@@ -17,6 +17,21 @@ public class ExperienceResponse {
 	private Date end_date;
 	private String description;
 	
+	
+	
+	public ExperienceResponse() {
+		super();
+	}
+	public ExperienceResponse(Long id, String companyname, String job_title, Date start_date, Date end_date,
+			String description) {
+		super();
+		this.id = id;
+		this.companyname = companyname;
+		this.job_title = job_title;
+		this.start_date = start_date;
+		this.end_date = end_date;
+		this.description = description;
+	}
 	public Long getId() {
 		return id;
 	}

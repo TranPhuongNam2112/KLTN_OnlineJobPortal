@@ -14,7 +14,8 @@ public interface EducationRepository extends JpaRepository<Education, Long> {
 	@Query("Select e From Education e LEFT JOIN e.candidate c LEFT JOIN c.user u Where u.id = :userId And e.id = :educationId")
 	Education getEducationByUserIdAndEducationId(@Param("userId") Long userId, @Param("educationId") Long educationId);
 	
-	@Query("Select e From Education e LEFT JOIN e.candidate c LEFT JOIN c.user u Where u.id = :userId")
+	@Query("Select new com.datn.onlinejobportal.payload.EducationResponse(e.id, e.university_college, e.major, e.start_date, e.completion_date, e.gpa) "
+			+ "From Education e LEFT JOIN e.candidate c LEFT JOIN c.user u Where u.id = :userId")
 	List<EducationResponse> getEducationByUser(@Param("userId") Long userId);
 	
 

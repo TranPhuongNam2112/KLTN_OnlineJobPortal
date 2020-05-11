@@ -18,6 +18,20 @@ public class EducationResponse {
 	private Long gpa;
 	
 	
+	
+	public EducationResponse() {
+		super();
+	}
+	public EducationResponse(Long id, String university_college, String major, Date start_date, Date completion_date,
+			Long gpa) {
+		super();
+		this.id = id;
+		this.university_college = university_college;
+		this.major = major;
+		this.start_date = start_date;
+		this.completion_date = completion_date;
+		this.gpa = gpa;
+	}
 	public Long getId() {
 		return id;
 	}
