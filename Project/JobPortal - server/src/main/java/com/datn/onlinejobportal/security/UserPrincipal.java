@@ -27,7 +27,10 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         this.authorities = authorities;
     }
 
-    public static UserPrincipal create(User user) {
+    public UserPrincipal() {
+	}
+
+	public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
 				.map(role -> new SimpleGrantedAuthority(role.getName().name()))
 				.collect(Collectors.toList());
@@ -46,8 +49,14 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         userPrincipal.setAttributes(attributes);
         return userPrincipal;
     }
+    
+    
 
-    public Long getId() {
+    public void setFullname(String fullname) {
+		this.fullname = fullname;
+	}
+
+	public Long getId() {
         return id;
     }
 

@@ -277,6 +277,7 @@ public class CandidateDashboardController {
 	public List<String> getAllJobTypes(@CurrentUser UserPrincipal currentUser) {
 		return jobTypeRepository.getAllJobTypes();
 	}
+	
 
 
 

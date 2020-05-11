@@ -1,5 +1,7 @@
 package com.datn.onlinejobportal.security;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -136,5 +138,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// Add our custom Token based authentication filter
 		http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+		
+		http.anonymous().authenticationFilter(new MyAnonymousAuthenticationFilter(UUID.randomUUID().toString()));
 	}
 }
