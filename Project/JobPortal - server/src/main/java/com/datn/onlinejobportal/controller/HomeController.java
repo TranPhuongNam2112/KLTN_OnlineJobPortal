@@ -72,7 +72,7 @@ public class HomeController {
     @ResponseBody
     public Page<Employer> searchEmployer(@RequestParam(value = "search") String search, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
-			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+			@RequestParam(defaultValue = "id") String sortBy) {
         EmployerSpecificationsBuilder builder = new EmployerSpecificationsBuilder();
         String operationSetExper = Joiner.on("|")
             .join(SearchOperation.SIMPLE_OPERATION_SET);
