@@ -160,13 +160,13 @@ public class EmployerDashboardController {
 	@PutMapping("/profile")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public Employer updateProfile(@CurrentUser UserPrincipal currentUser, 
-			@Valid @RequestBody EmployerRequest employerRequest, @RequestParam("file") MultipartFile file) {
+			@Valid @RequestBody EmployerRequest employerRequest) {
 		Employer employer = employerRepository.getEmployerByAccount_Id(currentUser.getId());
 
 		User user = userRepository.getOne(currentUser.getId());
-		DBFile dbFile = dbFileStorageService.storeFile(file);
-
-		user.setFiles(dbFile);
+//		DBFile dbFile = dbFileStorageService.storeFile(file);
+//
+//		user.setFiles(dbFile);
 		employer.setCompanyname(employerRequest.getCompanyname());
 		employer.setDescription(employerRequest.getDescription());
 		employer.setEstablishmentdate(employerRequest.getEstablishmentdate());
@@ -216,7 +216,7 @@ public class EmployerDashboardController {
 		return ResponseEntity.ok("Uploaded successfully");
 	}
 
-	@PostMapping("/{candidateId}/save")
+	@PostMapping("/save/{candidateId}")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public ResponseEntity<?> saveCandidate(@PathVariable("candidateId") Long candidateId, @CurrentUser UserPrincipal currentUser) {
 		Employer employer = employerRepository.getEmployerByAccount_Id(currentUser.getId());
