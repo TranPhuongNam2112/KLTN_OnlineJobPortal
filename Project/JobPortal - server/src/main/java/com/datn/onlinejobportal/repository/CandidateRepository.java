@@ -26,7 +26,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 			+ "LEFT JOIN u.files f "
 			+ "WHERE c.id NOT IN (SELECT sc.candidate.id FROM SavedCandidate sc WHERE sc.employer.id = :employerId) "
 			+ "AND c.city_province IN (SELECT jl.city_province FROM JobPost jp LEFT JOIN jp.joblocation jl LEFT JOIN jp.employer e Where e.id = :employerId) "
-			+ "AND (SELECT jt FROM JobPost jp LEFT JOIN jp.jobtype jt LEFT JOIN jp.employer e WHERE e.id = :employerId) IN c.jobtypes "
+			+ "AND (SELECT jt.job_type_name FROM JobPost jp LEFT JOIN jp.jobtype jt LEFT JOIN jp.employer e WHERE e.id = :employerId) IN c.jobtypes "
 			+ "AND c.profile_visible = TRUE")
 	Page<CandidateSummary> getRecommendedCandidatesBasedOnJobPostAndEmployerId(@Param("employerId") Long employerId, Pageable pageable);
 
