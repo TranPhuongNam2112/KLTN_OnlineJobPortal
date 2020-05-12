@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "joblocation")
 public class JobLocation {
@@ -20,6 +22,7 @@ public class JobLocation {
 	private String city_province;
 	
 	@OneToOne(mappedBy = "joblocation")
+	@JsonIgnore
     private JobPost jobpost;
 
 	public JobLocation(String street_address, String city_province) {
