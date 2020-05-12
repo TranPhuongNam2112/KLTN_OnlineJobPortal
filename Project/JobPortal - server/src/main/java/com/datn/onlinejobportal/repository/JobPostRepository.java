@@ -33,7 +33,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN u.files f "
 			+ "LEFT JOIN j.joblocation jl "
 			+ "LEFT JOIN j.jobtype jt "
-			+ "Where jt.job_type_name = :jobtypename AND j.expirationDate <= CURRENT_DATE")
+			+ "Where jt.job_type_name = :jobtypename AND j.expirationDate >= CURRENT_DATE")
 	Page<JobPostSummary> getJobPostsByJobType(@Param("jobtypename") String jobtypename, Pageable pageable); 
 	
 	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "

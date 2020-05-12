@@ -1,9 +1,12 @@
 package com.datn.onlinejobportal.model;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -15,6 +18,9 @@ public class JobType {
 	private Long id;
 	
 	private String job_type_name;
+	
+	@ManyToMany(mappedBy="jobtypes")
+    private Set<Candidate> candidates;
 
 	public JobType() {
 		
