@@ -22,6 +22,9 @@ public interface JobTypeRepository extends JpaRepository<JobType, Long> {
 	
 	@Query("Select j.job_type_name FROM JobType j")
 	List<String> getAllJobTypes();
+	
+	@Query("Select j.job_type_name From JobPost jp LEFT JOIN jp.joblocation Where jp.id = :jobpostId")
+	List<String> getAllJobPostTypeName(@Param("jobpostId") Long jobpostId);
 
 
 }

@@ -30,6 +30,7 @@ import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Education;
 import com.datn.onlinejobportal.model.Experience;
+import com.datn.onlinejobportal.model.JobLocation;
 import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.model.SavedJobPost;
 import com.datn.onlinejobportal.model.User;
@@ -39,9 +40,11 @@ import com.datn.onlinejobportal.payload.EducationResponse;
 import com.datn.onlinejobportal.payload.EducationsRequest;
 import com.datn.onlinejobportal.payload.ExperienceResponse;
 import com.datn.onlinejobportal.payload.ExperiencesRequest;
+import com.datn.onlinejobportal.payload.JobPostDetails;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EducationRepository;
 import com.datn.onlinejobportal.repository.ExperienceRepository;
+import com.datn.onlinejobportal.repository.JobLocationRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
 import com.datn.onlinejobportal.repository.JobTypeRepository;
 import com.datn.onlinejobportal.repository.SavedJobPostRepository;
@@ -79,7 +82,10 @@ public class CandidateDashboardController {
 	@Autowired
 	private JobTypeRepository jobTypeRepository;
 
+	@Autowired
+	private JobLocationRepository jobLocationRepository;
 
+	
 
 
 	@GetMapping("/myprofile")
@@ -279,9 +285,25 @@ public class CandidateDashboardController {
 	}
 	
 	@GetMapping("/jobposts/{jobpostId}")
-	public JobPost getJobPostById(@CurrentUser UserPrincipal currentUser, @PathVariable("jobpostId") Long jobpostId) {
+	public JobPostDetails getJobPostById(@CurrentUser UserPrincipal currentUser, @PathVariable("jobpostId") Long jobpostId) {
 		
-		return jobPostRepository.findByJobPostId(jobpostId);
+		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(() -> new ResourceNotFoundException("Job post", "jobpostId", jobpostId));
+		JobLocation jobLocation = jobLocationRepository.findByJobPostId(jobpostId);
+		JobPostDetails jobpostDetails = new JobPostDetails();
+		jobpostDetails.setCity_province(jobLocation.getCity_province());
+		jobpostDetails.setCreatedDate(jobpost.getCreatedAt());
+		jobpostDetails.setDescription(jobpost.getJob_description());
+		jobpostDetails.setExpirationDate(jobpost.getExpirationDate());
+		jobpostDetails.setIndustry(jobpost.getIndustry());
+		jobpostDetails.setJobtitle(jobpost.getJob_title());
+		jobpostDetails.setJobtypes(jobpost.getJobtype().getJob_type_name());
+		jobpostDetails.setMaxSalary(jobpost.getMax_salary());
+		jobpostDetails.setMinSalary(jobpost.getMin_salary());
+		jobpostDetails.setRequiredexperienceyears(jobpost.getRequiredexpreienceyears());
+		jobpostDetails.setStreet_address(jobLocation.getStreet_address());
+		
+		return jobpostDetails;
+		
 	}
 	
 

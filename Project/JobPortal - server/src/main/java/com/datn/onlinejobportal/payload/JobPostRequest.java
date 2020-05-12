@@ -6,6 +6,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 
 public class JobPostRequest {
 	@NotBlank
@@ -31,6 +33,7 @@ public class JobPostRequest {
 	private Long maxSalary;
 	
 	@NotNull
+	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date expiredDate;
 	
 	@NotBlank

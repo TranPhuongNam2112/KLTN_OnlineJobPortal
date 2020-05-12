@@ -184,7 +184,7 @@ public class EmployerDashboardController {
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public Page<CandidateSummary> getAllSavedCandidates(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
-			@RequestParam(defaultValue = "created_at") String sortBy) {
+			@RequestParam(defaultValue = "id") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 		Long employerId = employerRepository.getEmployerIdByAccount_Id(currentUser.getId());
 		return savedCandidateRepository.findSavedCandidatesByEmployerId(employerId, pageable);
