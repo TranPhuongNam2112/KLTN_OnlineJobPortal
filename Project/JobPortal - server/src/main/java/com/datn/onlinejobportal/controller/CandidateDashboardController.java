@@ -285,6 +285,7 @@ public class CandidateDashboardController {
 	}
 	
 	@GetMapping("/jobposts/{jobpostId}")
+	@PreAuthorize("hasRole('CANDIDATE')")
 	public JobPostDetails getJobPostById(@CurrentUser UserPrincipal currentUser, @PathVariable("jobpostId") Long jobpostId) {
 		
 		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(() -> new ResourceNotFoundException("Job post", "jobpostId", jobpostId));
@@ -304,6 +305,18 @@ public class CandidateDashboardController {
 		
 		return jobpostDetails;
 		
+	}
+	
+	@GetMapping("/recommendedjobposts")
+	@PreAuthorize("hasRole('CANDIDATE')")
+	public Page<JobPostSummary> getAllRecommendedJobPosts(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = "3")int pageSize,
+			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
+		
+		return jobPostRepository.getRecommendedJobPostsByUser(candidate.getId(), pageable);
+
 	}
 	
 

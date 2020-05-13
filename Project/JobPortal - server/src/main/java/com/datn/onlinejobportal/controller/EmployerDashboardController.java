@@ -2,6 +2,7 @@ package com.datn.onlinejobportal.controller;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -35,11 +36,16 @@ import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.model.SavedCandidate;
 import com.datn.onlinejobportal.model.User;
 import com.datn.onlinejobportal.payload.ApiResponse;
+import com.datn.onlinejobportal.payload.CandidateProfile;
+import com.datn.onlinejobportal.payload.EducationResponse;
 import com.datn.onlinejobportal.payload.EmployerProfile;
 import com.datn.onlinejobportal.payload.EmployerRequest;
+import com.datn.onlinejobportal.payload.ExperienceResponse;
 import com.datn.onlinejobportal.payload.JobPostRequest;
 import com.datn.onlinejobportal.repository.CandidateRepository;
+import com.datn.onlinejobportal.repository.EducationRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
+import com.datn.onlinejobportal.repository.ExperienceRepository;
 import com.datn.onlinejobportal.repository.JobLocationRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
 import com.datn.onlinejobportal.repository.JobTypeRepository;
@@ -81,6 +87,12 @@ public class EmployerDashboardController {
 
 	@Autowired
 	private JobTypeRepository jobTypeRepository;
+	
+	@Autowired
+	private ExperienceRepository experienceRepository;
+
+	@Autowired
+	private EducationRepository educationRepository;
 
 	@PostMapping("/createpost")
 	@PreAuthorize("hasRole('EMPLOYER')")
@@ -260,6 +272,38 @@ public class EmployerDashboardController {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 		return candidateRepository.getAllCandidates(pageable);
 	}
+	
+	@GetMapping("/candidates/{candidateId}")
+	@PreAuthorize("hasRole('EMPLOYER')")
+	public CandidateProfile getCandidateById(@PathVariable("candidateId") Long candidateId) {
+		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(() -> new ResourceNotFoundException("Candidate", "candidateId", candidateId));
+		List<ExperienceResponse> experiences = experienceRepository.getExperienceByCandidate(candidateId);
+		List<EducationResponse> educations = educationRepository.getEducationByCandidate(candidateId);
+		CandidateProfile candidateProfile = new CandidateProfile();
+		if (userRepository.getCandidateImage(candidateId) != null) {
+			candidateProfile.setImage(userRepository.getCandidateImage(candidateId));
+		}
+		if (candidate.getFiles() != null) {
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+					.path("/downloadFile/")
+					.path(candidate.getFiles().getId())
+					.toUriString();
+			candidateProfile.setCV_Uri(fileDownloadUri);
+		}
+		candidateProfile.setName(userRepository.getNameByCandidateId(candidateId));
+		candidateProfile.setAddress(candidate.getHomeaddress());
+		candidateProfile.setGender(candidate.getGender());
+		List<String> types = jobTypeRepository.getAllCandidateJobTypeName(candidate.getId());
+		candidateProfile.setJobtypes(types);
+		candidateProfile.setDoB(candidate.getDoB());
+		candidateProfile.setPhonenumber(candidate.getPhone_number());
+		candidateProfile.setWork_title(candidate.getWork_title());
+		candidateProfile.setEducations(educations);
+		candidateProfile.setExperiences(experiences);
+
+		return candidateProfile;
+	}
+
 
 
 }

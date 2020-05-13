@@ -20,10 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.datn.onlinejobportal.dao.EmployerSpecificationsBuilder;
 import com.datn.onlinejobportal.dao.JobPostSpecificationsBuilder;
 import com.datn.onlinejobportal.dto.JobPostSummary;
+import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Employer;
 import com.datn.onlinejobportal.model.JobPost;
+import com.datn.onlinejobportal.payload.EmployerProfile;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
+import com.datn.onlinejobportal.repository.UserRepository;
 import com.datn.onlinejobportal.security.CurrentUser;
 import com.datn.onlinejobportal.security.UserPrincipal;
 import com.datn.onlinejobportal.util.AppConstants;
@@ -40,6 +43,9 @@ public class HomeController {
 	
 	@Autowired
 	private EmployerRepository employerRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@GetMapping("/{jobtype}")
 	public Page<JobPostSummary> getJobPostsByJobType(@PathVariable("jobtype") String jobtype, @CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
@@ -93,6 +99,26 @@ public class HomeController {
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return jobPostRepository.getAllJobPosts(pageable);
+    }
+    
+    @GetMapping("/employers/{employerId}")
+    public EmployerProfile getEmployerProfile(@PathVariable("employerId") Long employerId) {
+    	
+    	Employer employer = employerRepository.findById(employerId).orElseThrow(() -> new ResourceNotFoundException("Employer", "employerId", employerId));    	
+    	EmployerProfile employerProfile = new EmployerProfile();
+    	
+    	employerProfile.setCompanyname(employer.getCompanyname());
+    	employerProfile.setDescription(employer.getDescription());
+    	employerProfile.setEstablishmentdate(employer.getEstablishmentdate());
+    	employerProfile.setId(employer.getId());
+    	employerProfile.setImage(userRepository.getEmployerImage(employerId));
+    	employerProfile.setIndustry(employer.getIndustry());
+    	employerProfile.setMain_address(employer.getMain_address());
+    	employerProfile.setPhone_number(employer.getPhone_number());
+    	employerProfile.setWebsiteUrl(employer.getWebsiteurl());
+    	
+    	return employerProfile;
+    	
     }
 	
 }
