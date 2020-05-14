@@ -22,11 +22,18 @@ public class CandidateProfile {
 	private List<ExperienceResponse> experiences;
 	private List<EducationResponse> educations;
 	private String CV_Uri;
+	private String CV_name;
 	private Long expectedsalary;
 	
 	
 	
 	
+	public String getCV_name() {
+		return CV_name;
+	}
+	public void setCV_name(String cV_name) {
+		CV_name = cV_name;
+	}
 	public Long getExpectedsalary() {
 		return expectedsalary;
 	}

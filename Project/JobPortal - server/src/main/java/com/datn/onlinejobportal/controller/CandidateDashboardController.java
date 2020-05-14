@@ -105,6 +105,7 @@ public class CandidateDashboardController {
 					.path(candidate.getFiles().getId())
 					.toUriString();
 			candidateProfile.setCV_Uri(fileDownloadUri);
+			candidateProfile.setCV_name(candidate.getFiles().getFileName());
 		}
 		candidateProfile.setName(currentUser.getFullname());
 		candidateProfile.setAddress(candidate.getHomeaddress());
