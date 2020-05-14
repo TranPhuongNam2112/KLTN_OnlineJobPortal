@@ -22,8 +22,17 @@ public class CandidateProfile {
 	private List<ExperienceResponse> experiences;
 	private List<EducationResponse> educations;
 	private String CV_Uri;
+	private Long expectedsalary;
 	
 	
+	
+	
+	public Long getExpectedsalary() {
+		return expectedsalary;
+	}
+	public void setExpectedsalary(Long expectedsalary) {
+		this.expectedsalary = expectedsalary;
+	}
 	public String getCV_Uri() {
 		return CV_Uri;
 	}

@@ -35,6 +35,17 @@ public class CandidateProfileRequest {
 	
 	private Long experiencedyears;
 	
+	private Long expectedsalary;
+	
+
+	
+	public Long getExpectedsalary() {
+		return expectedsalary;
+	}
+
+	public void setExpectedsalary(Long expectedsalary) {
+		this.expectedsalary = expectedsalary;
+	}
 
 	public Boolean getProfile_visible() {
 		return profile_visible;

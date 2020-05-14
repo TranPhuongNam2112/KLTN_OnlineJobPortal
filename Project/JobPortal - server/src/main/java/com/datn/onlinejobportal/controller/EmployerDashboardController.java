@@ -300,6 +300,7 @@ public class EmployerDashboardController {
 		candidateProfile.setWork_title(candidate.getWork_title());
 		candidateProfile.setEducations(educations);
 		candidateProfile.setExperiences(experiences);
+		candidateProfile.setExpectedsalary(candidate.getExpectedsalary());
 
 		return candidateProfile;
 	}

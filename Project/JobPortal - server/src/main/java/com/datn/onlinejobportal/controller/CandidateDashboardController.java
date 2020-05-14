@@ -116,7 +116,7 @@ public class CandidateDashboardController {
 		candidateProfile.setWork_title(candidate.getWork_title());
 		candidateProfile.setEducations(educations);
 		candidateProfile.setExperiences(experiences);
-
+		candidateProfile.setExpectedsalary(candidate.getExpectedsalary());
 		return candidateProfile;
 	}
 	
@@ -205,6 +205,7 @@ public class CandidateDashboardController {
 		candidate.setJobtypes(jobTypeRepository.getAllCandidateJobType(candidateProfileRequest.getJobtypes()));
 		candidate.setProfile_visible(candidateProfileRequest.getProfile_visible());
 		candidate.setYearsofexperience(candidateProfileRequest.getExperiencedyears());
+		candidate.setExpectedsalary(candidateProfileRequest.getExpectedsalary());
 		candidateRepository.save(candidate);
 		return ResponseEntity.ok("Cập nhật thành công!");
 	}
