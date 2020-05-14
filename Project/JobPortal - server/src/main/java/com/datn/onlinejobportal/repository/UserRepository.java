@@ -62,4 +62,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("Select f.data From User u LEFT JOIN u.files f LEFT JOIN u.candidate c Where c.id = :candidateId")
 	byte[] getCandidateImage(@Param("candidateId") Long candidateId);
 	
+	@Query("Select u.imageUrl From User u LEFT JOIN u.candidate c Where c.id = :candidateId")
+	String getCandidateImageUrl(@Param("candidateId") Long candidateId);
+	
+	
 }

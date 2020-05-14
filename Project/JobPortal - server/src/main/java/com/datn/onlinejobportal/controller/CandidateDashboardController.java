@@ -118,6 +118,7 @@ public class CandidateDashboardController {
 		candidateProfile.setEducations(educations);
 		candidateProfile.setExperiences(experiences);
 		candidateProfile.setExpectedsalary(candidate.getExpectedsalary());
+		candidateProfile.setImageUrl(userRepository.getCandidateImageUrl(candidate.getId()));
 		return candidateProfile;
 	}
 	

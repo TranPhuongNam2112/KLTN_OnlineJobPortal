@@ -24,10 +24,17 @@ public class CandidateProfile {
 	private String CV_Uri;
 	private String CV_name;
 	private Long expectedsalary;
+	private String imageUrl;
 	
 	
 	
 	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
 	public String getCV_name() {
 		return CV_name;
 	}
