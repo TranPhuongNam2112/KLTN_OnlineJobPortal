@@ -2,6 +2,7 @@ package com.datn.onlinejobportal.payload;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -16,7 +17,7 @@ public class JobPostDetails {
 	
 	private String description;
 	
-	private String industry;
+	private List<String> industry;
 	
 	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date expirationDate;
@@ -66,12 +67,13 @@ public class JobPostDetails {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
 
-	public String getIndustry() {
+	public List<String> getIndustry() {
 		return industry;
 	}
 
-	public void setIndustry(String industry) {
+	public void setIndustry(List<String> industry) {
 		this.industry = industry;
 	}
 

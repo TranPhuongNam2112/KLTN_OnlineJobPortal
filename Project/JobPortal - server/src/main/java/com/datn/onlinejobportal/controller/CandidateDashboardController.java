@@ -44,6 +44,7 @@ import com.datn.onlinejobportal.payload.JobPostDetails;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EducationRepository;
 import com.datn.onlinejobportal.repository.ExperienceRepository;
+import com.datn.onlinejobportal.repository.IndustryRepository;
 import com.datn.onlinejobportal.repository.JobLocationRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
 import com.datn.onlinejobportal.repository.JobTypeRepository;
@@ -84,6 +85,9 @@ public class CandidateDashboardController {
 
 	@Autowired
 	private JobLocationRepository jobLocationRepository;
+	
+	@Autowired
+	private IndustryRepository industryRepository;
 
 	
 
@@ -298,7 +302,7 @@ public class CandidateDashboardController {
 		jobpostDetails.setCreatedDate(jobpost.getCreatedAt());
 		jobpostDetails.setDescription(jobpost.getJob_description());
 		jobpostDetails.setExpirationDate(jobpost.getExpirationDate());
-		jobpostDetails.setIndustry(jobpost.getIndustry());
+		jobpostDetails.setIndustry(industryRepository.getAllJobPostIndustries(jobpost.getId()));
 		jobpostDetails.setJobtitle(jobpost.getJob_title());
 		jobpostDetails.setJobtypes(jobpost.getJobtype().getJob_type_name());
 		jobpostDetails.setMaxSalary(jobpost.getMax_salary());

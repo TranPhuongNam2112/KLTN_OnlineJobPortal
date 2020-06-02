@@ -46,6 +46,7 @@ import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EducationRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.ExperienceRepository;
+import com.datn.onlinejobportal.repository.IndustryRepository;
 import com.datn.onlinejobportal.repository.JobLocationRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
 import com.datn.onlinejobportal.repository.JobTypeRepository;
@@ -93,6 +94,9 @@ public class EmployerDashboardController {
 
 	@Autowired
 	private EducationRepository educationRepository;
+	
+	@Autowired
+	private IndustryRepository industryRepository;
 
 	@PostMapping("/createpost")
 	@PreAuthorize("hasRole('EMPLOYER')")
@@ -126,7 +130,7 @@ public class EmployerDashboardController {
 		jobpost.setJob_title(jobPostRequest.getJobtitle());
 		jobpost.setJobtype(jobTypeRepository.findByJob_type_name(jobPostRequest.getJobType()));
 		jobpost.setJoblocation(joblocation);
-		jobpost.setIndustry(jobPostRequest.getIndustry());
+		jobpost.setIndustries(industryRepository.getAllIndustries(jobPostRequest.getIndustry()));
 		jobpost.setJob_description(jobPostRequest.getJobdescription());
 		jobpost.setCreatedAt(LocalDate.now());
 		jobpost.setExpirationDate(jobPostRequest.getExpiredDate());    

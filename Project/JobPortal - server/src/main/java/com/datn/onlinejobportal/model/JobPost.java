@@ -1,6 +1,7 @@
 package com.datn.onlinejobportal.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -46,8 +49,12 @@ public class JobPost extends DateAudit {
 	@JsonIgnore
 	private JobType jobtype;
 
-	private String industry;
-
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "jobpost_industry", 
+	joinColumns = @JoinColumn(name = "jobpost_id"), 
+	inverseJoinColumns = @JoinColumn(name = "industry_id"))
+	private Set<Industry> industries = new HashSet<>();
+	
 	private String job_description;
 	
 	@OneToOne(cascade = CascadeType.ALL)
@@ -69,23 +76,14 @@ public class JobPost extends DateAudit {
 	public JobPost() {
 		super();
 	}
-	
-	
-	
 
 	public Long getRequiredexpreienceyears() {
 		return requiredexperienceyears;
 	}
 
-
-
-
 	public void setRequiredexpreienceyears(Long requiredexpreienceyears) {
 		this.requiredexperienceyears = requiredexpreienceyears;
 	}
-
-
-
 
 	public String getJob_title() {
 		return job_title;
@@ -131,12 +129,23 @@ public class JobPost extends DateAudit {
 		this.jobtype = jobtype;
 	}
 
-	public String getIndustry() {
-		return industry;
+
+	public Set<Industry> getIndustries() {
+		return industries;
 	}
 
-	public void setIndustry(String industry) {
-		this.industry = industry;
+
+	public void setIndustries(Set<Industry> industries) {
+		this.industries = industries;
+	}
+
+
+	public Long getRequiredexperienceyears() {
+		return requiredexperienceyears;
+	}
+
+	public void setRequiredexperienceyears(Long requiredexperienceyears) {
+		this.requiredexperienceyears = requiredexperienceyears;
 	}
 
 
@@ -185,5 +194,7 @@ public class JobPost extends DateAudit {
 	public void setMax_salary(Long max_salary) {
 		this.max_salary = max_salary;
 	}
+	
+	
 
 }

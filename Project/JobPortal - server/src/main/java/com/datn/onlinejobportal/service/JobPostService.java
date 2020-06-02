@@ -9,6 +9,7 @@ import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.JobLocation;
 import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.payload.JobPostRequest;
+import com.datn.onlinejobportal.repository.IndustryRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
 import com.datn.onlinejobportal.repository.JobTypeRepository;
 import com.datn.onlinejobportal.security.UserPrincipal;
@@ -22,6 +23,9 @@ public class JobPostService {
 	@Autowired
 	private JobTypeRepository jobTypeRepository;
 	
+	@Autowired
+	private IndustryRepository industryRepository;
+	
 	public JobPost createJobPost(JobPostRequest jobPostRequest) {
 		JobPost jobpost = new JobPost();
 		JobLocation joblocation = new JobLocation();
@@ -31,7 +35,7 @@ public class JobPostService {
 		jobpost.setJob_title(jobPostRequest.getJobtitle());
 		jobpost.setJobtype(jobTypeRepository.findByJob_type_name(jobPostRequest.getJobType()));
 		jobpost.setJoblocation(joblocation);
-		jobpost.setIndustry(jobPostRequest.getIndustry());
+		jobpost.setIndustries(industryRepository.getAllIndustriesByNames(jobPostRequest.getIndustry()));
 		jobpost.setJob_description(jobPostRequest.getJobdescription());
 		jobpost.setCreatedAt(LocalDate.now());
 		jobpost.setExpirationDate(jobPostRequest.getExpiredDate());

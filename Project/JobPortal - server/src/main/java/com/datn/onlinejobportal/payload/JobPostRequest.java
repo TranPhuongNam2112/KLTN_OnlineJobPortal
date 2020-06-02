@@ -1,6 +1,7 @@
 package com.datn.onlinejobportal.payload;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,7 +25,7 @@ public class JobPostRequest {
 	private String jobdescription;
 	
 	@NotBlank
-	private String industry;
+	private List<String> industry;
 	
     @NotNull(message = "Please enter the correct amount!")
 	private Long minSalary;
@@ -99,12 +100,14 @@ public class JobPostRequest {
 	public void setExpiredDate(Date expiredDate) {
 		this.expiredDate = expiredDate;
 	}
+	
+	
 
-	public String getIndustry() {
+	public List<String> getIndustry() {
 		return industry;
 	}
 
-	public void setIndustry(String industry) {
+	public void setIndustry(List<String> industry) {
 		this.industry = industry;
 	}
 
