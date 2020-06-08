@@ -73,9 +73,22 @@ public class JobPost extends DateAudit {
 	
 	private Long max_salary;
 	
+	private String sourceUrl;
+	
 	public JobPost() {
 		super();
 	}
+	
+
+	public String getSourceUrl() {
+		return sourceUrl;
+	}
+
+
+	public void setSourceUrl(String sourceUrl) {
+		this.sourceUrl = sourceUrl;
+	}
+
 
 	public Long getRequiredexpreienceyears() {
 		return requiredexperienceyears;
