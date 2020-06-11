@@ -17,7 +17,7 @@ public class Industry {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long id;
 	
-	public String name;
+	public String industryname;
 	
 	@ManyToMany(mappedBy="industries")
     private Set<JobPost> jobposts;
@@ -27,9 +27,9 @@ public class Industry {
 		super();
 	}
 
-	public Industry(String name) {
+	public Industry(String industryname) {
 		super();
-		this.name = name;
+		this.industryname = industryname;
 	}
 
 	public Long getId() {
@@ -40,13 +40,23 @@ public class Industry {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getIndustryname() {
+		return industryname;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setIndustryname(String industryname) {
+		this.industryname = industryname;
 	}
+
+	public Set<JobPost> getJobposts() {
+		return jobposts;
+	}
+
+	public void setJobposts(Set<JobPost> jobposts) {
+		this.jobposts = jobposts;
+	}
+
+	
 	
 	
 	

@@ -18,6 +18,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import com.datn.webcrawler.service.DBService;
 
@@ -46,7 +47,12 @@ public class MyWebCrawler extends WebCrawler {
 		if (FILTERS.matcher(href).matches()) {
 			return false;
 		}
-		return true;
+
+		if (href.startsWith("https://www.timviecnhanh.com/") || href.startsWith("https://careerbuilder.vn/")) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -68,6 +74,7 @@ public class MyWebCrawler extends WebCrawler {
 					if (cat.hasAttr("id")) {
 						List<String> industry = new ArrayList<String>();
 						String jobtype = null; 
+						long years = 0;
 						String sourceUrl = cat.child(0).child(1).child(0).select("a").attr("href");
 						String jobtitle = cat.child(0).child(1).child(0).select("a").attr("title");
 						try {
@@ -76,7 +83,31 @@ public class MyWebCrawler extends WebCrawler {
 							if (industries.size() == 0) {
 								industries = post.select("#info-career-desktop > ul > li:nth-child(5) > div > a");
 								Elements industrynames = industries;
-								jobtype = post.select("#info-career-desktop > ul > li:nth-child(2) > div").html();
+								jobtype = post.select("#info-career-desktop > ul > li:nth-child(2) > div").text();
+
+								String experiencetype = post.select("#info-career-desktop > ul > li:nth-child(6) > div").text();
+								System.out.println(experiencetype);
+								if (experiencetype.contains("Không yêu cầu kinh nghiệm") || experiencetype.contains("Chưa"))
+								{
+									years = 0;
+								}
+								else {
+									String[] strArray = experiencetype.split("\\s+");
+									for (String str: strArray) {
+										System.out.println(str);
+									}
+									if (strArray[0].contains("-")) {
+										String[] yearArray = strArray[0].split("-");
+										years = Long.parseLong(yearArray[1]);
+									}
+									else if (strArray[0].contains("Trên") || strArray[0].contains("Dưới"))
+									{
+										years = Long.parseLong(strArray[1]);
+									}
+									else {
+										years = Long.parseLong(strArray[0]);
+									}
+								}								
 								for (Element industryname: industrynames) {
 									industry.add(industryname.text());
 								}
@@ -93,8 +124,6 @@ public class MyWebCrawler extends WebCrawler {
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
-						//jobpost.setSourceUrl(cat.child(0).child(1).child(0).select("a").attr("href"));
-						//jobpost.setJob_title(cat.child(0).child(1).child(0).select("a").attr("title"));
 						Long minSalary = null;
 						Long maxSalary = null;
 						List<String> salary = new ArrayList<String>();
@@ -165,18 +194,22 @@ public class MyWebCrawler extends WebCrawler {
 							maxSalary = Long.valueOf(0);
 						}
 						SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-						Date expirationDate;
+						java.util.Date date;
+						java.sql.Date sqlDate = null;
 						try {
-							expirationDate = formatter.parse(cat.child(1).select("div.time > time").text());
+							date = formatter.parse(cat.child(1).select("div.time > time").text());
+							sqlDate = new java.sql.Date(date.getTime());  
+							System.out.println(jobtype);
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
 						String companyname = cat.child(0).child(1).child(1).select("p.company-name").text();
 						String joblocation = cat.child(0).child(1).child(1).select("div.location > ul > li").text();
 
-						
+
 						System.out.println(cat.child(1).select("div.time > time").text());
-						//dBService.saveJobPost(joblocation, jobtype);
+						dBService.saveJobPost(jobtitle, jobtype, industry, minSalary, maxSalary, companyname, sourceUrl, sqlDate, 
+								years, "", "");
 
 
 						/*
@@ -201,6 +234,7 @@ public class MyWebCrawler extends WebCrawler {
 					Element job = doc.select(jobposts).first().child(0);
 					System.out.println(job.select("a").attr("href"));
 					String sourceUrl = job.select("div > a:nth-child(1)").attr("href");
+					System.out.println(sourceUrl);
 					Document jobpostdetails;
 					try {
 						long minSalary;
@@ -209,50 +243,83 @@ public class MyWebCrawler extends WebCrawler {
 						List<String> salary = new ArrayList<String>();
 						jobpostdetails = Jsoup.connect(sourceUrl).get();
 						Element jobcategories = jobpostdetails.select("#left-content > article > div.row > div.col-xs-4.offset20.push-right-20 > ul > li:nth-child(5)").first();
+
+						//industries
 						Elements cats = jobcategories.select("a");
+
+						//Job type
 						String jobtype = jobpostdetails.select("#left-content > article > div.row > div:nth-child(2) > ul > li:nth-child(4)").text().substring(22);
+
+						//Experience
+						long years;
+						String experiencetype = jobpostdetails.select("#left-content > article > div.row > div.col-xs-4.offset20.push-right-20 > ul > li:nth-child(2)").text().substring(15);
+						System.out.println(experiencetype);
+						if (experiencetype.contains("Không yêu cầu kinh nghiệm") || experiencetype.contains("Chưa"))
+						{
+							years = 0;
+						}
+						else {
+							String[] strArray = experiencetype.split(" ");
+							for (String str: strArray) {
+								System.out.println(str);
+							}
+							if (strArray[0].contains("-")) {
+								String[] yearArray = strArray[0].split("-",2);
+								years = Long.parseLong(yearArray[1]);
+							}
+							else if (strArray[0].contains("Trên") || strArray[0].contains("Dưới"))
+							{
+								years = Long.parseLong(strArray[1]);
+							}
+							else years = Long.parseLong(strArray[0]);
+						}
+
+
+
 						String street_address = jobpostdetails.select("#left-content > article > div.block-info-company > div > table > tbody > tr:nth-child(2) > td:nth-child(2) > p").text();
 						for (Element cat: cats) {
 							industries.add(cat.text());
 						}
 						String line = job.select("div > div:nth-child(1)").first().text();
+						System.out.println(line);
 						if (line.contains("Trên") || line.contains("Dưới"))
 						{
-							String[] strArray = line.split(" ", 3);
-							for (String string : strArray) {
-								if (!string.equals("")) {
-									//System.out.println(string);
-									salary.add(string);
-								}
-							}
-							if (salary.get(2).contains("Trên"))
+							String[] strArray = line.split("\\s+", 3);
+							if (strArray[0].contains("Trên"))
 							{
-								minSalary = Long.parseLong(salary.get(1))*1000000;
+								minSalary = Long.parseLong(strArray[1])*1000000;
 								maxSalary = 0;
 							} else {
-								maxSalary = Long.parseLong(salary.get(1))*1000000;
+								maxSalary = Long.parseLong(strArray[1])*1000000;
 								minSalary = 0;
 							}
 						}
 						else {
-							String[] strArray = line.split(" ", 2);
+							String[] strArray = line.split("\\s+", 2);
+							System.out.println(strArray[0]);
 							String[] str = strArray[0].split("-", 2);
+							System.out.println(str[0]);
 							for (String string: str) {
 								salary.add(string);
 							}
-							minSalary = Long.parseLong(salary.get(1))*1000000;
-							maxSalary = Long.parseLong(salary.get(2))*1000000;
+							minSalary = Long.parseLong(salary.get(0))*1000000;
+							maxSalary = Long.parseLong(salary.get(1))*1000000;
 						}
 						SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 						String dateInString = job.select("div > div:nth-child(1)").first().nextElementSibling().nextElementSibling().text();
 						java.util.Date date;
 						java.sql.Date sqlDate;
+						String companyname = job.select("div > a:nth-child(2)").attr("title");
 						try {
 							date = formatter.parse(dateInString);
 							sqlDate = new java.sql.Date(date.getTime());  
-							dBService.saveJobPost(job.select("div > a:nth-child(1)").attr("title"), jobtype, industries, minSalary, maxSalary, job.select("div > a:nth-child(2)").attr("title"), 
+							System.out.println(jobtype);
+							for (String industry: industries) {
+								System.out.println(industry);
+							}
+							dBService.saveJobPost(job.select("div > a:nth-child(1)").attr("title"), jobtype, industries, minSalary, maxSalary, companyname, 
 									job.select("div > div:nth-child(1)").first().nextElementSibling().text(), 
-									sqlDate, null, street_address, job.select("div > div:nth-child(1)").first().nextElementSibling().text());
+									sqlDate, years, street_address, job.select("div > div:nth-child(1)").first().nextElementSibling().text());
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -285,5 +352,5 @@ public class MyWebCrawler extends WebCrawler {
 		}
 
 		logger.debug("=============");
-		}
+	}
 }

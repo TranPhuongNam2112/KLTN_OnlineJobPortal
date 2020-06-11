@@ -11,12 +11,12 @@ import com.datn.onlinejobportal.model.Industry;
 
 public interface IndustryRepository extends JpaRepository<Industry, Long>{
 	
-	@Query("Select i From Industry i Where i.name IN :industries")
+	@Query("Select i From Industry i Where i.industryname IN :industries")
 	Set<Industry> getAllIndustries(@Param("industries") List<String> industries);
 	
-	@Query("Select i.name From JobPost jp LEFT JOIN jp.industries i Where jp.id = :jobpostId")
+	@Query("Select i.industryname From JobPost jp LEFT JOIN jp.industries i Where jp.id = :jobpostId")
 	List<String> getAllJobPostIndustries(@Param("jobpostId") Long jobpostId);
 	
-	@Query("Select i From Industry i Where i.name In :names")
+	@Query("Select i From Industry i Where i.industryname In :names")
 	Set<Industry> getAllIndustriesByNames(@Param("names") List<String> names);
 }

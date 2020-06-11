@@ -12,7 +12,7 @@ spring:
         username: phuongnam.tran2112@gmail.com
 
     datasource:
-        url: jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+        url: jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&useUnicode=yes&characterEncoding=UTF-8
         username: root
         password: 1234
     servlet:

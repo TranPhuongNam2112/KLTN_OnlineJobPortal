@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.datn.webcrawler.CrawlerFactory;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -69,6 +68,7 @@ public class JobPortalCrawlerApplication {
 		CrawlController controller2 = new CrawlController(config2, pageFetcher2, robotstxtServer);
 
 
+		/*
 		Document timvn = Jsoup.connect("https://www.timviecnhanh.com/viec-lam/nganh-nghe").get();
 		Elements categories = timvn.select("#province-content");
 
@@ -85,7 +85,10 @@ public class JobPortalCrawlerApplication {
 				}
 			}
 		}
+		*/
+		controller1.addSeed("https://careerbuilder.vn/viec-lam/tiep-thi-marketing-c4-vi.html");
 
+		/*
 		Document doc = Jsoup.connect("https://careerbuilder.vn/tim-viec-lam.html").get();
 		Element jobcategories = doc.select("body > main > section.find-jobsby-categories.cb-section > div > div > div.col-xl-9 > div.row.list-of-working-positions").first();
 		Elements cats = jobcategories.children();
@@ -104,6 +107,7 @@ public class JobPortalCrawlerApplication {
 			}			
 		}
 		
+		*/
 
 		
 		ComboPooledDataSource pool = new ComboPooledDataSource();
@@ -120,17 +124,18 @@ public class JobPortalCrawlerApplication {
 		pool1.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false");
 		pool1.setUser("root");
 		pool1.setPassword("1234");
-		pool1.setMaxPoolSize(7);
-		pool1.setMinPoolSize(7);
-		pool1.setInitialPoolSize(7);
+		pool1.setMaxPoolSize(10);
+		pool1.setMinPoolSize(10);
+		pool1.setInitialPoolSize(10);
 
 		controller1.startNonBlocking(new CrawlerFactory(pool1), 5);
-		controller2.startNonBlocking(new CrawlerFactory(pool1), 7);
+		//controller2.startNonBlocking(new CrawlerFactory(pool1), 7);
 
 		controller1.waitUntilFinish();
 		logger.info("Crawler 1 is finished.");
 
-		controller2.waitUntilFinish();
+		//controller2.waitUntilFinish();
 		logger.info("Crawler 2 is finished.");
+		pool1.close();
 	}
 }
