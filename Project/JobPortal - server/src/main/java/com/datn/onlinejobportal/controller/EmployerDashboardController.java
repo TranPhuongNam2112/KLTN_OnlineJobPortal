@@ -7,6 +7,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.datn.onlinejobportal.dto.CandidateSummary;
 import com.datn.onlinejobportal.dto.MyJobPostSummary;
+import com.datn.onlinejobportal.event.SaveCandidateEvent;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.DBFile;
@@ -62,6 +64,9 @@ import com.datn.onlinejobportal.util.AppConstants;
 @RequestMapping("/employer")
 public class EmployerDashboardController {
 
+	@Autowired
+    ApplicationEventPublisher applicationEventPublisher;
+	
 	@Autowired
 	private EmployerRepository employerRepository;
 
@@ -243,6 +248,7 @@ public class EmployerDashboardController {
 		savedCandidateRepository.save(sc);
 		candidateRepository.save(candidate);
 		employerRepository.save(employer);
+		applicationEventPublisher.publishEvent(new SaveCandidateEvent(this, currentUser.getId()));
 		return ResponseEntity.ok("Đã lưu hồ sơ ứng viên thành công!");
 	}
 

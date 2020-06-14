@@ -77,6 +77,7 @@ public class MyWebCrawler extends WebCrawler {
 						long years = 0;
 						String sourceUrl = cat.child(0).child(1).child(0).select("a").attr("href");
 						String jobtitle = cat.child(0).child(1).child(0).select("a").attr("title");
+						String companyimageUrl = cat.select("div.figure > div.image > a > img").attr("src");
 						try {
 							Document post = Jsoup.connect(sourceUrl).get();
 							Elements industries = post.select("#tab-1 > section > div.row > div:nth-child(1) > div > div.industry");
@@ -209,7 +210,7 @@ public class MyWebCrawler extends WebCrawler {
 
 						System.out.println(cat.child(1).select("div.time > time").text());
 						dBService.saveJobPost(jobtitle, jobtype, industry, minSalary, maxSalary, companyname, sourceUrl, sqlDate, 
-								years, "", "");
+								years, "", joblocation, companyimageUrl);
 
 
 						/*
@@ -232,8 +233,8 @@ public class MyWebCrawler extends WebCrawler {
 				String jobposts = "#job_fields_list > div > div";
 				do {
 					Element job = doc.select(jobposts).first().child(0);
-					System.out.println(job.select("a").attr("href"));
-					String sourceUrl = job.select("div > a:nth-child(1)").attr("href");
+					//System.out.println(job.select("a").attr("href"));
+					String sourceUrl = job.select("a").attr("href");
 					System.out.println(sourceUrl);
 					Document jobpostdetails;
 					try {
@@ -310,6 +311,7 @@ public class MyWebCrawler extends WebCrawler {
 						java.util.Date date;
 						java.sql.Date sqlDate;
 						String companyname = job.select("div > a:nth-child(2)").attr("title");
+						String companyimageUrl = job.select("a > span > img").attr("src");
 						try {
 							date = formatter.parse(dateInString);
 							sqlDate = new java.sql.Date(date.getTime());  
@@ -318,8 +320,7 @@ public class MyWebCrawler extends WebCrawler {
 								System.out.println(industry);
 							}
 							dBService.saveJobPost(job.select("div > a:nth-child(1)").attr("title"), jobtype, industries, minSalary, maxSalary, companyname, 
-									job.select("div > div:nth-child(1)").first().nextElementSibling().text(), 
-									sqlDate, years, street_address, job.select("div > div:nth-child(1)").first().nextElementSibling().text());
+									sourceUrl, sqlDate, years, street_address, job.select("div > div:nth-child(1)").first().nextElementSibling().text(), companyimageUrl);
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

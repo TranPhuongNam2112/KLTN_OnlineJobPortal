@@ -6,9 +6,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -18,9 +17,8 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
-@SpringBootApplication
-@EnableScheduling
-public class JobPortalCrawlerApplication {
+@Component
+public class CrawlerController {
 	static int findLastIndex(String str, Character x) 
 	{ 
 		int index = -1; 
@@ -45,15 +43,12 @@ public class JobPortalCrawlerApplication {
 		} 
 		return newString; 
 	} 
-	private static final Logger logger = LoggerFactory.getLogger(JobPortalCrawlerApplication.class);
+	private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
 
 
-	public static void main(String[] args) throws Exception {
-		
-
-		SpringApplication.run(JobPortalCrawlerApplication.class, args);
-
-		/*
+	@Scheduled(cron = "0 0-30 6 * * ?")
+	public static void crawlSchedule() throws Exception {
+		System.out.println("Start crawling");
 		String crawlStorageFolder = "/tmp/crawler4j/";
 
 		CrawlConfig config1 = new CrawlConfig();
@@ -67,7 +62,7 @@ public class JobPortalCrawlerApplication {
 
 		config1.setMaxPagesToFetch(50);
 		config2.setMaxPagesToFetch(100);
-		
+
 		//config1.setResumableCrawling(true);
 		//config2.setResumableCrawling(true);
 
@@ -81,7 +76,7 @@ public class JobPortalCrawlerApplication {
 		CrawlController controller2 = new CrawlController(config2, pageFetcher2, robotstxtServer);
 
 
-		
+
 		Document timvn = Jsoup.connect("https://www.timviecnhanh.com/viec-lam/nganh-nghe").get();
 		Elements categories = timvn.select("#province-content");
 
@@ -98,9 +93,9 @@ public class JobPortalCrawlerApplication {
 				}
 			}
 		}
-		
 
-		
+
+
 		Document doc = Jsoup.connect("https://careerbuilder.vn/tim-viec-lam.html").get();
 		Element jobcategories = doc.select("body > main > section.find-jobsby-categories.cb-section > div > div > div.col-xl-9 > div.row.list-of-working-positions").first();
 		Elements cats = jobcategories.children();
@@ -118,10 +113,10 @@ public class JobPortalCrawlerApplication {
 
 			}			
 		}
-		
-		
 
-		
+
+
+
 		ComboPooledDataSource pool = new ComboPooledDataSource();
 		pool.setDriverClass("com.mysql.cj.jdbc.Driver");
 		pool.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false");
@@ -149,6 +144,5 @@ public class JobPortalCrawlerApplication {
 		//controller2.waitUntilFinish();
 		logger.info("Crawler 2 is finished.");
 		pool1.close();
-		*/
 	}
 }

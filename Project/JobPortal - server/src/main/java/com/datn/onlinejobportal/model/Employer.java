@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,11 +15,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+
 
 
 @Entity
 @Table(name = "employer")
 public class Employer {
+	
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +43,17 @@ public class Employer {
 	
 	private String industry;
 	
+	private String imageUrl;
+	
+	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 	public String getPhone_number() {
 		return phone_number;
 	}

@@ -6,11 +6,13 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.datn.onlinejobportal.dto.JobPostSummary;
+import com.datn.onlinejobportal.event.SaveCandidateEvent;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.DBFile;
@@ -325,6 +328,13 @@ public class CandidateDashboardController {
 		return jobPostRepository.getRecommendedJobPostsByUser(candidate.getId(), pageable);
 
 	}
+	
+	@Async
+    @EventListener
+    @PreAuthorize("hasRole('CANDIDATE')")
+    public ResponseEntity<?> saveCandiateEventListener(SaveCandidateEvent saveCandidateEvent) throws InterruptedException {
+        return ResponseEntity.ok("Nhà tuyển dụng " + saveCandidateEvent.getEmployerId()+" đã lưu hồ sơ của bạn");
+    }
 	
 
 

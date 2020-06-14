@@ -14,6 +14,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 public class DBServiceImpl implements DBService {
 
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = org.slf4j.LoggerFactory.getLogger(DBServiceImpl.class);
 
 	private ComboPooledDataSource comboPooledDataSource;
@@ -43,8 +44,8 @@ public class DBServiceImpl implements DBService {
 		selectEmployerStatement = comboPooledDataSource.getConnection().prepareStatement("select * from employer where "
 				+ "companyname LIKE ?");
 		insertNewEmployerStatement = comboPooledDataSource.getConnection().prepareStatement("insert into "
-				+ "employer(companyname, description, establishmentdate, industry, main_address, phone_number, websiteurl, account_id) "
-				+ "values (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+				+ "employer(companyname, description, establishmentdate, industry, main_address, phone_number, websiteurl, account_id, image_url) "
+				+ "values (?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 		insertNewJobPostStatement = comboPooledDataSource.getConnection().prepareStatement("insert into job_post(created_at, updated_at, expiration_date, job_description, job_title, "
 				+ "max_salary, min_salary, requiredexperienceyears, source_Url, posted_by, joblocation_id, job_type_id) values "
 				+ "(?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
@@ -59,7 +60,7 @@ public class DBServiceImpl implements DBService {
 	@Override
 	public void saveJobPost(String jobtitle, String jobtype, List<String> industries, Long minSalary, 
 			Long maxSalary, String companyname, String sourceUrl, Date expirationDate, Long requiredexperienceyears
-			, String street_address, String city_province) {
+			, String street_address, String city_province, String imageUrl) {
 
 		try {
 			selectDuplicateJobPost.setString(1, sourceUrl);
@@ -96,6 +97,7 @@ public class DBServiceImpl implements DBService {
 					insertNewEmployerStatement.setNull(6, java.sql.Types.VARCHAR);
 					insertNewEmployerStatement.setNull(7, java.sql.Types.VARCHAR);
 					insertNewEmployerStatement.setNull(8, java.sql.Types.BIGINT);
+					insertNewEmployerStatement.setString(9, imageUrl);
 					insertNewEmployerStatement.executeUpdate();
 					ResultSet insertedemployer = insertNewEmployerStatement.getGeneratedKeys();
 					while (insertedemployer.next())
