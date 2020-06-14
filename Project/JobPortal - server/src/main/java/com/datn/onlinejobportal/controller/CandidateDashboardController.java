@@ -333,7 +333,7 @@ public class CandidateDashboardController {
     @EventListener
     @PreAuthorize("hasRole('CANDIDATE')")
     public ResponseEntity<?> saveCandiateEventListener(SaveCandidateEvent saveCandidateEvent) throws InterruptedException {
-        return ResponseEntity.ok("Nhà tuyển dụng " + saveCandidateEvent.getEmployerId()+" đã lưu hồ sơ của bạn");
+        return ResponseEntity.ok("Nhà tuyển dụng " + saveCandidateEvent.getEmployerId()+" đã lưu hồ sơ của bạn!");
     }
 	
 
