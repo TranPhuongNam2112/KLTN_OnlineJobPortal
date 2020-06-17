@@ -26,6 +26,7 @@ public class JobPostDAO implements IJobPostDAO{
 		CriteriaQuery<JobPost> query = builder.createQuery(JobPost.class);
 		@SuppressWarnings("rawtypes")
 		Root r = query.from(JobPost.class);
+		
 
 		Predicate predicate = builder.conjunction();
 

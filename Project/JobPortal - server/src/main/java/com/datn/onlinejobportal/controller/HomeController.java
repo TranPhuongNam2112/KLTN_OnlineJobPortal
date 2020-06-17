@@ -18,17 +18,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.datn.onlinejobportal.dao.EmployerSpecificationsBuilder;
-import com.datn.onlinejobportal.dao.JobPostSpecificationsBuilder;
+import com.datn.onlinejobportal.dto.CrawledJobPostSummary;
+import com.datn.onlinejobportal.dto.JobPostListRequest;
 import com.datn.onlinejobportal.dto.JobPostSummary;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Employer;
-import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.payload.EmployerProfile;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
 import com.datn.onlinejobportal.security.CurrentUser;
 import com.datn.onlinejobportal.security.UserPrincipal;
+import com.datn.onlinejobportal.service.JobPostService;
 import com.datn.onlinejobportal.util.AppConstants;
 import com.datn.onlinejobportal.util.SearchOperation;
 import com.google.common.base.Joiner;
@@ -37,16 +38,25 @@ import com.google.common.base.Joiner;
 @RestController
 @RequestMapping("/home")
 public class HomeController {
-	
+
 	@Autowired
 	private JobPostRepository jobPostRepository;
-	
+
 	@Autowired
 	private EmployerRepository employerRepository;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
+	@Autowired
+	private JobPostService jobPostService;
+
+
+
+	public HomeController(JobPostService jobPostService) {
+		super();
+		this.jobPostService = jobPostService;
+	}
 	@GetMapping("/{jobtype}")
 	public Page<JobPostSummary> getJobPostsByJobType(@PathVariable("jobtype") String jobtype, @CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
@@ -54,7 +64,7 @@ public class HomeController {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return jobPostRepository.getJobPostsByJobType(jobtype, pageable);
 	}
-	
+	/*
     @RequestMapping(method = RequestMethod.GET, value = "/jobposts")
     @ResponseBody
     public Page<JobPost> searchJobPosts(@RequestParam(value = "search") String search, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
@@ -73,52 +83,76 @@ public class HomeController {
         Specification<JobPost> spec = builder.build();
         return jobPostRepository.findAll(spec, pageable);
     }
-    
-    @RequestMapping(method = RequestMethod.GET, value = "/employers")
-    @ResponseBody
-    public Page<Employer> searchEmployer(@RequestParam(value = "search") String search, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+	 */
+	@RequestMapping(method = RequestMethod.GET, value = "/employers")
+	@ResponseBody
+	public Page<Employer> searchEmployer(@RequestParam(value = "search") String search, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "id") String sortBy) {
-        EmployerSpecificationsBuilder builder = new EmployerSpecificationsBuilder();
-        String operationSetExper = Joiner.on("|")
-            .join(SearchOperation.SIMPLE_OPERATION_SET);
-        Pattern pattern = Pattern.compile("(\\w+?)(" + operationSetExper + ")(\\p{Punct}?)(\\w+?)(\\p{Punct}?),");
-        Matcher matcher = pattern.matcher(search + ",");
-        while (matcher.find()) {
-            builder.with(matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(3), matcher.group(5));
-        }
+		EmployerSpecificationsBuilder builder = new EmployerSpecificationsBuilder();
+		String operationSetExper = Joiner.on("|")
+				.join(SearchOperation.SIMPLE_OPERATION_SET);
+		Pattern pattern = Pattern.compile("(\\w+?)(" + operationSetExper + ")(\\p{Punct}?)(\\w+?)(\\p{Punct}?),");
+		Matcher matcher = pattern.matcher(search + ",");
+		while (matcher.find()) {
+			builder.with(matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(3), matcher.group(5));
+		}
 
-        Specification<Employer> spec = builder.build();
-        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
-        return employerRepository.findAll(spec, pageable);
-    }
-    
-    @GetMapping("/alljobposts")
-    public Page<JobPostSummary> getAllJobPosts(@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+		Specification<Employer> spec = builder.build();
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+		return employerRepository.findAll(spec, pageable);
+	}
+
+	@GetMapping("/alljobposts")
+	public Page<JobPostSummary> getAllJobPosts(@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return jobPostRepository.getAllJobPosts(pageable);
-    }
-    
-    @GetMapping("/employers/{employerId}")
-    public EmployerProfile getEmployerProfile(@PathVariable("employerId") Long employerId) {
-    	
-    	Employer employer = employerRepository.findById(employerId).orElseThrow(() -> new ResourceNotFoundException("Employer", "employerId", employerId));    	
-    	EmployerProfile employerProfile = new EmployerProfile();
-    	
-    	employerProfile.setCompanyname(employer.getCompanyname());
-    	employerProfile.setDescription(employer.getDescription());
-    	employerProfile.setEstablishmentdate(employer.getEstablishmentdate());
-    	employerProfile.setId(employer.getId());
-    	employerProfile.setImage(userRepository.getEmployerImage(employerId));
-    	employerProfile.setIndustry(employer.getIndustry());
-    	employerProfile.setMain_address(employer.getMain_address());
-    	employerProfile.setPhone_number(employer.getPhone_number());
-    	employerProfile.setWebsiteUrl(employer.getWebsiteurl());
-    	
-    	return employerProfile;
-    	
-    }
+	}
+
+	@GetMapping("/employers/{employerId}")
+	public EmployerProfile getEmployerProfile(@PathVariable("employerId") Long employerId) {
+
+		Employer employer = employerRepository.findById(employerId).orElseThrow(() -> new ResourceNotFoundException("Employer", "employerId", employerId));    	
+		EmployerProfile employerProfile = new EmployerProfile();
+
+		employerProfile.setCompanyname(employer.getCompanyname());
+		employerProfile.setDescription(employer.getDescription());
+		employerProfile.setEstablishmentdate(employer.getEstablishmentdate());
+		employerProfile.setId(employer.getId());
+		employerProfile.setImage(userRepository.getEmployerImage(employerId));
+		employerProfile.setIndustry(employer.getIndustry());
+		employerProfile.setMain_address(employer.getMain_address());
+		employerProfile.setPhone_number(employer.getPhone_number());
+		employerProfile.setWebsiteUrl(employer.getWebsiteurl());
+
+		return employerProfile;
+
+	}
 	
+	@GetMapping("/otherwebsites/{websitename}/alljobposts")
+	public Page<CrawledJobPostSummary> getAllCrawledJobPosts(@PathVariable("websitename") String websitename, 
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+		return jobPostRepository.getCrawledJobPostByWebsiteName(websitename, pageable);
+	}
+	
+
+	@GetMapping("/search/jobposts")
+	public Page<JobPostSummary> getFilterJobPosts(@RequestParam(value = "jobtitle",required=false) String jobtitle, 
+			@RequestParam(value = "industry",required = false) String industry, 
+			@RequestParam(value = "jobtype",required = false) String jobtype, 
+			@RequestParam(value = "joblocation",required = false) String joblocation,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+		return jobPostRepository.getJobPostsByJobTitleAndIndustryAndJobTypeAndJobLocation(jobtitle, industry, jobtype, joblocation, pageable);
+
+	}
+
+
 }

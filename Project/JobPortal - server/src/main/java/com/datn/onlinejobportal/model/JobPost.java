@@ -62,6 +62,7 @@ public class JobPost extends DateAudit {
     private JobLocation joblocation;
 	
 	@OneToMany(mappedBy = "jobpost", cascade = CascadeType.MERGE)
+	@JsonIgnore
     private Set<SavedJobPost> savedjobpost;
 	
 	private Long requiredexperienceyears;

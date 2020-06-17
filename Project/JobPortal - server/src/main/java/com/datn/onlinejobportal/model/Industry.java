@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "industry")
 public class Industry {
@@ -20,6 +22,7 @@ public class Industry {
 	public String industryname;
 	
 	@ManyToMany(mappedBy="industries")
+	@JsonIgnore
     private Set<JobPost> jobposts;
 
 

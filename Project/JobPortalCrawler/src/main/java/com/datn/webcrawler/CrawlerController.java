@@ -46,7 +46,7 @@ public class CrawlerController {
 	private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
 
 
-	@Scheduled(cron = "0 0-30 6 * * ?")
+	@Scheduled(cron = "0 0-59 16 * * ?")
 	public static void crawlSchedule() throws Exception {
 		System.out.println("Start crawling");
 		String crawlStorageFolder = "/tmp/crawler4j/";
@@ -113,18 +113,15 @@ public class CrawlerController {
 
 			}			
 		}
-
-
-
-
+		
 		ComboPooledDataSource pool = new ComboPooledDataSource();
 		pool.setDriverClass("com.mysql.cj.jdbc.Driver");
 		pool.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false");
 		pool.setUser("root");
 		pool.setPassword("1234");
-		pool.setMaxPoolSize(5);
-		pool.setMinPoolSize(5);
-		pool.setInitialPoolSize(5);
+		pool.setMaxPoolSize(10);
+		pool.setMinPoolSize(10);
+		pool.setInitialPoolSize(10);
 
 		ComboPooledDataSource pool1 = new ComboPooledDataSource();
 		pool1.setDriverClass("com.mysql.cj.jdbc.Driver");
@@ -135,13 +132,13 @@ public class CrawlerController {
 		pool1.setMinPoolSize(10);
 		pool1.setInitialPoolSize(10);
 
-		controller1.startNonBlocking(new CrawlerFactory(pool1), 5);
+		controller1.startNonBlocking(new CrawlerFactory(pool), 7);
 		controller2.startNonBlocking(new CrawlerFactory(pool1), 7);
 
 		controller1.waitUntilFinish();
 		logger.info("Crawler 1 is finished.");
 
-		//controller2.waitUntilFinish();
+		controller2.waitUntilFinish();
 		logger.info("Crawler 2 is finished.");
 		pool1.close();
 	}
