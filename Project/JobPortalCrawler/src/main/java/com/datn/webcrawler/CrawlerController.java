@@ -140,10 +140,14 @@ public class CrawlerController {
 		pool.setInitialPoolSize(7);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		controller1.start(new CrawlerFactory(pool), 7);
 		controller2.startNonBlocking(new CrawlerFactory(pool), 3);
 
 		pool.close();
+=======
+		
+>>>>>>> 68641a77688ee6e97f17779fcf99c7e17291418e
 =======
 		
 >>>>>>> 68641a77688ee6e97f17779fcf99c7e17291418e
@@ -245,6 +249,9 @@ public class CrawlerController {
 		controller4.waitUntilFinish();
 		logger.info("Crawler 4 is finished.");
 		
+<<<<<<< HEAD
+>>>>>>> 68641a77688ee6e97f17779fcf99c7e17291418e
+=======
 >>>>>>> 68641a77688ee6e97f17779fcf99c7e17291418e
 		
 	}
