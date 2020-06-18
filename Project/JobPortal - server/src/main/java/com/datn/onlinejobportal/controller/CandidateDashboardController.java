@@ -30,6 +30,7 @@ import com.datn.onlinejobportal.dto.JobPostSummary;
 import com.datn.onlinejobportal.event.SaveCandidateEvent;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Candidate;
+import com.datn.onlinejobportal.model.CandidateHistory;
 import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Education;
 import com.datn.onlinejobportal.model.Experience;
@@ -44,6 +45,7 @@ import com.datn.onlinejobportal.payload.EducationsRequest;
 import com.datn.onlinejobportal.payload.ExperienceResponse;
 import com.datn.onlinejobportal.payload.ExperiencesRequest;
 import com.datn.onlinejobportal.payload.JobPostDetails;
+import com.datn.onlinejobportal.repository.CandidateHistoryRepository;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EducationRepository;
 import com.datn.onlinejobportal.repository.ExperienceRepository;
@@ -61,6 +63,9 @@ import com.datn.onlinejobportal.util.AppConstants;
 @RestController
 @RequestMapping("/candidate")
 public class CandidateDashboardController {
+
+	@Autowired
+	private CandidateHistoryRepository candidateHistoryRepository;
 
 	@Autowired
 	private CandidateRepository candidateRepository;
@@ -88,11 +93,11 @@ public class CandidateDashboardController {
 
 	@Autowired
 	private JobLocationRepository jobLocationRepository;
-	
+
 	@Autowired
 	private IndustryRepository industryRepository;
 
-	
+
 
 
 	@GetMapping("/myprofile")
@@ -128,8 +133,8 @@ public class CandidateDashboardController {
 		candidateProfile.setImageUrl(userRepository.getCandidateImageUrl(candidate.getId()));
 		return candidateProfile;
 	}
-	
-	
+
+
 
 	@PostMapping("/myprofile/addEducation")
 	@PreAuthorize("hasRole('CANDIDATE')")
@@ -145,7 +150,7 @@ public class CandidateDashboardController {
 		candidateRepository.save(candidate);
 		return ResponseEntity.ok("Thêm thành công");
 	}
-	
+
 	@PostMapping("/myprofile/addExperience")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> addNewExperience(@CurrentUser UserPrincipal currentUser, 
@@ -161,8 +166,8 @@ public class CandidateDashboardController {
 		return ResponseEntity.ok("Thêm thành công");
 
 	}
-	
-	
+
+
 	@DeleteMapping("/myprofile/experience/remove/{experienceId}")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> removeExperience(@PathVariable("experienceId") Long experienceId ,@CurrentUser UserPrincipal currentUser) {
@@ -192,7 +197,7 @@ public class CandidateDashboardController {
 		return ResponseEntity.ok("Xóa thành công");
 
 	}
-	
+
 	@PutMapping("/myprofile")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public ResponseEntity<?> updateProfile(@CurrentUser UserPrincipal currentUser,
@@ -287,18 +292,33 @@ public class CandidateDashboardController {
 		savedJobPostRepository.delete(sjp);
 		return ResponseEntity.ok("Đã xóa bài đăng thành công!");
 	}
-	
+
 	@GetMapping("/jobtypes")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public List<String> getAllJobTypes(@CurrentUser UserPrincipal currentUser) {
 		return jobTypeRepository.getAllJobTypes();
 	}
-	
+
 	@GetMapping("/jobposts/{jobpostId}")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public JobPostDetails getJobPostById(@CurrentUser UserPrincipal currentUser, @PathVariable("jobpostId") Long jobpostId) {
-		
+
 		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(() -> new ResourceNotFoundException("Job post", "jobpostId", jobpostId));
+		if (candidateHistoryRepository.getDuplicateViewedJobPost(jobpost.getId(), currentUser.getId()) == null)
+		{
+			CandidateHistory candidatehistory = new CandidateHistory(candidateRepository.getCandidateByUserId(currentUser.getId()), jobpost, LocalDate.now());
+			Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
+			candidate.getCandidatehistories().add(candidatehistory);
+			jobpost.getCandidatehistories().add(candidatehistory);
+			candidateHistoryRepository.save(candidatehistory);
+			candidateRepository.save(candidate);
+			jobPostRepository.save(jobpost);
+		}
+		else {
+			CandidateHistory candidatehistory = candidateHistoryRepository.getCandidateHistory(jobpost.getId(), currentUser.getId());
+			candidatehistory.setViewDate(LocalDate.now());
+			candidateHistoryRepository.save(candidatehistory);
+		}
 		JobLocation jobLocation = jobLocationRepository.findByJobPostId(jobpostId);
 		JobPostDetails jobpostDetails = new JobPostDetails();
 		jobpostDetails.setCity_province(jobLocation.getCity_province());
@@ -312,11 +332,10 @@ public class CandidateDashboardController {
 		jobpostDetails.setMinSalary(jobpost.getMin_salary());
 		jobpostDetails.setRequiredexperienceyears(jobpost.getRequiredexpreienceyears());
 		jobpostDetails.setStreet_address(jobLocation.getStreet_address());
-		
+
 		return jobpostDetails;
-		
 	}
-	
+
 	@GetMapping("/recommendedjobposts")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getAllRecommendedJobPosts(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
@@ -324,18 +343,18 @@ public class CandidateDashboardController {
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
-		
+
 		return jobPostRepository.getRecommendedJobPostsByUser(candidate.getId(), pageable);
 
 	}
-	
+
 	@Async
-    @EventListener
-    @PreAuthorize("hasRole('CANDIDATE')")
-    public ResponseEntity<?> saveCandiateEventListener(SaveCandidateEvent saveCandidateEvent) throws InterruptedException {
-        return ResponseEntity.ok("Nhà tuyển dụng " + saveCandidateEvent.getEmployerId()+" đã lưu hồ sơ của bạn!");
-    }
-	
+	@EventListener
+	@PreAuthorize("hasRole('CANDIDATE')")
+	public ResponseEntity<?> saveCandiateEventListener(SaveCandidateEvent saveCandidateEvent) throws InterruptedException {
+		return ResponseEntity.ok("Nhà tuyển dụng " + saveCandidateEvent.getEmployerId()+" đã lưu hồ sơ của bạn!");
+	}
+
 
 
 

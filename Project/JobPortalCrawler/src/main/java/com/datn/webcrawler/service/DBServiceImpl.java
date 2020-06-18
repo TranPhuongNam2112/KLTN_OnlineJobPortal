@@ -64,10 +64,9 @@ public class DBServiceImpl implements DBService {
 
 		try {
 			selectDuplicateJobPost.setString(1, sourceUrl);
-			selectDuplicateJobPost.executeQuery();
 			ResultSet duplicatejobposts = selectDuplicateJobPost.executeQuery();
-			if (duplicatejobposts.next() == false) {
-
+			if (duplicatejobposts.next() == false)
+			{
 				insertNewJobLocationStatement.setString(2, street_address);
 				insertNewJobLocationStatement.setString(1, city_province);
 				insertNewJobLocationStatement.executeUpdate();
@@ -162,8 +161,8 @@ public class DBServiceImpl implements DBService {
 						insertManyToManyStatement.executeUpdate();
 					}
 				}
-			}
 
+			}
 
 
 		} catch (SQLException e) {

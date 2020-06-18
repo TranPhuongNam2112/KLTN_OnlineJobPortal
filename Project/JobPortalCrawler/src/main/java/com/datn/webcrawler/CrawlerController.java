@@ -17,7 +17,7 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
-@Component
+//@Component
 public class CrawlerController {
 	static int findLastIndex(String str, Character x) 
 	{ 
@@ -46,40 +46,72 @@ public class CrawlerController {
 	private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
 
 
-	@Scheduled(cron = "0 0-59 16 * * ?")
-	public static void crawlSchedule() throws Exception {
+	//@Scheduled(cron = "0 41 19 * * ?")
+	public static void TimViecNhanhcrawlSchedule() throws Exception {
 		System.out.println("Start crawling");
 		String crawlStorageFolder = "/tmp/crawler4j/";
-
+		int MAX_PAGES_TO_SEARCH = 150;
 		CrawlConfig config1 = new CrawlConfig();
+<<<<<<< HEAD
+		config1.setCrawlStorageFolder(crawlStorageFolder + "/crawler1");
+		config1.setPolitenessDelay(1000);
+		config1.setMaxPagesToFetch(50);
+		config1.setMaxDepthOfCrawling(0);
+=======
 		CrawlConfig config2 = new CrawlConfig();
+		CrawlConfig config3 = new CrawlConfig();
+		CrawlConfig config4 = new CrawlConfig();
 
 		config1.setCrawlStorageFolder(crawlStorageFolder + "/crawler1");
 		config2.setCrawlStorageFolder(crawlStorageFolder + "/crawler2");
+		config3.setCrawlStorageFolder(crawlStorageFolder + "/crawler3");
+		config4.setCrawlStorageFolder(crawlStorageFolder + "/crawler4");
 
 		config1.setPolitenessDelay(1000);
 		config2.setPolitenessDelay(2000);
+		config3.setPolitenessDelay(3000);
+		config4.setPolitenessDelay(4000);
 
 		config1.setMaxPagesToFetch(50);
 		config2.setMaxPagesToFetch(100);
+		config3.setMaxPagesToFetch(MAX_PAGES_TO_SEARCH);
+		config4.setMaxPagesToFetch(MAX_PAGES_TO_SEARCH);
 
 		//config1.setResumableCrawling(true);
 		//config2.setResumableCrawling(true);
 
+>>>>>>> 68641a77688ee6e97f17779fcf99c7e17291418e
 		PageFetcher pageFetcher1 = new PageFetcher(config1);
+		
+		CrawlConfig config2 = new CrawlConfig();
+		config2.setCrawlStorageFolder(crawlStorageFolder + "/crawler2");
+		config2.setPolitenessDelay(2000);
+		config2.setMaxPagesToFetch(100);
+		config2.setMaxDepthOfCrawling(0);
 		PageFetcher pageFetcher2 = new PageFetcher(config2);
+		PageFetcher pageFetcher3 = new PageFetcher(config3);
+		PageFetcher pageFetcher4 = new PageFetcher(config4);
 
 		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
 		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher1);
 
 		CrawlController controller1 = new CrawlController(config1, pageFetcher1, robotstxtServer);
 		CrawlController controller2 = new CrawlController(config2, pageFetcher2, robotstxtServer);
+		CrawlController controller3 = new CrawlController(config3, pageFetcher3, robotstxtServer);
+		CrawlController controller4 = new CrawlController(config4, pageFetcher4, robotstxtServer);
 
-
+		for (int i = 1; i <= MAX_PAGES_TO_SEARCH; i++) {
+			controller3.addSeed("https://jobsgo.vn/viec-lam-trang-" + i + ".html");
+		}
+		
+		for (int j = 1; j <= MAX_PAGES_TO_SEARCH; j++) {
+			controller4.addSeed("https://timviec365.vn/tin-tuyen-dung-viec-lam.html?page="+j);
+		}
 
 		Document timvn = Jsoup.connect("https://www.timviecnhanh.com/viec-lam/nganh-nghe").get();
 		Elements categories = timvn.select("#province-content");
 
+		/*
 		for (Element category:categories) {
 			Elements joblinks = category.select("li > a");
 			for (Element joblink: joblinks) {
@@ -93,12 +125,50 @@ public class CrawlerController {
 				}
 			}
 		}
+		*/
+		
+		controller1.addSeed("https://www.timviecnhanh.com/mien-nam/viec-lam-kinh-doanh-c32.html");
+		controller2.addSeed("https://careerbuilder.vn/viec-lam/tiep-thi-marketing-c4-vi.html");
+		
+		ComboPooledDataSource pool = new ComboPooledDataSource();
+		pool.setDriverClass("com.mysql.cj.jdbc.Driver");
+		pool.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false");
+		pool.setUser("root");
+		pool.setPassword("1234");
+		pool.setMaxPoolSize(7);
+		pool.setMinPoolSize(7);
+		pool.setInitialPoolSize(7);
 
+<<<<<<< HEAD
+		controller1.start(new CrawlerFactory(pool), 7);
+		controller2.startNonBlocking(new CrawlerFactory(pool), 3);
 
+		pool.close();
+=======
+		
+>>>>>>> 68641a77688ee6e97f17779fcf99c7e17291418e
 
+		System.out.println("Crawler finished");
+	}
+	
+	//@Scheduled(cron = "0 30-59 11 * * ?")
+	public static void CareerBuilderCrawlSchedule() throws Exception {
+		String crawlStorageFolder = "/tmp/crawler4j/";
+		CrawlConfig config2 = new CrawlConfig();
+		config2.setCrawlStorageFolder(crawlStorageFolder + "/crawler2");
+		config2.setPolitenessDelay(2000);
+		config2.setMaxPagesToFetch(100);
+		config2.setMaxDepthOfCrawling(0);
+		PageFetcher pageFetcher2 = new PageFetcher(config2);
+		RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
+		RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher2);
+		CrawlController controller2 = new CrawlController(config2, pageFetcher2, robotstxtServer);
+		
+		
 		Document doc = Jsoup.connect("https://careerbuilder.vn/tim-viec-lam.html").get();
 		Element jobcategories = doc.select("body > main > section.find-jobsby-categories.cb-section > div > div > div.col-xl-9 > div.row.list-of-working-positions").first();
 		Elements cats = jobcategories.children();
+		
 		for (Element cat: cats) {
 			Elements types = cat.child(1).select("li").select("a");
 			for (Element type: types) {
@@ -118,22 +188,48 @@ public class CrawlerController {
 		pool.setDriverClass("com.mysql.cj.jdbc.Driver");
 		pool.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false");
 		pool.setUser("root");
-		pool.setPassword("1234");
+		pool.setPassword("123456789");
 		pool.setMaxPoolSize(10);
 		pool.setMinPoolSize(10);
 		pool.setInitialPoolSize(10);
+<<<<<<< HEAD
+		
+		controller2.start(new CrawlerFactory(pool), 7);
+		logger.info("Crawler 2 is finished.");
+		pool.close();
+=======
 
 		ComboPooledDataSource pool1 = new ComboPooledDataSource();
 		pool1.setDriverClass("com.mysql.cj.jdbc.Driver");
 		pool1.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false");
 		pool1.setUser("root");
-		pool1.setPassword("1234");
+		pool1.setPassword("123456789");
 		pool1.setMaxPoolSize(10);
 		pool1.setMinPoolSize(10);
 		pool1.setInitialPoolSize(10);
+		
+		ComboPooledDataSource pool3 = new ComboPooledDataSource();
+		pool3.setDriverClass("com.mysql.cj.jdbc.Driver");
+		pool3.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false");
+		pool3.setUser("root");
+		pool3.setPassword("123456789");
+		pool3.setMaxPoolSize(10);
+		pool3.setMinPoolSize(10);
+		pool3.setInitialPoolSize(10);
+		
+		ComboPooledDataSource pool4 = new ComboPooledDataSource();
+		pool4.setDriverClass("com.mysql.cj.jdbc.Driver");
+		pool4.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false");
+		pool4.setUser("root");
+		pool4.setPassword("123456789");
+		pool4.setMaxPoolSize(10);
+		pool4.setMinPoolSize(10);
+		pool4.setInitialPoolSize(10);
 
 		controller1.startNonBlocking(new CrawlerFactory(pool), 7);
 		controller2.startNonBlocking(new CrawlerFactory(pool1), 7);
+		controller3.startNonBlocking(new CrawlerFactory(pool3), 7);
+		controller4.startNonBlocking(new CrawlerFactory(pool4), 7);
 
 		controller1.waitUntilFinish();
 		logger.info("Crawler 1 is finished.");
@@ -141,5 +237,16 @@ public class CrawlerController {
 		controller2.waitUntilFinish();
 		logger.info("Crawler 2 is finished.");
 		pool1.close();
+		
+		controller3.waitUntilFinish();
+		logger.info("Crawler 3 is finished.");
+		
+		
+		controller4.waitUntilFinish();
+		logger.info("Crawler 4 is finished.");
+		
+>>>>>>> 68641a77688ee6e97f17779fcf99c7e17291418e
+		
 	}
+	
 }

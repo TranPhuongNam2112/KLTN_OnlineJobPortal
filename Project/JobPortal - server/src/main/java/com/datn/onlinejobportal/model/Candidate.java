@@ -50,6 +50,9 @@ public class Candidate extends DateAudit {
 
 	@OneToMany(mappedBy = "candidate", cascade = CascadeType.MERGE)
 	private Set<SavedJobPost> savedJobPosts = new HashSet<>();
+	
+	@OneToMany(mappedBy = "candidate", cascade = CascadeType.MERGE)
+	private Set<CandidateHistory> candidatehistories = new HashSet<>();
 
 	@OneToMany(mappedBy = "candidate", cascade = CascadeType.MERGE)
 	private Set<SavedCandidate> savedCandidates = new HashSet<>();
@@ -89,6 +92,14 @@ public class Candidate extends DateAudit {
 	
 	public Long getYearsofexperience() {
 		return yearsofexperience;
+	}
+
+	public Set<CandidateHistory> getCandidatehistories() {
+		return candidatehistories;
+	}
+
+	public void setCandidatehistories(Set<CandidateHistory> candidatehistories) {
+		this.candidatehistories = candidatehistories;
 	}
 
 	public void setYearsofexperience(Long yearsofexperience) {

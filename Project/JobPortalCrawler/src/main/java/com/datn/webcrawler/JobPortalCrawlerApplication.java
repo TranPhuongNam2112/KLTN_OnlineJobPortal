@@ -1,14 +1,24 @@
 package com.datn.webcrawler;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
+
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+
+import edu.uci.ics.crawler4j.crawler.CrawlConfig;
+import edu.uci.ics.crawler4j.crawler.CrawlController;
+import edu.uci.ics.crawler4j.fetcher.PageFetcher;
+import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
+import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 
 @SpringBootApplication
-@EnableScheduling
 public class JobPortalCrawlerApplication {
 	static int findLastIndex(String str, Character x) 
 	{ 
@@ -42,7 +52,7 @@ public class JobPortalCrawlerApplication {
 
 		SpringApplication.run(JobPortalCrawlerApplication.class, args);
 
-		/*
+		
 		String crawlStorageFolder = "/tmp/crawler4j/";
 
 		CrawlConfig config1 = new CrawlConfig();
@@ -70,6 +80,7 @@ public class JobPortalCrawlerApplication {
 		CrawlController controller2 = new CrawlController(config2, pageFetcher2, robotstxtServer);
 
 
+		/*
 		
 		Document timvn = Jsoup.connect("https://www.timviecnhanh.com/viec-lam/nganh-nghe").get();
 		Elements categories = timvn.select("#province-content");
@@ -108,8 +119,11 @@ public class JobPortalCrawlerApplication {
 			}			
 		}
 		
+		*/
 		
 
+		controller1.addSeed("https://www.timviecnhanh.com/mien-nam/viec-lam-kinh-doanh-c32.html");
+		controller2.addSeed("https://careerbuilder.vn/viec-lam/tiep-thi-marketing-c4-vi.html");
 		
 		ComboPooledDataSource pool = new ComboPooledDataSource();
 		pool.setDriverClass("com.mysql.cj.jdbc.Driver");
@@ -135,9 +149,9 @@ public class JobPortalCrawlerApplication {
 		controller1.waitUntilFinish();
 		logger.info("Crawler 1 is finished.");
 
-		//controller2.waitUntilFinish();
+		controller2.waitUntilFinish();
 		logger.info("Crawler 2 is finished.");
 		pool1.close();
-		*/
+		
 	}
 }
