@@ -88,11 +88,11 @@ public class CrawlerController {
 		CrawlController controller4 = new CrawlController(config4, pageFetcher4, robotstxtServer);
 
 		for (int i = 1; i <= MAX_PAGES_TO_SEARCH; i++) {
-			controller1.addSeed("https://jobsgo.vn/viec-lam-trang-" + i + ".html");
+			controller3.addSeed("https://jobsgo.vn/viec-lam-trang-" + i + ".html");
 		}
 		
 		for (int j = 1; j <= MAX_PAGES_TO_SEARCH; j++) {
-			controller2.addSeed("https://timviec365.vn/tin-tuyen-dung-viec-lam.html?page="+j);
+			controller4.addSeed("https://timviec365.vn/tin-tuyen-dung-viec-lam.html?page="+j);
 		}
 
 		Document timvn = Jsoup.connect("https://www.timviecnhanh.com/viec-lam/nganh-nghe").get();
