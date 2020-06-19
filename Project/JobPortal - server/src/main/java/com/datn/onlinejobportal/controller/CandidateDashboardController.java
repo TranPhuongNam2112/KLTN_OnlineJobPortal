@@ -355,6 +355,11 @@ public class CandidateDashboardController {
 		return ResponseEntity.ok("Nhà tuyển dụng " + saveCandidateEvent.getEmployerId()+" đã lưu hồ sơ của bạn!");
 	}
 
+	@GetMapping("/hisotry")
+	@PreAuthorize("hasRole('CANDIDATE')")
+	public List<JobPostSummary> getAllViewedJobPost(@CurrentUser UserPrincipal currentUser) {
+		return candidateHistoryRepository.getAllCandidatHistory(candidateRepository.getCandidateIdByUserId(currentUser.getId()));
+	}
 
 
 
