@@ -33,6 +33,7 @@ import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Candidate;
 import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Employer;
+import com.datn.onlinejobportal.model.EmployerHistory;
 import com.datn.onlinejobportal.model.JobLocation;
 import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.model.SavedCandidate;
@@ -46,6 +47,7 @@ import com.datn.onlinejobportal.payload.ExperienceResponse;
 import com.datn.onlinejobportal.payload.JobPostRequest;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EducationRepository;
+import com.datn.onlinejobportal.repository.EmployerHistoryRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.ExperienceRepository;
 import com.datn.onlinejobportal.repository.IndustryRepository;
@@ -102,6 +104,9 @@ public class EmployerDashboardController {
 	
 	@Autowired
 	private IndustryRepository industryRepository;
+	
+	@Autowired
+	private EmployerHistoryRepository employerHistoryRepository;
 
 	@PostMapping("/createpost")
 	@PreAuthorize("hasRole('EMPLOYER')")
@@ -285,8 +290,23 @@ public class EmployerDashboardController {
 	
 	@GetMapping("/candidates/{candidateId}")
 	@PreAuthorize("hasRole('EMPLOYER')")
-	public CandidateProfile getCandidateById(@PathVariable("candidateId") Long candidateId) {
+	public CandidateProfile getCandidateById(@CurrentUser UserPrincipal currentUser, @PathVariable("candidateId") Long candidateId) {
 		Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(() -> new ResourceNotFoundException("Candidate", "candidateId", candidateId));
+		if (employerHistoryRepository.getDuplicateViewedCandidateProfile(candidateId) == null) {
+			EmployerHistory employerhistory = new EmployerHistory(candidate, employerRepository.getEmployerByAccount_Id(currentUser.getId()), LocalDate.now());
+			candidate.getEmployerhistories().add(employerhistory);
+			Employer employer = employerRepository.getEmployerByAccount_Id(currentUser.getId());
+			employer.getEmployerhistories().add(employerhistory);
+			employerHistoryRepository.save(employerhistory);
+			candidateRepository.save(candidate);
+			employerRepository.save(employer);
+		}
+		else {
+			Employer employer = employerRepository.getEmployerByAccount_Id(currentUser.getId());
+			EmployerHistory employerhistory = employerHistoryRepository.getEmployerHistory(employer.getId(), candidateId);
+			employerhistory.setViewDate(LocalDate.now());
+			employerHistoryRepository.save(employerhistory);
+		}
 		List<ExperienceResponse> experiences = experienceRepository.getExperienceByCandidate(candidateId);
 		List<EducationResponse> educations = educationRepository.getEducationByCandidate(candidateId);
 		CandidateProfile candidateProfile = new CandidateProfile();
@@ -314,7 +334,10 @@ public class EmployerDashboardController {
 
 		return candidateProfile;
 	}
-
-
+	
+	@GetMapping("/history")
+	public List<CandidateSummary> getAllViewedCandidateProfiles(@CurrentUser UserPrincipal currentUser) {
+		return employerHistoryRepository.getAllViewedCandidateProfiles(employerRepository.getEmployerIdByAccount_Id(currentUser.getId()));
+	}
 
 }

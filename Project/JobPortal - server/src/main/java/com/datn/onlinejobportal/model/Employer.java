@@ -15,10 +15,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-
-
 
 @Entity
 @Table(name = "employer")
@@ -69,6 +65,9 @@ public class Employer {
 	@OneToMany(mappedBy = "employer", cascade = CascadeType.MERGE)
 	private Set<SavedCandidate> savedCandidates = new HashSet<>();
 	
+	@OneToMany(mappedBy = "employer", cascade = CascadeType.MERGE)
+	private Set<EmployerHistory> employerhistories = new HashSet<>();
+	
 	
 	public Employer() {
 		super();
@@ -84,6 +83,14 @@ public class Employer {
 		this.main_address = main_address;
 		this.phone_number = phone_number;
 		this.industry = industry;
+	}
+
+	public Set<EmployerHistory> getEmployerhistories() {
+		return employerhistories;
+	}
+
+	public void setEmployerhistories(Set<EmployerHistory> employerhistories) {
+		this.employerhistories = employerhistories;
 	}
 
 	public Long getId() {

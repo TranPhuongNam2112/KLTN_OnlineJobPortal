@@ -20,5 +20,9 @@ public interface SavedCandidateRepository extends JpaRepository<SavedCandidate, 
 	
 	@Query("Select sc From SavedCandidate sc Where sc.employer.id = :employerId And sc.candidate.id = :candidateId")
 	SavedCandidate getSavedCandidateByEmployerId(@Param("employerId") Long employerId, @Param("candidateId") Long candidateId);
-	
+
+	@Query("Select COUNT(sc) FROM Candidate c "
+			+ "LEFT JOIN c.savedCandidates sc "
+			+ "Where sc.candidate.id = :candidateId")
+	Long countSavedProfileEmployer(@Param("candidateId") Long candidateId);
 }
