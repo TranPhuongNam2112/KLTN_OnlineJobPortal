@@ -47,8 +47,8 @@ public class DBServiceImpl implements DBService {
 				+ "employer(companyname, description, establishmentdate, industry, main_address, phone_number, websiteurl, account_id, image_url) "
 				+ "values (?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 		insertNewJobPostStatement = comboPooledDataSource.getConnection().prepareStatement("insert into job_post(created_at, updated_at, expiration_date, job_description, job_title, "
-				+ "max_salary, min_salary, requiredexperienceyears, source_Url, posted_by, joblocation_id, job_type_id) values "
-				+ "(?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+				+ "max_salary, min_salary, requiredexperienceyears, source_Url, posted_by, joblocation_id, job_type_id, source_website) values "
+				+ "(?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 		insertNewIndustryStatement = comboPooledDataSource.getConnection().prepareStatement("insert into industry(industryname) values "
 				+ "(?)", Statement.RETURN_GENERATED_KEYS);
 		selectIndustryStatement = comboPooledDataSource.getConnection().prepareStatement("select * from industry where "
@@ -60,7 +60,7 @@ public class DBServiceImpl implements DBService {
 	@Override
 	public void saveJobPost(String jobtitle, String jobtype, List<String> industries, Long minSalary, 
 			Long maxSalary, String companyname, String sourceUrl, Date expirationDate, Long requiredexperienceyears
-			, String street_address, String city_province, String imageUrl) {
+			, String street_address, String city_province, String imageUrl, String sourceWebsite) {
 
 		try {
 			selectDuplicateJobPost.setString(1, sourceUrl);
@@ -79,6 +79,7 @@ public class DBServiceImpl implements DBService {
 				insertNewJobPostStatement.setLong(7, minSalary);
 				insertNewJobPostStatement.setLong(8, requiredexperienceyears);
 				insertNewJobPostStatement.setString(9, sourceUrl);
+				insertNewJobPostStatement.setString(13, sourceWebsite);
 				ResultSet insertedjoblocation = insertNewJobLocationStatement.getGeneratedKeys();
 				while (insertedjoblocation.next())
 				{

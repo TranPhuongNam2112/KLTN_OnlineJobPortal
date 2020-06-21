@@ -37,8 +37,17 @@ public class CandidateProfileRequest {
 	
 	private Long expectedsalary;
 	
+	private List<String> industries;
 
 	
+	public List<String> getIndustries() {
+		return industries;
+	}
+
+	public void setIndustries(List<String> industries) {
+		this.industries = industries;
+	}
+
 	public Long getExpectedsalary() {
 		return expectedsalary;
 	}

@@ -1,6 +1,8 @@
 package com.datn.onlinejobportal.repository;
 
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -71,6 +73,15 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN j.jobtype jt "
 			+ "Where j.expirationDate >= CURRENT_DATE AND j.sourceUrl IS NOT NULL AND lower(j.sourceUrl) Like lower(concat('%', :pagename,'%'))")
 	Page<CrawledJobPostSummary> getCrawledJobPostByWebsiteName(@Param("pagename") String pagename, Pageable pageable);
+	
+	@Query("Select new com.datn.onlinejobportal.dto.CrawledJobPostSummary(j.id, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
+			+ "From JobPost j "
+			+ "LEFT JOIN j.employer e "
+			+ "LEFT JOIN j.joblocation jl "
+			+ "LEFT JOIN j.jobtype jt "
+			+ "Where j.expirationDate >= CURRENT_DATE AND j.sourceUrl IS NOT NULL "
+			+ "AND j.sourceWebsite IN :pagenames")
+	Page<CrawledJobPostSummary> getCrawledJobPostByWebsiteNames(@Param("pagenames") List<String> pagenames, Pageable pageable);
 	
 	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
 			+ "From JobPost j "

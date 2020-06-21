@@ -82,6 +82,12 @@ public class Candidate extends DateAudit {
 	joinColumns = @JoinColumn(name = "candidate_id"), 
 	inverseJoinColumns = @JoinColumn(name = "jobtype_id"))
 	private Set<JobType> jobtypes = new HashSet<>();
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "candidate_industry", 
+	joinColumns = @JoinColumn(name = "candidate_id"), 
+	inverseJoinColumns = @JoinColumn(name = "industry_id"))
+	private Set<Industry> industries = new HashSet<>();
 
 	private String work_title;
 	
@@ -93,6 +99,14 @@ public class Candidate extends DateAudit {
 	
 	private Boolean profile_visible;
 	
+	public Set<Industry> getIndustries() {
+		return industries;
+	}
+
+	public void setIndustries(Set<Industry> industries) {
+		this.industries = industries;
+	}
+
 	public Set<EmployerHistory> getEmployerhistories() {
 		return employerhistories;
 	}

@@ -16,6 +16,7 @@ public class CandidateProfile {
 	private Date DoB;
 	
 	private List<String> jobtypes;
+	private List<String> industries;
 	private String phonenumber;
 	private String work_title;
 	private String address;
@@ -29,6 +30,12 @@ public class CandidateProfile {
 	
 	
 	
+	public List<String> getIndustries() {
+		return industries;
+	}
+	public void setIndustries(List<String> industries) {
+		this.industries = industries;
+	}
 	public String getImageUrl() {
 		return imageUrl;
 	}

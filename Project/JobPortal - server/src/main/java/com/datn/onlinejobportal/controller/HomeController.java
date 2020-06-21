@@ -1,5 +1,6 @@
 package com.datn.onlinejobportal.controller;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.datn.onlinejobportal.dao.EmployerSpecificationsBuilder;
 import com.datn.onlinejobportal.dto.CrawledJobPostSummary;
-import com.datn.onlinejobportal.dto.JobPostListRequest;
 import com.datn.onlinejobportal.dto.JobPostSummary;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Employer;
@@ -151,7 +151,17 @@ public class HomeController {
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return jobPostRepository.getJobPostsByJobTitleAndIndustryAndJobTypeAndJobLocation(jobtitle, industry, jobtype, joblocation, pageable);
+	}
+	
+	@GetMapping("/otherwebsites")
+	public Page<CrawledJobPostSummary> getOtherWebsitesJobPosts(@RequestParam(value="websitename") List<String> websitename,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+		return jobPostRepository.getCrawledJobPostByWebsiteNames(websitename, pageable);
 
+		
 	}
 
 

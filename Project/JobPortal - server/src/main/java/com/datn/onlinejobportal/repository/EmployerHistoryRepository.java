@@ -36,4 +36,5 @@ public interface EmployerHistoryRepository extends JpaRepository<EmployerHistory
 	EmployerHistory getEmployerHistory(@Param("employerId") Long employerId, @Param("candidateId") Long candidateId);
 	
 
+
 }

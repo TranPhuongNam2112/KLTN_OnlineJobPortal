@@ -212,7 +212,7 @@ public class MyWebCrawler extends WebCrawler {
 
 						//System.out.println(cat.child(1).select("div.time > time").text());
 						dBService.saveJobPost(jobtitle, jobtype, industry, minSalary, maxSalary, companyname, sourceUrl, sqlDate, 
-								years, "", joblocation, companyimageUrl);
+								years, "", joblocation, companyimageUrl, "CareerBuilder");
 
 
 						/*
@@ -371,7 +371,7 @@ public class MyWebCrawler extends WebCrawler {
 
 						System.out.println(ele.select("p.font-12 span.mrg-l-10").text());
 						dBService.saveJobPost(jobtitle, jobtype, industries, minSalary, maxSalary, companyname, sourceUrl, sqlDate, 
-								years, street_address, city_province,companyimageUrl);
+								years, street_address, city_province,companyimageUrl, "jobsgo");
 					
 				}
 			}
@@ -502,7 +502,7 @@ public class MyWebCrawler extends WebCrawler {
 					
 						System.out.println(ele.select("p.font-12 span.mrg-l-10").text());
 						dBService.saveJobPost(jobtitle, jobtype, industries, minSalary, maxSalary, companyname, sourceUrl, sqlDate, 
-								years, street_address, city_province, companyimageUrl);
+								years, street_address, city_province, companyimageUrl, "timviec365");
 					
 				}	
 			}
@@ -595,7 +595,7 @@ public class MyWebCrawler extends WebCrawler {
 							//System.out.println(jobtype);
 							
 							dBService.saveJobPost(job.select("div > a:nth-child(1)").attr("title"), jobtype, industries, minSalary, maxSalary, companyname, 
-									sourceUrl, sqlDate, years, street_address, job.select("div > div:nth-child(1)").first().nextElementSibling().text(), companyimageUrl);
+									sourceUrl, sqlDate, years, street_address, job.select("div > div:nth-child(1)").first().nextElementSibling().text(), companyimageUrl, "timviecnhanh");
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

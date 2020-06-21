@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -19,6 +20,7 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 
 @SpringBootApplication
+@EnableScheduling
 public class JobPortalCrawlerApplication {
 	static int findLastIndex(String str, Character x) 
 	{ 
@@ -51,7 +53,7 @@ public class JobPortalCrawlerApplication {
 		
 
 		SpringApplication.run(JobPortalCrawlerApplication.class, args);
-
+		/*
 		
 		String crawlStorageFolder = "/tmp/crawler4j/";
 
@@ -119,7 +121,7 @@ public class JobPortalCrawlerApplication {
 			}			
 		}
 		
-		*/
+		
 		
 
 		controller1.addSeed("https://www.timviecnhanh.com/mien-nam/viec-lam-kinh-doanh-c32.html");
@@ -152,6 +154,6 @@ public class JobPortalCrawlerApplication {
 		controller2.waitUntilFinish();
 		logger.info("Crawler 2 is finished.");
 		pool1.close();
-		
+		*/
 	}
 }

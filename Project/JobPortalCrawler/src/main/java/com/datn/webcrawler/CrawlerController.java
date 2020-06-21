@@ -46,7 +46,7 @@ public class CrawlerController {
 	private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
 
 
-	//@Scheduled(cron = "0 41 19 * * ?")
+	//@Scheduled(cron = "0 22 12 * * ?")
 	public static void TimViecNhanhcrawlSchedule() throws Exception {
 		System.out.println("Start crawling");
 		String crawlStorageFolder = "/tmp/crawler4j/";

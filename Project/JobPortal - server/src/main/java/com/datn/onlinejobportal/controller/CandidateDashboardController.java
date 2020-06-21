@@ -119,6 +119,7 @@ public class CandidateDashboardController {
 			candidateProfile.setCV_Uri(fileDownloadUri);
 			candidateProfile.setCV_name(candidate.getFiles().getFileName());
 		}
+		candidateProfile.setIndustries(industryRepository.getCandidateIndustryNames());
 		candidateProfile.setName(currentUser.getFullname());
 		candidateProfile.setAddress(candidate.getHomeaddress());
 		candidateProfile.setGender(candidate.getGender());
@@ -210,6 +211,7 @@ public class CandidateDashboardController {
 
 		user.setName(candidateProfileRequest.getFullname());
 		candidate.setUpdatedAt(LocalDate.now());
+		candidate.setIndustries(industryRepository.getAllIndustriesByNames(candidateProfileRequest.getIndustries()));
 		candidate.setDoB(candidateProfileRequest.getDoB());
 		candidate.setGender(candidateProfileRequest.getGender());
 		candidate.setHomeaddress(candidateProfileRequest.getHomeaddress());
@@ -360,7 +362,6 @@ public class CandidateDashboardController {
 	public List<JobPostSummary> getAllViewedJobPost(@CurrentUser UserPrincipal currentUser) {
 		return candidateHistoryRepository.getAllCandidatHistory(candidateRepository.getCandidateIdByUserId(currentUser.getId()));
 	}
-
-
+	
 
 }

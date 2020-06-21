@@ -25,6 +25,10 @@ public class Industry {
 	@JsonIgnore
     private Set<JobPost> jobposts;
 
+	
+	@ManyToMany(mappedBy="industries")
+	@JsonIgnore
+    private Set<Candidate> industries;
 
 	public Industry() {
 		super();
@@ -33,6 +37,15 @@ public class Industry {
 	public Industry(String industryname) {
 		super();
 		this.industryname = industryname;
+	}
+
+	
+	public Set<Candidate> getIndustries() {
+		return industries;
+	}
+
+	public void setIndustries(Set<Candidate> industries) {
+		this.industries = industries;
 	}
 
 	public Long getId() {

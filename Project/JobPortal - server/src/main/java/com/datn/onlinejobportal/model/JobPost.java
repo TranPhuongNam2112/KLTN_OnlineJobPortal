@@ -80,10 +80,22 @@ public class JobPost extends DateAudit {
 	
 	private String sourceUrl;
 	
+	private String sourceWebsite;
+	
 	public JobPost() {
 		super();
 	}
 	
+
+	public String getSourceWebsite() {
+		return sourceWebsite;
+	}
+
+
+	public void setSourceWebsite(String sourceWebsite) {
+		this.sourceWebsite = sourceWebsite;
+	}
+
 
 	public Set<CandidateHistory> getCandidatehistories() {
 		return candidatehistories;

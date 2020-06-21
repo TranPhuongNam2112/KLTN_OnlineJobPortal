@@ -19,4 +19,8 @@ public interface IndustryRepository extends JpaRepository<Industry, Long>{
 	
 	@Query("Select i From Industry i Where i.industryname In :names")
 	Set<Industry> getAllIndustriesByNames(@Param("names") List<String> names);
+	
+	@Query("Select i.industryname From Candidate c "
+			+ "LEFT JOIN c.industries i")
+	List<String> getCandidateIndustryNames();
 }
