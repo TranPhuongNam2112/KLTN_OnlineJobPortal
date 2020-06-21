@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.datn.onlinejobportal.dto.CandidateStats;
+import com.datn.onlinejobportal.dto.EmployerSummary;
 import com.datn.onlinejobportal.dto.JobPostSummary;
 import com.datn.onlinejobportal.event.SaveCandidateEvent;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
@@ -48,6 +50,7 @@ import com.datn.onlinejobportal.payload.JobPostDetails;
 import com.datn.onlinejobportal.repository.CandidateHistoryRepository;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EducationRepository;
+import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.ExperienceRepository;
 import com.datn.onlinejobportal.repository.IndustryRepository;
 import com.datn.onlinejobportal.repository.JobLocationRepository;
@@ -57,6 +60,7 @@ import com.datn.onlinejobportal.repository.SavedJobPostRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
 import com.datn.onlinejobportal.security.CurrentUser;
 import com.datn.onlinejobportal.security.UserPrincipal;
+import com.datn.onlinejobportal.service.CandidateStatisticService;
 import com.datn.onlinejobportal.service.DBFileStorageService;
 import com.datn.onlinejobportal.util.AppConstants;
 
@@ -96,8 +100,12 @@ public class CandidateDashboardController {
 
 	@Autowired
 	private IndustryRepository industryRepository;
-
-
+	
+	@Autowired
+	private EmployerRepository employerRepository;
+	
+	@Autowired
+	private CandidateStatisticService candidateStatisticService;
 
 
 	@GetMapping("/myprofile")
@@ -363,5 +371,20 @@ public class CandidateDashboardController {
 		return candidateHistoryRepository.getAllCandidatHistory(candidateRepository.getCandidateIdByUserId(currentUser.getId()));
 	}
 	
+	@GetMapping("/allemployers")
+	public Page<EmployerSummary> getAllEmployers(@CurrentUser UserPrincipal currentUser,  @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = "3")int pageSize,
+			@RequestParam(defaultValue = "companyname") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+		return employerRepository.getAllEmployers(pageable);
+	}
+	
+	@GetMapping("/mystats")
+	public CandidateStats getCandidateStats(@CurrentUser UserPrincipal currentUser) {
+		CandidateStats candidate = new CandidateStats();
+		candidate.setViewedEmployersCount(candidateStatisticService.countViewedProfileEmployers(currentUser));
+		candidate.setSavedEmployersCount(candidateStatisticService.countSavedProfileEmployers(currentUser));
+		return candidate;
+	}
 
 }

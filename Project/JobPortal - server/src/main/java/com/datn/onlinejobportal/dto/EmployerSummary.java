@@ -9,6 +9,19 @@ public class EmployerSummary {
 	
 	
 	
+	public EmployerSummary() {
+		super();
+	}
+	
+	
+	public EmployerSummary(byte[] image, String companyname, String industry) {
+		super();
+		this.image = image;
+		this.companyname = companyname;
+		this.industry = industry;
+	}
+
+
 	public Long getId() {
 		return id;
 	}

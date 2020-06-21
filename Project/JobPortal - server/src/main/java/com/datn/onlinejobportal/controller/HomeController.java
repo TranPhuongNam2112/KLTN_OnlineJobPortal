@@ -160,9 +160,12 @@ public class HomeController {
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return jobPostRepository.getCrawledJobPostByWebsiteNames(websitename, pageable);
-
-		
 	}
 
+	@GetMapping("/topviewedjobposts")
+	public List<JobPostSummary> getTopViewedJobPost() {
+		Pageable pageable = PageRequest.of(0, 10);
+		return jobPostRepository.getTopViewedJobPost(jobPostRepository.getTop10ViewedJobPost(), pageable);
+	}
 
 }
