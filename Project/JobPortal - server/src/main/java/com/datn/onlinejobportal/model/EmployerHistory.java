@@ -35,6 +35,7 @@ public class EmployerHistory {
 		this.candidate = candidate;
 		this.employer = employer;
 		this.viewDate = viewDate;
+		this.employerHistoryId = new EmployerHistoryId(candidate.getId(), employer.getId());
 	}
 
 	public Candidate getCandidate() {

@@ -38,6 +38,7 @@ public class CandidateHistory {
 		this.candidate = candidate;
 		this.jobpost = jobpost;
 		this.viewDate = viewDate;
+		this.candidateHistoryId = new CandidateHistoryId(candidate.getId(), jobpost.getId());
 	}
 
 
@@ -49,7 +50,6 @@ public class CandidateHistory {
 	public void setCandidateHistoryId(CandidateHistoryId candidateHistoryId) {
 		this.candidateHistoryId = candidateHistoryId;
 	}
-
 
 
 	public LocalDate getViewDate() {

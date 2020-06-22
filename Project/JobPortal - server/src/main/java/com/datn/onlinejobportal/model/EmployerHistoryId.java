@@ -13,16 +13,16 @@ public class EmployerHistoryId implements Serializable {
 	private Long candidateId;
 	
 	@Column(name="employer_id")
-	private Long jobpostId;
+	private Long employerId;
 
 	public EmployerHistoryId() {
 		super();
 	}
 
-	public EmployerHistoryId(Long candidateId, Long jobpostId) {
+	public EmployerHistoryId(Long candidateId, Long employerId) {
 		super();
 		this.candidateId = candidateId;
-		this.jobpostId = jobpostId;
+		this.employerId = employerId;
 	}
 
 	public Long getCandidateId() {
@@ -33,13 +33,14 @@ public class EmployerHistoryId implements Serializable {
 		this.candidateId = candidateId;
 	}
 
-	public Long getJobpostId() {
-		return jobpostId;
+	public Long getEmployerId() {
+		return employerId;
 	}
 
-	public void setJobpostId(Long jobpostId) {
-		this.jobpostId = jobpostId;
+	public void setEmployerId(Long employerId) {
+		this.employerId = employerId;
 	}
+	
 	
 
 }
