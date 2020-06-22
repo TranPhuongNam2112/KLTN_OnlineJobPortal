@@ -50,6 +50,7 @@ import com.datn.onlinejobportal.payload.SignUpRequest;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.ConfirmationTokenRepository;
 import com.datn.onlinejobportal.repository.EmployerRepository;
+import com.datn.onlinejobportal.repository.JobPostRepository;
 import com.datn.onlinejobportal.repository.PasswordResetTokenRepository;
 import com.datn.onlinejobportal.repository.RoleRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
@@ -85,12 +86,14 @@ public class AuthController {
 	@Autowired
 	private EmployerRepository employerRepository;
 
-
 	@Autowired
 	private CandidateRepository candidateRepository;
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private JobPostRepository jobPostRepository;
 
 
 	@PostMapping("/login")
@@ -145,6 +148,9 @@ public class AuthController {
 		user.setRoles(roles);
 		user.setCreatedAt(LocalDate.now());
 		User result = userRepository.save(user);
+		
+		employerRepository.deleteDuplicateEmployer(employersignUpRequest.getCompanyname());
+		jobPostRepository.deleteJobPostsByEmployer(employersignUpRequest.getCompanyname());
 
 		Employer company = new Employer();
 		company.setCompanyname(employersignUpRequest.getCompanyname());

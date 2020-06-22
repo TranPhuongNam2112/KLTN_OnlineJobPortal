@@ -121,8 +121,8 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN u.files f "
 			+ "LEFT JOIN j.joblocation jl "
 			+ "LEFT JOIN j.jobtype jt "
-			+ "Where j.expirationDate >= CURRENT_DATE AND j.sourceUrl IS NULL AND e.companyname = :companyname")
-	Page<JobPostSummary> getAllJobPostsByEmployer(@Param("companyname") String companyname, Pageable pageable);
+			+ "Where j.expirationDate >= CURRENT_DATE AND j.sourceUrl IS NULL AND e.id = :employerId")
+	Page<JobPostSummary> getAllJobPostsByEmployer(@Param("employerId") Long employerId, Pageable pageable);
 	
 	@Query("Select COUNT(j.id) From JobPost j "
 			+ "Where j.createdAt = CURENT_DATE")

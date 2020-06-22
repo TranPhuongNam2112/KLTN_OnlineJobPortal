@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 
 import com.datn.onlinejobportal.dto.CandidateStats;
 import com.datn.onlinejobportal.dto.EmployerSummary;
@@ -394,26 +397,16 @@ public class CandidateDashboardController {
 		return candidate;
 	}
 	
-<<<<<<< HEAD
 
 	
-	@GetMapping("/{companyname}/jobposts")
-=======
-	@GetMapping("/jobposts/{companyname}")
->>>>>>> 3d2d542eab8ccd2fbc72e526f93eecc672730c88
+	@GetMapping("/{employerId}/jobposts")
 	@PreAuthorize("hasRole('CANDIDATE')")
-	public Page<JobPostSummary> getAllJobPostByEmployers(@CurrentUser UserPrincipal currentUser, @PathVariable("companyname") String companyname, 
+	public Page<JobPostSummary> getAllJobPostByEmployers(@CurrentUser UserPrincipal currentUser, @PathVariable("employerId") Long employerId, 
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = "3")int pageSize,
-			@RequestParam(defaultValue = "expirationDate") String sortBy, HttpServletRequest httpServletRequest) {
+			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
-		try {
-			httpServletRequest.setCharacterEncoding(StandardCharsets.UTF_8.toString());
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		return jobPostRepository.getAllJobPostsByEmployer(companyname, pageable);
+		return jobPostRepository.getAllJobPostsByEmployer(employerId, pageable);
 	}
 	
 	

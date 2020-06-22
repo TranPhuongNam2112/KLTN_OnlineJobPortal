@@ -29,7 +29,7 @@ public interface EmployerRepository extends JpaRepository<Employer, Long>, JpaSp
 
 	Page<Employer> findAll(Pageable pageable);
 	
-	@Query("Select new com.datn.onlinejobportal.dto.EmployerSummary(f.data, e.companyname, e.industry) From Employer e "
+	@Query("Select new com.datn.onlinejobportal.dto.EmployerSummary(e.id, f.data, e.imageUrl, e.companyname, e.industry) From Employer e "
 			+ "LEFT JOIN e.user u "
 			+ "LEFT JOIN u.files f ")
 	Page<EmployerSummary> getAllEmployers(Pageable pageable);

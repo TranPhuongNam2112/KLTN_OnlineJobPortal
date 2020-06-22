@@ -4,21 +4,32 @@ public class EmployerSummary {
 	
 	private Long id;
 	private byte[] image;
+	private String imageUrl;
 	private String companyname;
 	private String industry;
-	
-	
 	
 	public EmployerSummary() {
 		super();
 	}
-	
-	
-	public EmployerSummary(byte[] image, String companyname, String industry) {
+
+
+	public EmployerSummary(Long id, byte[] image, String imageUrl, String companyname, String industry) {
 		super();
+		this.id = id;
 		this.image = image;
+		this.imageUrl = imageUrl;
 		this.companyname = companyname;
 		this.industry = industry;
+	}
+
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 
