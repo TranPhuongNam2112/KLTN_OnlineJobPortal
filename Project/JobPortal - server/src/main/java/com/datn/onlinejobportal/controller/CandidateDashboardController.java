@@ -372,6 +372,7 @@ public class CandidateDashboardController {
 	}
 	
 	@GetMapping("/allemployers")
+	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<EmployerSummary> getAllEmployers(@CurrentUser UserPrincipal currentUser,  @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = "3")int pageSize,
 			@RequestParam(defaultValue = "companyname") String sortBy) {
@@ -380,11 +381,25 @@ public class CandidateDashboardController {
 	}
 	
 	@GetMapping("/mystats")
+	@PreAuthorize("hasRole('CANDIDATE')")
 	public CandidateStats getCandidateStats(@CurrentUser UserPrincipal currentUser) {
 		CandidateStats candidate = new CandidateStats();
 		candidate.setViewedEmployersCount(candidateStatisticService.countViewedProfileEmployers(currentUser));
 		candidate.setSavedEmployersCount(candidateStatisticService.countSavedProfileEmployers(currentUser));
 		return candidate;
 	}
+	
+	@GetMapping("/{companyname}/jobposts")
+	@PreAuthorize("hasRole('CANDIDATE')")
+	public Page<JobPostSummary> getAllJobPostByEmployers(@CurrentUser UserPrincipal currentUser, @PathVariable("companyname") String companyname, 
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = "3")int pageSize,
+			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+		return jobPostRepository.getAllJobPostsByEmployer(companyname, pageable);
+	}
+	
+	
+	
 
 }

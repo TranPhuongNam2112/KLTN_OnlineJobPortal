@@ -37,7 +37,12 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 			+ "LEFT JOIN u.files f ")
 	Page<CandidateSummary> getAllCandidates(Pageable pageable);
 
+	@Query("Select COUNT(c) From Candidate c ")
+	Long getCandidateCounts();
 	
-	
+	@Query("Select COUNT(c) From Candidate c "
+			+ "LEFT JOIN c.user u "
+			+ "Where u.createdAt = CURRENT_DATE")
+	Long getCurrentDateNewCandidatesCount();
 	
 }

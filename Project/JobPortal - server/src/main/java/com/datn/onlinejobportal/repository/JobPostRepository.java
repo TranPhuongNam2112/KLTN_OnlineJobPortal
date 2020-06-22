@@ -3,10 +3,13 @@ package com.datn.onlinejobportal.repository;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -111,4 +114,22 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "Where j.expirationDate >= CURRENT_DATE AND j.sourceUrl IS NULL AND j.id IN :top")
 	List<JobPostSummary> getTopViewedJobPost(@Param("top") List<Long> top, Pageable pageable); 
 	
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
+			+ "From JobPost j "
+			+ "LEFT JOIN j.employer e "
+			+ "LEFT JOIN e.user u "
+			+ "LEFT JOIN u.files f "
+			+ "LEFT JOIN j.joblocation jl "
+			+ "LEFT JOIN j.jobtype jt "
+			+ "Where j.expirationDate >= CURRENT_DATE AND j.sourceUrl IS NULL AND e.companyname = :companyname")
+	Page<JobPostSummary> getAllJobPostsByEmployer(@Param("companyname") String companyname, Pageable pageable);
+	
+	@Query("Select COUNT(j.id) From JobPost j "
+			+ "Where j.createdAt = CURENT_DATE")
+	Long getNewJobPostsCountToday();
+	
+	@Modifying
+	@Transactional
+	@Query("DELET FROM JobPost jp Where jp.employer.companyname = :companyname")
+	void deleteJobPostsByEmployer(@Param("companyname") String companyname);
 }
