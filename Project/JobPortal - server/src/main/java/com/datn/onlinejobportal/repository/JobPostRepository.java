@@ -130,6 +130,6 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 	
 	@Modifying
 	@Transactional
-	@Query("DELET FROM JobPost jp Where jp.employer.companyname = :companyname")
+	@Query("DELETE FROM JobPost jp Where jp.employer.companyname = :companyname")
 	void deleteJobPostsByEmployer(@Param("companyname") String companyname);
 }

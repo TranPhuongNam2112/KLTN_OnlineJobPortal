@@ -1,8 +1,12 @@
 package com.datn.onlinejobportal.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -389,13 +393,21 @@ public class CandidateDashboardController {
 		return candidate;
 	}
 	
+
+	
 	@GetMapping("/{companyname}/jobposts")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getAllJobPostByEmployers(@CurrentUser UserPrincipal currentUser, @PathVariable("companyname") String companyname, 
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = "3")int pageSize,
-			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+			@RequestParam(defaultValue = "expirationDate") String sortBy, HttpServletRequest httpServletRequest) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+		try {
+			httpServletRequest.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 		return jobPostRepository.getAllJobPostsByEmployer(companyname, pageable);
 	}
 	
