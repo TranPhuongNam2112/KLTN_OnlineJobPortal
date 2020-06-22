@@ -11,7 +11,16 @@ public class EmployerProfile {
 	private byte[] image;
 	
 	private String companyname;
+	private String image_url;
 	
+	public String getImage_url() {
+		return image_url;
+	}
+
+	public void setImage_url(String image_url) {
+		this.image_url = image_url;
+	}
+
 	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date establishmentdate;
 	
@@ -30,7 +39,7 @@ public class EmployerProfile {
 	}
 
 	public EmployerProfile(Long id, byte[] image, String companyname, Date establishmentdate, String industry, String main_address,
-			String phone_number, String websiteUrl, String description) {
+			String phone_number, String websiteUrl, String description, String image_url) {
 		super();
 		this.id = id;
 		this.image = image;
@@ -41,6 +50,7 @@ public class EmployerProfile {
 		this.phone_number = phone_number;
 		this.websiteUrl = websiteUrl;
 		this.description = description;
+		this.image_url = image_url;
 	}
 
 	public byte[] getImage() {
