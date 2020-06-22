@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,7 +68,7 @@ import com.datn.onlinejobportal.security.UserPrincipal;
 import com.datn.onlinejobportal.service.CandidateStatisticService;
 import com.datn.onlinejobportal.service.DBFileStorageService;
 import com.datn.onlinejobportal.util.AppConstants;
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/candidate")
 public class CandidateDashboardController {
@@ -393,9 +394,13 @@ public class CandidateDashboardController {
 		return candidate;
 	}
 	
+<<<<<<< HEAD
 
 	
 	@GetMapping("/{companyname}/jobposts")
+=======
+	@GetMapping("/jobposts/{companyname}")
+>>>>>>> 3d2d542eab8ccd2fbc72e526f93eecc672730c88
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getAllJobPostByEmployers(@CurrentUser UserPrincipal currentUser, @PathVariable("companyname") String companyname, 
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,

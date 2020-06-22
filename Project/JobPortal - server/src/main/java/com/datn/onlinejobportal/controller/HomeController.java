@@ -126,12 +126,12 @@ public class HomeController {
 		employerProfile.setMain_address(employer.getMain_address());
 		employerProfile.setPhone_number(employer.getPhone_number());
 		employerProfile.setWebsiteUrl(employer.getWebsiteurl());
-
+		employerProfile.setImage_url(employer.getImageUrl());
 		return employerProfile;
 
 	}
 	
-	@GetMapping("/otherwebsites/{websitename}/alljobposts")
+	@GetMapping("/otherwebsites/alljobposts/{websitename}")
 	public Page<CrawledJobPostSummary> getAllCrawledJobPosts(@PathVariable("websitename") String websitename, 
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
