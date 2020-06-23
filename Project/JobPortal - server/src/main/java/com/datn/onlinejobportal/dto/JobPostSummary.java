@@ -16,10 +16,11 @@ public class JobPostSummary {
 	private Date expirationDate;
 	private Long minSalary;
 	private Long maxSalary;
+	private String sourceUrl;
 	
 	
 	public JobPostSummary(Long id, byte[] image, String imageUrl, String companyname, String jobtitle, Long experienceyears, String city,
-			String jobtype, Date expirationDate, Long minSalary, Long maxSalary) {
+			String jobtype, Date expirationDate, Long minSalary, Long maxSalary, String sourceUrl) {
 		super();
 		this.id = id;
 		this.image = image;
@@ -32,8 +33,17 @@ public class JobPostSummary {
 		this.expirationDate = expirationDate;
 		this.minSalary = minSalary;
 		this.maxSalary = maxSalary;
+		this.sourceUrl = sourceUrl;
 	}
 	
+	public String getSourceUrl() {
+		return sourceUrl;
+	}
+
+	public void setSourceUrl(String sourceUrl) {
+		this.sourceUrl = sourceUrl;
+	}
+
 	public String getImageUrl() {
 		return imageUrl;
 	}

@@ -34,7 +34,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "Where e.id = :employerId")
 	Page<MyJobPostSummary> getAllJobPostByEmployerId(@Param("employerId") Long employerId, Pageable pageable);
 	
-	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
 			+ "From JobPost j "
 			+ "LEFT JOIN j.employer e "
 			+ "LEFT JOIN e.user u "
@@ -44,7 +44,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "Where jt.job_type_name = :jobtypename AND j.expirationDate >= CURRENT_DATE")
 	Page<JobPostSummary> getJobPostsByJobType(@Param("jobtypename") String jobtypename, Pageable pageable); 
 	
-	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
 			+ "From JobPost j "
 			+ "LEFT JOIN j.employer e "
 			+ "LEFT JOIN e.user u "
@@ -59,7 +59,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 	@Query("Select j from JobPost j Where j.id = :jobpostId")
 	JobPost findByJobPostId(@Param("jobpostId") Long jobpostId);
 	
-	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
 			+ "From JobPost j "
 			+ "LEFT JOIN j.employer e "
 			+ "LEFT JOIN e.user u "
@@ -86,7 +86,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "AND j.sourceWebsite IN :pagenames")
 	Page<CrawledJobPostSummary> getCrawledJobPostByWebsiteNames(@Param("pagenames") List<String> pagenames, Pageable pageable);
 	
-	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
 			+ "From JobPost j "
 			+ "LEFT JOIN j.employer e "
 			+ "LEFT JOIN e.user u "
@@ -104,7 +104,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "ORDER BY COUNT(ch.candidate.id)")
 	List<Long> getTop10ViewedJobPost();
 	
-	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
 			+ "From JobPost j "
 			+ "LEFT JOIN j.employer e "
 			+ "LEFT JOIN e.user u "
@@ -114,7 +114,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "Where j.expirationDate >= CURRENT_DATE AND j.id IN :top AND j.sourceUrl IS NULL")
 	List<JobPostSummary> getTopViewedJobPost(@Param("top") List<Long> top, Pageable pageable); 
 	
-	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
 			+ "From JobPost j "
 			+ "LEFT JOIN j.employer e "
 			+ "LEFT JOIN e.user u "

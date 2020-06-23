@@ -25,7 +25,7 @@ public interface CandidateHistoryRepository extends JpaRepository<CandidateHisto
 			+ "Where ch.jobpost.id =:jobpostId And u.id =:userId")
 	CandidateHistory getCandidateHistory(@Param("jobpostId") Long jobpostId, @Param("userId") Long userId);
 	
-	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
 			+ "From JobPost j "
 			+ "LEFT JOIN j.employer e "
 			+ "LEFT JOIN e.user u "
