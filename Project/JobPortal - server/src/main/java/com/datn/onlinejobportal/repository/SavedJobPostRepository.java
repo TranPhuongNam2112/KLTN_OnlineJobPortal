@@ -13,7 +13,7 @@ public interface SavedJobPostRepository extends JpaRepository<SavedJobPost, Long
 	
 	Long countByCandidate_id(Long candidate_id);
 	
-	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
 			+ "From JobPost j "
 			+ "LEFT JOIN j.employer e "
 			+ "LEFT JOIN e.user u "

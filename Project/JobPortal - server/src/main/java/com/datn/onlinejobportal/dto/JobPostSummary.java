@@ -7,6 +7,7 @@ public class JobPostSummary {
 	
 	private Long id;
 	private byte[] image;
+	private String imageUrl;
 	private String companyname;
 	private String jobtitle;
 	private Long experienceyears;
@@ -17,11 +18,12 @@ public class JobPostSummary {
 	private Long maxSalary;
 	
 	
-	public JobPostSummary(Long id, byte[] image, String companyname, String jobtitle, Long experienceyears, String city,
+	public JobPostSummary(Long id, byte[] image, String imageUrl, String companyname, String jobtitle, Long experienceyears, String city,
 			String jobtype, Date expirationDate, Long minSalary, Long maxSalary) {
 		super();
 		this.id = id;
 		this.image = image;
+		this.imageUrl = imageUrl;
 		this.companyname = companyname;
 		this.jobtitle = jobtitle;
 		this.experienceyears = experienceyears;
@@ -32,6 +34,14 @@ public class JobPostSummary {
 		this.maxSalary = maxSalary;
 	}
 	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 	public Long getId() {
 		return id;
 	}
