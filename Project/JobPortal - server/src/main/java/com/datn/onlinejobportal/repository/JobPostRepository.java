@@ -66,7 +66,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN u.files f "
 			+ "LEFT JOIN j.joblocation jl "
 			+ "LEFT JOIN j.jobtype jt "
-			+ "Where j.expirationDate >= CURRENT_DATE")
+			+ "Where j.expirationDate >= CURRENT_DATE AND j.sourceUrl IS NULL")
 	Page<JobPostSummary> getAllJobPosts(Pageable pageable); 
 	
 	@Query("Select new com.datn.onlinejobportal.dto.CrawledJobPostSummary(j.id, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
@@ -111,7 +111,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN u.files f "
 			+ "LEFT JOIN j.joblocation jl "
 			+ "LEFT JOIN j.jobtype jt "
-			+ "Where j.expirationDate >= CURRENT_DATE AND j.id IN :top")
+			+ "Where j.expirationDate >= CURRENT_DATE AND j.id IN :top AND j.sourceUrl IS NULL")
 	List<JobPostSummary> getTopViewedJobPost(@Param("top") List<Long> top, Pageable pageable); 
 	
 	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary) "
