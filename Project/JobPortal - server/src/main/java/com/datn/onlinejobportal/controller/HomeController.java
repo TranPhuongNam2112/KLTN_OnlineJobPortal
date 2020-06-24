@@ -176,7 +176,7 @@ public class HomeController {
 		return jobPostRepository.getAllJobPostsByIndustryAndWebsitename(industry, websitename, pageable);
 	}
 	
-	@GetMapping("/{industry}/")
+	@GetMapping("/{industry}")
 	public Page<JobPostSummary> getJobPostsByIndustry(@PathVariable("industry") String industry, @PathVariable("websitename") String websitename, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
