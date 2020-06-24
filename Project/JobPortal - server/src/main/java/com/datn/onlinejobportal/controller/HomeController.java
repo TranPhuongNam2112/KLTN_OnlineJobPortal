@@ -181,7 +181,7 @@ public class HomeController {
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
-		return jobPostRepository.getAllJobPostsByIndustryAndWebsitename(industry, websitename, pageable);
+		return jobPostRepository.getAllJobPostsByIndustry(industry, pageable);
 	}
 
 }
