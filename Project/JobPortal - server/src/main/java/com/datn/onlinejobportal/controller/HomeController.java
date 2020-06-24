@@ -167,5 +167,14 @@ public class HomeController {
 		Pageable pageable = PageRequest.of(0, 10);
 		return jobPostRepository.getTopViewedJobPost(jobPostRepository.getTop10ViewedJobPost(), pageable);
 	}
+	
+	@GetMapping("/{industry}/{websitename}")
+	public Page<JobPostSummary> getJobPostsByIndustryAndWebsiteName(@PathVariable("industry") String industry, @PathVariable("websitename") String websitename, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+		return jobPostRepository.getAllJobPostsByIndustryAndWebsitename(industry, websitename, pageable);
+		
+	}
 
 }

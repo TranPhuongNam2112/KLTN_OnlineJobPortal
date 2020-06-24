@@ -148,6 +148,7 @@ public class CandidateDashboardController {
 		candidateProfile.setExperiences(experiences);
 		candidateProfile.setExpectedsalary(candidate.getExpectedsalary());
 		candidateProfile.setImageUrl(userRepository.getCandidateImageUrl(candidate.getId()));
+		candidateProfile.setCity_province(candidate.getCity_province());
 		return candidateProfile;
 	}
 
@@ -225,15 +226,15 @@ public class CandidateDashboardController {
 		User user = userRepository.findById(currentUser.getId()).orElseThrow(
 				() -> new ResourceNotFoundException("User", "id", candidateId));
 
-		user.setName(candidateProfileRequest.getFullname());
+		user.setName(candidateProfileRequest.getName());
 		candidate.setUpdatedAt(LocalDate.now());
 		candidate.setIndustries(industryRepository.getAllIndustriesByNames(candidateProfileRequest.getIndustries()));
 		candidate.setDoB(candidateProfileRequest.getDoB());
 		candidate.setGender(candidateProfileRequest.getGender());
-		candidate.setHomeaddress(candidateProfileRequest.getHomeaddress());
+		candidate.setHomeaddress(candidateProfileRequest.getAddress());
 		candidate.setCity_province(candidateProfileRequest.getCity_province());
 		candidate.setWork_title(candidateProfileRequest.getWork_title());
-		candidate.setPhone_number(candidateProfileRequest.getPhone_number());
+		candidate.setPhone_number(candidateProfileRequest.getPhonenumber());
 		candidate.setJobtypes(jobTypeRepository.getAllCandidateJobType(candidateProfileRequest.getJobtypes()));
 		candidate.setProfile_visible(candidateProfileRequest.getProfile_visible());
 		candidate.setYearsofexperience(candidateProfileRequest.getExperiencedyears());

@@ -13,21 +13,21 @@ public class CandidateProfileRequest {
 	
 	@NotBlank
 	@Size(max=100)
-	private String fullname;
+	private String name;
 	
 	@DateTimeFormat(pattern = "dd.MM.yyyy")
 	private Date DoB;
 	
 	private String gender;
 	
-	private String homeaddress;
+	private String address;
 	
 	private String city_province;
 	
 	private String work_title;
 	
 	@Size(max=11)
-	private String phone_number;
+	private String phonenumber;
 	
 	private List<String> jobtypes;
 	
@@ -88,12 +88,12 @@ public class CandidateProfileRequest {
 		this.work_title = work_title;
 	}
 
-	public String getFullname() {
-		return fullname;
+	public String getName() {
+		return name;
 	}
 
-	public void setFullname(String fullname) {
-		this.fullname = fullname;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Date getDoB() {
@@ -112,22 +112,22 @@ public class CandidateProfileRequest {
 		this.gender = gender;
 	}
 
-	public String getHomeaddress() {
-		return homeaddress;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setHomeaddress(String homeaddress) {
-		this.homeaddress = homeaddress;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
-	public String getPhone_number() {
-		return phone_number;
+	public String getPhonenumber() {
+		return phonenumber;
 	}
 
-	public void setPhone_number(String phone_number) {
-		this.phone_number = phone_number;
+	public void setPhonenumber(String phonenumber) {
+		this.phonenumber = phonenumber;
 	}
-	
+
 	public List<String> getJobtypes() {
 		return jobtypes;
 	}

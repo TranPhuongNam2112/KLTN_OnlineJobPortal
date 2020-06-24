@@ -26,10 +26,15 @@ public class CandidateProfile {
 	private String CV_name;
 	private Long expectedsalary;
 	private String imageUrl;
+	private String city_province;
 	
 	
-	
-	
+	public String getCity_province() {
+		return city_province;
+	}
+	public void setCity_province(String city_province) {
+		this.city_province = city_province;
+	}
 	public List<String> getIndustries() {
 		return industries;
 	}
