@@ -141,7 +141,18 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN j.joblocation jl "
 			+ "LEFT JOIN j.jobtype jt "
 			+ "LEFT JOIN j.industries i "
-			+ "Where j.expirationDate >= CURRENT_DATE AND j.sourceUrl IS NOT NULL AND i.industry.industryname = ?1 AND j.sourceWebsite = ?2")
+			+ "Where j.expirationDate >= CURRENT_DATE AND j.sourceUrl IS NOT NULL AND i.industryname = ?1 AND j.sourceWebsite = ?2")
 	Page<JobPostSummary> getAllJobPostsByIndustryAndWebsitename(String industryname, String sourceWebsite, Pageable pageable); 
 	
+	
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
+			+ "From JobPost j "
+			+ "LEFT JOIN j.employer e "
+			+ "LEFT JOIN e.user u "
+			+ "LEFT JOIN u.files f "
+			+ "LEFT JOIN j.joblocation jl "
+			+ "LEFT JOIN j.jobtype jt "
+			+ "LEFT JOIN j.industries i "
+			+ "Where j.expirationDate >= CURRENT_DATE AND i.industryname = ?1")
+	Page<JobPostSummary> getAllJobPostsByIndustry(String industryname, Pageable pageable); 
 }

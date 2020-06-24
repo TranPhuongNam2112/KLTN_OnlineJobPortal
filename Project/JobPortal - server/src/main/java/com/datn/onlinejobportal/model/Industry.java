@@ -23,12 +23,12 @@ public class Industry {
 	
 	@ManyToMany(mappedBy="industries")
 	@JsonIgnore
-    private Set<JobPost> jobposts;
+    private Set<JobPost> jobpost;
 
 	
 	@ManyToMany(mappedBy="industries")
 	@JsonIgnore
-    private Set<Candidate> industries;
+    private Set<Candidate> industry;
 
 	public Industry() {
 		super();
@@ -40,12 +40,21 @@ public class Industry {
 	}
 
 	
-	public Set<Candidate> getIndustries() {
-		return industries;
+
+	public Set<JobPost> getJobpost() {
+		return jobpost;
 	}
 
-	public void setIndustries(Set<Candidate> industries) {
-		this.industries = industries;
+	public void setJobpost(Set<JobPost> jobpost) {
+		this.jobpost = jobpost;
+	}
+
+	public Set<Candidate> getIndustry() {
+		return industry;
+	}
+
+	public void setIndustry(Set<Candidate> industry) {
+		this.industry = industry;
 	}
 
 	public Long getId() {
@@ -63,19 +72,5 @@ public class Industry {
 	public void setIndustryname(String industryname) {
 		this.industryname = industryname;
 	}
-
-	public Set<JobPost> getJobposts() {
-		return jobposts;
-	}
-
-	public void setJobposts(Set<JobPost> jobposts) {
-		this.jobposts = jobposts;
-	}
-
-	
-	
-	
-	
-	
 
 }
