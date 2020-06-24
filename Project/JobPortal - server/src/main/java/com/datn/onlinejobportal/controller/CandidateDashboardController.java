@@ -411,6 +411,7 @@ public class CandidateDashboardController {
 	}
 	
 	@GetMapping("/{industry}/{websitename}")
+	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getJobPostsByIndustryAndWebsiteName(@PathVariable("industry") String industry, @PathVariable("websitename") String websitename, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
@@ -419,11 +420,18 @@ public class CandidateDashboardController {
 	}
 	
 	@GetMapping("/{industry}")
+	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getJobPostsByIndustry(@PathVariable("industry") String industry, @PathVariable("websitename") String websitename, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return jobPostRepository.getAllJobPostsByIndustry(industry, pageable);
+	}
+	
+	@GetMapping("/industries")
+	@PreAuthorize("hasRole('CANDIDATE')")
+	public List<String> getAllIndustries(@CurrentUser UserPrincipal currentUser) {
+		return industryRepository.getAllIndustriesName();
 	}
 	
 
