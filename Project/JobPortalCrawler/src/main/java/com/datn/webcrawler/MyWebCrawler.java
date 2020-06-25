@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jsoup.Connection;
+import org.jsoup.Connection.Method;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -527,48 +529,59 @@ public class MyWebCrawler extends WebCrawler {
 						
 						String city_province = ele.select("div#row-result-info-job div:eq(1) span").text().replace("Khu vực: ", "");
 						System.out.println("City Provinces : "+city_province);
-						//salary start
+						// salary start
+						try {
+
+							Connection.Response initial = Jsoup.connect("https://www.topcv.vn/login")
+									.method(Connection.Method.GET).execute();
+
+							Connection.Response login = Jsoup.connect("https://www.topcv.vn/login")
+									.data("_token", "aYyd2guQsHyPieV3YJawq2AslM3Jsf00ibk2t97i")
+									.data("email", "tranntn269@gmail.com").data("password", "CHOANcuc569")
+									.cookies(initial.cookies()).method(Method.POST).execute();
+								Document test = Jsoup.connect(sourceUrl).cookies(login.cookies()) 
+										.get();
+								
+								
+								//salary
+								List<String> salary = new ArrayList<String>();
+								String line = test.select("div#box-info-job div.job-info-item:eq(0) span").text();
+								System.out.println("line0" + line);
+								if (line.contains("Đăng nhập để xem")) {
+									minSalary = Long.valueOf(0);
+									maxSalary = Long.valueOf(0);
+								} else if (!line.contains("Thỏa thuận") && !line.contains("Trên") && !line.contains("Tới")) {
+									String[] strArray = line.split("\\s+", 2);
+									System.out.println("line1" + strArray[0]);
+									String[] str = strArray[0].split("-", 2);
+									System.out.println("line2" + str[0]);
+									System.out.println("line3" + str[1]);
+									for (String string : str) {
+										salary.add(string);
+									}
+									minSalary = Long.parseLong(salary.get(0)) * 1000000;
+									System.out.println(minSalary);
+									maxSalary = Long.parseLong(salary.get(1)) * 1000000;
+									System.out.println(maxSalary);
+								} else if (line.contains("Trên") || line.contains("Tới")) {
+									String[] strArray = line.split("\\s+", 3);
+									if (strArray[0].contains("Trên")) {
+										minSalary = Long.parseLong(strArray[1]) * 1000000;
+										maxSalary = Long.valueOf(0);
+									} else {
+										maxSalary = Long.parseLong(strArray[1]) * 1000000;
+										minSalary = Long.valueOf(0);
+									}
+								} else {
+									minSalary = Long.valueOf(0);
+									maxSalary = Long.valueOf(0);
+								}
+							
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
 						
-						List<String> salary = new ArrayList<String>();	
-						String line = ele.select("div#row-result-info-job div.salary").text();
-						System.out.println("line0"+line);
-						if (line.contains("Đăng nhập để xem")) {
-							minSalary = Long.valueOf(0);
-							maxSalary = Long.valueOf(0);
-						}
-						else if (!line.contains("Thỏa thuận") 
-								&& !line.contains("Trên")
-								&& !line.contains("Tới")
-								) {
-							String[] strArray = line.split("\\s+", 2);
-							System.out.println("line1"+strArray[0]);
-							String[] str = strArray[0].split("-", 2);
-							System.out.println("line2"+str[0]);
-							System.out.println("line3"+str[1]);
-							for (String string: str) {
-								salary.add(string);
-							}
-							minSalary = Long.parseLong(salary.get(0))*1000000;
-							System.out.println(minSalary);
-							maxSalary = Long.parseLong(salary.get(1))*1000000;
-							System.out.println(maxSalary);
-						} else if (line.contains("Trên") || line.contains("Tới")) {
-							String[] strArray = line.split("\\s+", 3);
-							if (strArray[0].contains("Trên"))
-							{
-								minSalary = Long.parseLong(strArray[1])*1000000;
-								maxSalary = Long.valueOf(0);
-							} else {
-								maxSalary = Long.parseLong(strArray[1])*1000000;
-								minSalary = Long.valueOf(0);
-							}
-						}
-						 else
-						{
-							minSalary = Long.valueOf(0);
-							maxSalary = Long.valueOf(0);
-						}
-						//salary end
+						// salary end
 						try {
 							Document post = Jsoup.connect(sourceUrl).get();
 							Elements cats = post.select("div#col-job-left div:eq(10)");
