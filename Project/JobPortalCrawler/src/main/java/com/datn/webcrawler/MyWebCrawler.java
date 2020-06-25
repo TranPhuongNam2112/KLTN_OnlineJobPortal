@@ -415,7 +415,7 @@ public class MyWebCrawler extends WebCrawler {
 								e.printStackTrace();
 							}
 							//expirationdate end
-							companyimageUrl = post.select("div.box_tit_detail div.img_detail").attr("src");
+							companyimageUrl = post.select("div.box_tit_detail div.img_detail img").first().attr("data-src");
 							System.out.println("Company URL :"+ companyimageUrl);
 							jobtype = post.select("div.box_tomtat div.form_control.ic2 span").first().text();
 							street_address = post.select("div.right_tit p:eq(3)").text().replace("Địa chỉ công ty:", "");
@@ -506,6 +506,133 @@ public class MyWebCrawler extends WebCrawler {
 					
 				}	
 			}
+			//topcv start
+			else if(page.getWebURL().toString().contains("https://www.topcv.vn/")) {
+				Document doc = Jsoup.parseBodyFragment(htmlParseData.getHtml());
+				Elements joblist = doc.select("div.job-list.search-result div.result-job-hover");
+				for (Element ele : joblist.select("div.col-sm-8")) {
+					
+					List<String> industries = new ArrayList<String>();
+						String jobtype = null; 
+						String companyimageUrl = null;
+						String street_address = null;
+						long years = 0;
+						java.sql.Date sqlDate = null;
+						Long minSalary= null;
+						Long maxSalary= null;
+						String sourceUrl = ele.select("h4 a").attr("href");
+						System.out.println("hihi"+ sourceUrl);
+						String jobtitle = ele.select("h4 a span").text();
+						System.out.println(jobtitle);
+						
+						String city_province = ele.select("div#row-result-info-job div:eq(1) span").text().replace("Khu vực: ", "");
+						System.out.println("City Provinces : "+city_province);
+						//salary start
+						
+						List<String> salary = new ArrayList<String>();	
+						String line = ele.select("div#row-result-info-job div.salary").text();
+						System.out.println("line0"+line);
+						if (line.contains("Đăng nhập để xem")) {
+							minSalary = Long.valueOf(0);
+							maxSalary = Long.valueOf(0);
+						}
+						else if (!line.contains("Thỏa thuận") 
+								&& !line.contains("Trên")
+								&& !line.contains("Tới")
+								) {
+							String[] strArray = line.split("\\s+", 2);
+							System.out.println("line1"+strArray[0]);
+							String[] str = strArray[0].split("-", 2);
+							System.out.println("line2"+str[0]);
+							System.out.println("line3"+str[1]);
+							for (String string: str) {
+								salary.add(string);
+							}
+							minSalary = Long.parseLong(salary.get(0))*1000000;
+							System.out.println(minSalary);
+							maxSalary = Long.parseLong(salary.get(1))*1000000;
+							System.out.println(maxSalary);
+						} else if (line.contains("Trên") || line.contains("Tới")) {
+							String[] strArray = line.split("\\s+", 3);
+							if (strArray[0].contains("Trên"))
+							{
+								minSalary = Long.parseLong(strArray[1])*1000000;
+								maxSalary = Long.valueOf(0);
+							} else {
+								maxSalary = Long.parseLong(strArray[1])*1000000;
+								minSalary = Long.valueOf(0);
+							}
+						}
+						 else
+						{
+							minSalary = Long.valueOf(0);
+							maxSalary = Long.valueOf(0);
+						}
+						//salary end
+						try {
+							Document post = Jsoup.connect(sourceUrl).get();
+							Elements cats = post.select("div#col-job-left div:eq(10)");
+							for (Element cat: cats.select("span")) {
+								industries.add(cat.text());
+								System.out.println("Industries:"+ industries);
+							}
+							//expirationdate start
+							SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+							java.util.Date date;
+							
+							try {
+								date = formatter.parse(post.select("div#row-job-title div.job-deadline").text().replace("Hạn nộp hồ sơ: ",""));
+								sqlDate = new java.sql.Date(date.getTime());  
+								System.out.println(sqlDate);
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+							//expirationdate end
+							jobtype = post.select("div#box-info-job div.job-info-item:eq(1) span").text();
+							street_address = post.select("div#row-job-title div.col-sm-9 div.text-dark-gray").first().text();
+							companyimageUrl = post.select("div#row-job-title div.company-logo-wraper a img").attr("abs:src");
+							System.out.println("Street Address:"+ street_address);
+							System.out.println("JobType"+jobtype);
+							//experiences year start
+							String experiencetype = post.select("div#box-info-job div.job-info-item:eq(4) span ").text();
+
+								if (experiencetype.contains("Không yêu cầu"))
+								{
+									years = 0;
+									System.out.println(years);
+								}
+								else {
+									String[] strArray = experiencetype.split("\\s+");
+									for (String str: strArray) {
+										System.out.println("Years"+ str);
+									}
+									 if (strArray[0].contains("Dưới"))
+									{
+										years = Long.parseLong(strArray[1]);
+										System.out.println(years);
+									}
+									else {
+										years = Long.parseLong(strArray[0]);
+										System.out.println(years);
+									}
+								}			
+								
+
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+						
+
+						String companyname = ele.select("div.row-company a").text();
+						System.out.println(companyname);
+
+						//System.out.println(ele.select("p.font-12 span.mrg-l-10").text());
+						dBService.saveJobPost(jobtitle, jobtype, industries, minSalary, maxSalary, companyname, sourceUrl, sqlDate, 
+								years, street_address, city_province,companyimageUrl, "topcv");
+					
+				}
+			}
+			//topCv end
 			//timviecnhanh
 			else {
 				Document doc = Jsoup.parseBodyFragment(htmlParseData.getHtml());
