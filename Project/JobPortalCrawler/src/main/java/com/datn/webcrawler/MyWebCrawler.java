@@ -588,13 +588,10 @@ public class MyWebCrawler extends WebCrawler {
 						} catch (Exception e) {
 							// TODO: handle exception
 						}
-<<<<<<< HEAD
 						String description = null;
 						//salary end
-=======
 						
 						// salary end
->>>>>>> 48291535e0ad461636abac0af102a2b79d8ba462
 						try {
 							Document post = Jsoup.connect(sourceUrl).get();
 							description = post.select("#col-job-left > div:nth-child(2)").first().text();

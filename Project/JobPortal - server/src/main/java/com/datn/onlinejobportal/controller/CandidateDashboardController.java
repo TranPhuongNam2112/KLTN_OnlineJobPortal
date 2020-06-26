@@ -400,11 +400,7 @@ public class CandidateDashboardController {
 	
 
 	
-<<<<<<< HEAD
 	@GetMapping("/{companyname}/jobposts")
-=======
-	@GetMapping("/employerjobposts/{employerId}")
->>>>>>> 48291535e0ad461636abac0af102a2b79d8ba462
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getAllJobPostByEmployers(@CurrentUser UserPrincipal currentUser, @PathVariable("companyname") String companyname, 
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
