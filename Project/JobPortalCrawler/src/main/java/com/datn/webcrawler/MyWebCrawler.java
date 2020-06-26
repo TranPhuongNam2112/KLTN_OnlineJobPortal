@@ -82,6 +82,7 @@ public class MyWebCrawler extends WebCrawler {
 						String sourceUrl = cat.child(0).child(1).child(0).select("a").attr("href");
 						String jobtitle = cat.child(0).child(1).child(0).select("a").attr("title");
 						String companyimageUrl = cat.select("div.figure > div.image > a > img").attr("src");
+						String desc = null;
 						try {
 							Document post = Jsoup.connect(sourceUrl).get();
 							Elements industries = post.select("#tab-1 > section > div.row > div:nth-child(1) > div > div.industry");
@@ -89,6 +90,8 @@ public class MyWebCrawler extends WebCrawler {
 								industries = post.select("#info-career-desktop > ul > li:nth-child(5) > div > a");
 								Elements industrynames = industries;
 								jobtype = post.select("#info-career-desktop > ul > li:nth-child(2) > div").text();
+								Element description = post.select("\"body > main > section.search-result-list-detail > div > div > div.col-lg-7.col-xl-8 > div > section > div.template-200 > div.left-col > div:nth-child(2) > div > ul").first();
+								desc = description.children().text();
 
 								String experiencetype = post.select("#info-career-desktop > ul > li:nth-child(6) > div").text();
 								//System.out.println(experiencetype);
@@ -122,6 +125,7 @@ public class MyWebCrawler extends WebCrawler {
 								for (Element industryname: industrynames) {
 									industry.add(industryname.text());
 								}
+								desc = post.select("#tab-1 > section > div:nth-child(3) > h3").first().children().text();
 							}
 
 						} catch (IOException e1) {
@@ -212,7 +216,7 @@ public class MyWebCrawler extends WebCrawler {
 
 						//System.out.println(cat.child(1).select("div.time > time").text());
 						dBService.saveJobPost(jobtitle, jobtype, industry, minSalary, maxSalary, companyname, sourceUrl, sqlDate, 
-								years, "", joblocation, companyimageUrl, "CareerBuilder");
+								years, "", joblocation, companyimageUrl, "CareerBuilder", desc);
 
 
 						/*
@@ -248,6 +252,7 @@ public class MyWebCrawler extends WebCrawler {
 						
 						String city_province = ele.select("p.font-12 span ").first().text();
 						System.out.println("City Provinces"+city_province);
+						String description = null;
 						
 						try {
 							Document post = Jsoup.connect(sourceUrl).get();
@@ -292,6 +297,7 @@ public class MyWebCrawler extends WebCrawler {
 										years = Long.parseLong(strArray[0]);
 										System.out.println(years);
 									}
+									description = post.select("body > div.page-container > div.page-content > div > div > div.row > div.col-sm-8.pr0.job-detail-col-1 > div > div > div:nth-child(2) > div").first().children().text();
 								}								
 
 						} catch (IOException e1) {
@@ -371,7 +377,7 @@ public class MyWebCrawler extends WebCrawler {
 
 						System.out.println(ele.select("p.font-12 span.mrg-l-10").text());
 						dBService.saveJobPost(jobtitle, jobtype, industries, minSalary, maxSalary, companyname, sourceUrl, sqlDate, 
-								years, street_address, city_province,companyimageUrl, "jobsgo");
+								years, street_address, city_province,companyimageUrl, "jobsgo", description);
 					
 				}
 			}
@@ -395,6 +401,7 @@ public class MyWebCrawler extends WebCrawler {
 						
 						String city_province = ele.select("p:eq(2) span").text();
 						System.out.println("City Provinces : "+city_province);
+						String description = null;
 						
 						try {
 							Document post = Jsoup.connect(sourceUrl).get();
@@ -421,6 +428,7 @@ public class MyWebCrawler extends WebCrawler {
 							street_address = post.select("div.right_tit p:eq(3)").text().replace("Địa chỉ công ty:", "");
 							System.out.println("Street Address:"+ street_address);
 							System.out.println("JobType"+jobtype);
+							description = post.select("body > section > div > div.left_detail > div.content_detail > div.tt_td > div.box_mota").text().substring(18);
 							//experiences year start
 							String experiencetype = post.select("div.box_tomtat div.form_control.ic3 span").text();
 
@@ -502,7 +510,7 @@ public class MyWebCrawler extends WebCrawler {
 					
 						System.out.println(ele.select("p.font-12 span.mrg-l-10").text());
 						dBService.saveJobPost(jobtitle, jobtype, industries, minSalary, maxSalary, companyname, sourceUrl, sqlDate, 
-								years, street_address, city_province, companyimageUrl, "timviec365");
+								years, street_address, city_province, companyimageUrl, "timviec365", description);
 					
 				}	
 			}
@@ -568,9 +576,11 @@ public class MyWebCrawler extends WebCrawler {
 							minSalary = Long.valueOf(0);
 							maxSalary = Long.valueOf(0);
 						}
+						String description = null;
 						//salary end
 						try {
 							Document post = Jsoup.connect(sourceUrl).get();
+							description = post.select("#col-job-left > div:nth-child(2)").first().text();
 							Elements cats = post.select("div#col-job-left div:eq(10)");
 							for (Element cat: cats.select("span")) {
 								industries.add(cat.text());
@@ -628,7 +638,7 @@ public class MyWebCrawler extends WebCrawler {
 
 						//System.out.println(ele.select("p.font-12 span.mrg-l-10").text());
 						dBService.saveJobPost(jobtitle, jobtype, industries, minSalary, maxSalary, companyname, sourceUrl, sqlDate, 
-								years, street_address, city_province,companyimageUrl, "topcv");
+								years, street_address, city_province,companyimageUrl, "topcv", description);
 					
 				}
 			}
@@ -642,6 +652,7 @@ public class MyWebCrawler extends WebCrawler {
 					//System.out.println(job.select("a").attr("href"));
 					String sourceUrl = job.select("a").attr("href");
 					//System.out.println(sourceUrl);
+					String description;
 					Document jobpostdetails;
 					try {
 						long minSalary;
@@ -650,7 +661,7 @@ public class MyWebCrawler extends WebCrawler {
 						List<String> salary = new ArrayList<String>();
 						jobpostdetails = Jsoup.connect(sourceUrl).get();
 						Element jobcategories = jobpostdetails.select("#left-content > article > div.row > div.col-xs-4.offset20.push-right-20 > ul > li:nth-child(5)").first();
-
+						description = jobpostdetails.select("#left-content > article > table > tbody > tr:nth-child(1) > td:nth-child(2) > p").first().text();
 						//industries
 						Elements cats = jobcategories.select("a");
 
@@ -722,7 +733,7 @@ public class MyWebCrawler extends WebCrawler {
 							//System.out.println(jobtype);
 							
 							dBService.saveJobPost(job.select("div > a:nth-child(1)").attr("title"), jobtype, industries, minSalary, maxSalary, companyname, 
-									sourceUrl, sqlDate, years, street_address, job.select("div > div:nth-child(1)").first().nextElementSibling().text(), companyimageUrl, "timviecnhanh");
+									sourceUrl, sqlDate, years, street_address, job.select("div > div:nth-child(1)").first().nextElementSibling().text(), companyimageUrl, "timviecnhanh", description);
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

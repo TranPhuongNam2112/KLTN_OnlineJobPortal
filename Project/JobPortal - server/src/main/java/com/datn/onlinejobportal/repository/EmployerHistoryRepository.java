@@ -17,7 +17,7 @@ public interface EmployerHistoryRepository extends JpaRepository<EmployerHistory
 			+ "Where eh.candidate.id = :candidateId")
 	Long countViewedProfileEmployer(@Param("candidateId") Long candidateId);
 
-	@Query("Select new com.datn.onlinejobportal.dto.CandidateSummary(c.id, f.data, u.name, c.city_province, c.work_title, c.updatedAt) From Candidate c "
+	@Query("Select new com.datn.onlinejobportal.dto.CandidateSummary(c.id, f.data, u.name, c.city_province, c.work_title, c.updatedAt, u.imageUrl) From Candidate c "
 			+ "LEFT JOIN c.employerhistories eh "
 			+ "LEFT JOIN c.user u "
 			+ "LEFT JOIN u.files f "

@@ -10,9 +10,10 @@ public class CandidateSummary {
 	private String city;
 	private String work_title;
 	private LocalDate last_updated;
+	private String imageUrl;
 	
 	
-	public CandidateSummary(Long id, byte[] image, String name, String city, String work_title, LocalDate last_updated) {
+	public CandidateSummary(Long id, byte[] image, String name, String city, String work_title, LocalDate last_updated, String imageUrl) {
 		super();
 		this.id = id;
 		this.image = image;
@@ -20,7 +21,17 @@ public class CandidateSummary {
 		this.city = city;
 		this.work_title = work_title;
 		this.last_updated = last_updated;
+		this.imageUrl = imageUrl;
 	}
+	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 	public Long getId() {
 		return id;
 	}

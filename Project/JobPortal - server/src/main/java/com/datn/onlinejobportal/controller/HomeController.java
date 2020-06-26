@@ -19,6 +19,7 @@ import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Employer;
 import com.datn.onlinejobportal.payload.EmployerProfile;
 import com.datn.onlinejobportal.repository.EmployerRepository;
+import com.datn.onlinejobportal.repository.IndustryRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
 import com.datn.onlinejobportal.security.CurrentUser;
@@ -38,6 +39,9 @@ public class HomeController {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private IndustryRepository industryRepository;
 
 	@GetMapping("/{jobtype}")
 	public Page<JobPostSummary> getJobPostsByJobType(@PathVariable("jobtype") String jobtype, @CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
@@ -126,6 +130,14 @@ public class HomeController {
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return jobPostRepository.getAllJobPostsByIndustry(industry, pageable);
+	}
+	
+	@GetMapping("/hotjobposts")
+	public Page<JobPostSummary> getHottestJobPostsByIndustryId(@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+		return jobPostRepository.getAllJobPostsByIndustryId(industryRepository.getMostJobPostsIndustryId(), pageable);
 	}
 
 }

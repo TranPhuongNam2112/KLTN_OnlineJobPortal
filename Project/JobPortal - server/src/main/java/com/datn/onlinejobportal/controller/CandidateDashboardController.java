@@ -400,14 +400,14 @@ public class CandidateDashboardController {
 	
 
 	
-	@GetMapping("/{employerId}/jobposts")
+	@GetMapping("/{companyname}/jobposts")
 	@PreAuthorize("hasRole('CANDIDATE')")
-	public Page<JobPostSummary> getAllJobPostByEmployers(@CurrentUser UserPrincipal currentUser, @PathVariable("employerId") Long employerId, 
+	public Page<JobPostSummary> getAllJobPostByEmployers(@CurrentUser UserPrincipal currentUser, @PathVariable("companyname") String companyname, 
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = "3")int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
-		return jobPostRepository.getAllJobPostsByEmployer(employerId, pageable);
+		return jobPostRepository.getAllJobPostsByEmployer(companyname, pageable);
 	}
 	
 	@GetMapping("/{industry}/{websitename}")

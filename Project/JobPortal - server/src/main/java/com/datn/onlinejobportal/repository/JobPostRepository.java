@@ -121,8 +121,8 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN u.files f "
 			+ "LEFT JOIN j.joblocation jl "
 			+ "LEFT JOIN j.jobtype jt "
-			+ "Where j.expirationDate >= CURRENT_DATE AND e.id = :employerId")
-	Page<JobPostSummary> getAllJobPostsByEmployer(@Param("employerId") Long employerId, Pageable pageable);
+			+ "Where j.expirationDate >= CURRENT_DATE AND e.companyname = :companyname")
+	Page<JobPostSummary> getAllJobPostsByEmployer(@Param("companyname") String companyname, Pageable pageable);
 	
 	@Query("Select COUNT(j.id) From JobPost j "
 			+ "Where j.createdAt = CURENT_DATE")
@@ -155,4 +155,15 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN j.industries i "
 			+ "Where j.expirationDate >= CURRENT_DATE AND i.industryname = ?1")
 	Page<JobPostSummary> getAllJobPostsByIndustry(String industryname, Pageable pageable); 
+	
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
+			+ "From JobPost j "
+			+ "LEFT JOIN j.employer e "
+			+ "LEFT JOIN e.user u "
+			+ "LEFT JOIN u.files f "
+			+ "LEFT JOIN j.joblocation jl "
+			+ "LEFT JOIN j.jobtype jt "
+			+ "LEFT JOIN j.industries i "
+			+ "Where j.expirationDate >= CURRENT_DATE AND i.id = ?1")
+	Page<JobPostSummary> getAllJobPostsByIndustryId(Long industryid, Pageable pageable); 
 }

@@ -60,7 +60,7 @@ public class DBServiceImpl implements DBService {
 	@Override
 	public void saveJobPost(String jobtitle, String jobtype, List<String> industries, Long minSalary, 
 			Long maxSalary, String companyname, String sourceUrl, Date expirationDate, Long requiredexperienceyears
-			, String street_address, String city_province, String imageUrl, String sourceWebsite) {
+			, String street_address, String city_province, String imageUrl, String sourceWebsite, String jobdescription) {
 
 		try {
 			selectDuplicateJobPost.setString(1, sourceUrl);
@@ -73,7 +73,7 @@ public class DBServiceImpl implements DBService {
 				insertNewJobPostStatement.setNull(1, java.sql.Types.DATE);
 				insertNewJobPostStatement.setNull(2, java.sql.Types.DATE);            
 				insertNewJobPostStatement.setDate(3, expirationDate);
-				insertNewJobPostStatement.setNull(4, java.sql.Types.VARCHAR);
+				insertNewJobPostStatement.setString(4, jobdescription);
 				insertNewJobPostStatement.setString(5, jobtitle);
 				insertNewJobPostStatement.setLong(6, maxSalary);
 				insertNewJobPostStatement.setLong(7, minSalary);

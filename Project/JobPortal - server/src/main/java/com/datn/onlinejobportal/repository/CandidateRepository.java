@@ -20,7 +20,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 	Long getCandidateIdByUserId(@Param("account_id") Long account_id);
 	
 	
-	@Query("Select DISTINCT new com.datn.onlinejobportal.dto.CandidateSummary(c.id, f.data, u.name, c.city_province, c.work_title, c.updatedAt) From Candidate c "
+	@Query("Select DISTINCT new com.datn.onlinejobportal.dto.CandidateSummary(c.id, f.data, u.name, c.city_province, c.work_title, c.updatedAt, u.imageUrl) From Candidate c "
 			+ "LEFT JOIN c.savedCandidates sc "
 			+ "LEFT JOIN c.user u "
 			+ "LEFT JOIN u.files f "
@@ -31,7 +31,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 			+ "AND c.profile_visible = TRUE")
 	Page<CandidateSummary> getRecommendedCandidatesBasedOnJobPostAndEmployerId(@Param("employerId") Long employerId, Pageable pageable);
 
-	@Query("Select new com.datn.onlinejobportal.dto.CandidateSummary(c.id, f.data, u.name, c.city_province, c.work_title, c.updatedAt) From Candidate c "
+	@Query("Select new com.datn.onlinejobportal.dto.CandidateSummary(c.id, f.data, u.name, c.city_province, c.work_title, c.updatedAt, u.imageUrl) From Candidate c "
 			+ "LEFT JOIN c.savedCandidates sc "
 			+ "LEFT JOIN c.user u "
 			+ "LEFT JOIN u.files f ")
