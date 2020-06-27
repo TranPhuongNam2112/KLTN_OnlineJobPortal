@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.datn.onlinejobportal.dto.IndustryJobPostCount;
 import com.datn.onlinejobportal.model.Industry;
 
 public interface IndustryRepository extends JpaRepository<Industry, Long>{
@@ -27,10 +28,10 @@ public interface IndustryRepository extends JpaRepository<Industry, Long>{
 	@Query("Select i.industryname From Industry i")
 	List<String> getAllIndustriesName();
 	
-	@Query("Select i.id From Industry i "
+	@Query("Select new com.datn.onlinejobportal.dto.IndustryJobPostCount(i.id, COUNT(j.id)) From Industry i "
 			+ "LEFT JOIN i.jobpost j "
 			+ "ORDER BY COUNT(j.id) DESC")
-	List<Long> getMostJobPostsIndustryId();
+	List<IndustryJobPostCount> getIndustryJobPostCounts();
 	
 	
 	
