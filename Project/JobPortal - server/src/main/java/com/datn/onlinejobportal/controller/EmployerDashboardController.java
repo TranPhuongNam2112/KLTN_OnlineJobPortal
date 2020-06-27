@@ -110,8 +110,8 @@ public class EmployerDashboardController {
 
 	@PostMapping("/createpost")
 	@PreAuthorize("hasRole('EMPLOYER')")
-	public ResponseEntity<?> createJobPost(@Valid @RequestBody JobPostRequest jobPostRequest) {
-		JobPost jobpost = jobPostService.createJobPost(jobPostRequest);
+	public ResponseEntity<?> createJobPost(@Valid @RequestBody JobPostRequest jobPostRequest, @CurrentUser UserPrincipal currentUser) {
+		JobPost jobpost = jobPostService.createJobPost(jobPostRequest, currentUser);
 
 		URI location = ServletUriComponentsBuilder
 				.fromCurrentRequest().path("/{jobpostId}")
