@@ -29,9 +29,8 @@ public interface IndustryRepository extends JpaRepository<Industry, Long>{
 	
 	@Query("Select i.id From Industry i "
 			+ "LEFT JOIN i.jobpost j "
-			+ "GROUP BY i.id "
-			+ "HAVING COUNT(j.id) = (SELECT MAX(COUNT(j.id)) FROM Industry i LEFT JOIN i.jobpost j)")
-	Long getMostJobPostsIndustryId();
+			+ "ORDER BY COUNT(j.id) DESC")
+	List<Long> getMostJobPostsIndustryId();
 	
 	
 	

@@ -14,7 +14,7 @@ import com.datn.onlinejobportal.model.audit.DateAudit;
 @SuppressWarnings("serial")
 @Entity
 @Table(name="saved_candidate")
-public class SavedCandidate extends DateAudit {
+public class SavedCandidate {
 	
 	@EmbeddedId
 	private SavedCandidateId savedCandidateId;

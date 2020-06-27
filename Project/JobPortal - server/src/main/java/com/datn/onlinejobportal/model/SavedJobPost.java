@@ -16,7 +16,7 @@ import com.datn.onlinejobportal.model.audit.DateAudit;
 
 @Entity
 @Table(name="saved_job_post")
-public class SavedJobPost extends DateAudit {
+public class SavedJobPost {
 
 	/**
 	 * 

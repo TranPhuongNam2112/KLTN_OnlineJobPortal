@@ -166,4 +166,6 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN j.industries i "
 			+ "Where j.expirationDate >= CURRENT_DATE AND i.id = ?1")
 	Page<JobPostSummary> getAllJobPostsByIndustryId(Long industryid, Pageable pageable); 
+	
 }
+
