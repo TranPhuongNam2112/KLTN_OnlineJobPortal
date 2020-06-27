@@ -5,12 +5,12 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.JobLocation;
 import com.datn.onlinejobportal.model.JobPost;
 import com.datn.onlinejobportal.payload.JobPostRequest;
 import com.datn.onlinejobportal.repository.IndustryRepository;
+import com.datn.onlinejobportal.repository.JobLocationRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
 import com.datn.onlinejobportal.repository.JobTypeRepository;
 import com.datn.onlinejobportal.security.UserPrincipal;
@@ -28,6 +28,9 @@ public class JobPostService {
 	@Autowired
 	private IndustryRepository industryRepository;
 	
+	@Autowired
+	private JobLocationRepository jobLocationRepository;
+	
 
 	
 
@@ -36,7 +39,7 @@ public class JobPostService {
 		JobLocation joblocation = new JobLocation();
 		joblocation.setStreet_address(jobPostRequest.getStreet_address());
 		joblocation.setCity_province(jobPostRequest.getCity_province());
-		joblocation.setJobpost(jobpost);
+		jobLocationRepository.save(joblocation);
 		jobpost.setJob_title(jobPostRequest.getJobtitle());
 		jobpost.setJobtype(jobTypeRepository.findByJob_type_name(jobPostRequest.getJobType()));
 		jobpost.setJoblocation(joblocation);
