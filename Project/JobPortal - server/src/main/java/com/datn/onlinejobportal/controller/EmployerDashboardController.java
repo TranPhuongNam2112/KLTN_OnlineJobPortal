@@ -150,7 +150,7 @@ public class EmployerDashboardController {
 		return updatedJobPost;
 	}
 
-	@DeleteMapping("/myjobposts/{jobpostId}")
+	@DeleteMapping("/deleteJobPost/{jobpostId}")
 	@PreAuthorize("hasRole('EMPLOYER')")
 	public ResponseEntity<?> deleteJobPost(@PathVariable(value = "jobpostId") Long jobpostId) {
 		JobPost jobpost = jobPostRepository.findById(jobpostId)
