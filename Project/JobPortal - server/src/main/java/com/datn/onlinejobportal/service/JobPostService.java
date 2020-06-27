@@ -52,6 +52,8 @@ public class JobPostService {
 		jobpost.setCreatedAt(LocalDate.now());
 		jobpost.setExpirationDate(jobPostRequest.getExpiredDate());
 		jobpost.setRequiredexpreienceyears(jobPostRequest.getRequiredexperience());
+		jobpost.setMin_salary(jobPostRequest.getMinSalary());
+		jobpost.setMax_salary(jobPostRequest.getMaxSalary());
 		jobpost.setEmployer(employerRepository.getEmployerByAccount_Id(currentUser.getId()));
 
 		return jobPostRepository.save(jobpost);
