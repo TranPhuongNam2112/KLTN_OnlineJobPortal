@@ -1,7 +1,7 @@
 spring:
     mail:
         host: smtp.gmail.com
-        password: likeavirgin
+        password: CHOANcuc569
         port: 587
         properties:
             mail:
@@ -9,7 +9,7 @@ spring:
                     auth: true
                     starttls:
                         enable: true
-        username: phuongnam.tran2112@gmail.com
+        username: livingforshit@gmail.com
 
     datasource:
         url: jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&useUnicode=yes&characterEncoding=UTF-8
@@ -34,15 +34,15 @@ spring:
         client:
           registration:
             google:
-              clientId: 918135737820-slqrjq4t82rd2culsjjactp3p163fmct.apps.googleusercontent.com
-              clientSecret: s2ew9yErKJ34KPdCt8DicSzY
+              clientId: 1067771668515-cl2e57cemvuvu2cl24do7n2d8gcv6err.apps.googleusercontent.com
+              clientSecret: Sf21od0itj9IkIWxZ4LInowj
               redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
               scope:
                 - email
                 - profile
             facebook:
-              clientId: 250928982612921
-              clientSecret: ee52a8f3b51c6979b6d51580dea9d7fb
+              clientId: 2946602362090073
+              clientSecret: 01effc91d40cc1c882cf860c38fbdc1e
               redirectUri: "{baseUrl}/oauth2/callback/{registrationId}" # Note that facebook now mandates the use of https redirect URIs, so make sure your app supports https in production
               scope:
                 - email
@@ -69,6 +69,6 @@ app:
     # redirectUri mentioned by the frontend client in the /oauth2/authorize request.
     # We're not using cookies because they won't work well in mobile clients.
     authorizedRedirectUris:
-      - http://localhost:3000/oauth2/redirect
+      - http://localhost:4200/oauth2/redirect
       - myandroidapp://oauth2/redirect
       - myiosapp://oauth2/redirect

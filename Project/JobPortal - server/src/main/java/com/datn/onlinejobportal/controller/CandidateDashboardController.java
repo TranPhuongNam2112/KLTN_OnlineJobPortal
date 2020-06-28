@@ -313,7 +313,7 @@ public class CandidateDashboardController {
 	}
 
 	@GetMapping("/jobtypes")
-	@PreAuthorize("hasRole('CANDIDATE')")
+//	@PreAuthorize("hasRole('CANDIDATE')")
 	public List<String> getAllJobTypes(@CurrentUser UserPrincipal currentUser) {
 		return jobTypeRepository.getAllJobTypes();
 	}
@@ -358,7 +358,7 @@ public class CandidateDashboardController {
 	@GetMapping("/recommendedjobposts")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getAllRecommendedJobPosts(@CurrentUser UserPrincipal currentUser, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
-			@RequestParam(defaultValue = "6")int pageSize,
+			@RequestParam(defaultValue = "20")int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
@@ -400,7 +400,7 @@ public class CandidateDashboardController {
 	
 
 	
-	@GetMapping("/{companyname}/jobposts")
+	@GetMapping("/employerjobposts/{companyname}")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getAllJobPostByEmployers(@CurrentUser UserPrincipal currentUser, @PathVariable("companyname") String companyname, 
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
@@ -430,7 +430,7 @@ public class CandidateDashboardController {
 	}
 	
 	@GetMapping("/industries")
-	@PreAuthorize("hasRole('CANDIDATE')")
+
 	public List<String> getAllIndustries(@CurrentUser UserPrincipal currentUser) {
 		return industryRepository.getAllIndustriesName();
 	}

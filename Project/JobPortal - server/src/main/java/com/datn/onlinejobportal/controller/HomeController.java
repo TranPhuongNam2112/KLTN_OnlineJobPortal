@@ -90,7 +90,8 @@ public class HomeController {
 	
 
 	@GetMapping("/search/jobposts")
-	public Page<JobPostSummary> getFilterJobPosts(@RequestParam(value = "jobtitle",required=false) String jobtitle, 
+	public Page<JobPostSummary> getFilterJobPosts(
+			@RequestParam(value = "jobtitle",required=false) String jobtitle, 
 			@RequestParam(value = "industry",required = false) String industry, 
 			@RequestParam(value = "jobtype",required = false) String jobtype, 
 			@RequestParam(value = "joblocation",required = false) String joblocation,

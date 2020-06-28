@@ -24,7 +24,7 @@ public class JobPostRequest {
 	@Size(max=300)
 	private String jobdescription;
 	
-	@NotBlank
+	@NotNull
 	private List<String> industry;
 	
     @NotNull(message = "Please enter the correct amount!")

@@ -121,7 +121,7 @@ public class EmployerDashboardController {
 				.body(new ApiResponse(true, "Đã tạo bài post thành công!"));
 	}
 
-	@GetMapping("/{jobpostId}")
+	@GetMapping("/getJobPostbyId/{jobpostId}")
 	public JobPost getJobPostById(@CurrentUser UserPrincipal currentUser,
 			@PathVariable Long jobpostId) {
 		return jobPostService.getJobPostById(jobpostId, currentUser);
@@ -129,7 +129,7 @@ public class EmployerDashboardController {
 
 	@PutMapping("/myjobposts/{jobpostId}")
 	@PreAuthorize("hasRole('EMPLOYER')")
-	public JobPost updateJobPost(@CurrentUser UserPrincipal currentUser, @PathVariable(value = "id") Long jobpostId,
+	public JobPost updateJobPost(@CurrentUser UserPrincipal currentUser, @PathVariable Long jobpostId,
 			@Valid @RequestBody JobPostRequest jobPostRequest) {
 		JobPost jobpost = jobPostRepository.findById(jobpostId).orElseThrow(
 				() -> new ResourceNotFoundException("Job post", "id", jobpostId));
