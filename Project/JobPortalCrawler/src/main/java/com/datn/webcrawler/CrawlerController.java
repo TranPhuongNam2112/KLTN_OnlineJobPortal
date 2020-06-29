@@ -17,7 +17,7 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
-//@Component
+@Component
 public class CrawlerController {
 	static int findLastIndex(String str, Character x) 
 	{ 
@@ -46,7 +46,7 @@ public class CrawlerController {
 	private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
 
 
-	//@Scheduled(cron = "0 22 12 * * ?")
+	@Scheduled(cron = "0 55 14 * * ?")
 	public static void TimViecNhanhcrawlSchedule() throws Exception {
 		System.out.println("Start crawling");
 		String crawlStorageFolder = "/tmp/crawler4j/";
@@ -110,6 +110,7 @@ public class CrawlerController {
 				}
 			}
 		}
+
 		
 		Document doc = Jsoup.connect("https://careerbuilder.vn/tim-viec-lam.html").get();
 		Element jobcategories = doc.select("body > main > section.find-jobsby-categories.cb-section > div > div > div.col-xl-9 > div.row.list-of-working-positions").first();
@@ -132,7 +133,7 @@ public class CrawlerController {
 		
 		ComboPooledDataSource pool = new ComboPooledDataSource();
 		pool.setDriverClass("com.mysql.cj.jdbc.Driver");
-		pool.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false");
+		pool.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&useUnicode=yes&characterEncoding=UTF-8");
 		pool.setUser("root");
 		pool.setPassword("1234");
 		pool.setMaxPoolSize(10);
@@ -141,35 +142,35 @@ public class CrawlerController {
 		
 		ComboPooledDataSource pool1 = new ComboPooledDataSource();
 		pool1.setDriverClass("com.mysql.cj.jdbc.Driver");
-		pool1.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false");
+		pool1.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&useUnicode=yes&characterEncoding=UTF-8");
 		pool1.setUser("root");
-		pool1.setPassword("123456789");
+		pool1.setPassword("1234");
 		pool1.setMaxPoolSize(10);
 		pool1.setMinPoolSize(10);
 		pool1.setInitialPoolSize(10);
 		
 		ComboPooledDataSource pool3 = new ComboPooledDataSource();
 		pool3.setDriverClass("com.mysql.cj.jdbc.Driver");
-		pool3.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false");
+		pool3.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&useUnicode=yes&characterEncoding=UTF-8");
 		pool3.setUser("root");
-		pool3.setPassword("123456789");
+		pool3.setPassword("1234");
 		pool3.setMaxPoolSize(10);
 		pool3.setMinPoolSize(10);
 		pool3.setInitialPoolSize(10);
 		
 		ComboPooledDataSource pool4 = new ComboPooledDataSource();
 		pool4.setDriverClass("com.mysql.cj.jdbc.Driver");
-		pool4.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false");
+		pool4.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&useUnicode=yes&characterEncoding=UTF-8");
 		pool4.setUser("root");
-		pool4.setPassword("123456789");
+		pool4.setPassword("1234");
 		pool4.setMaxPoolSize(10);
 		pool4.setMinPoolSize(10);
 		pool4.setInitialPoolSize(10);
 
 		controller1.startNonBlocking(new CrawlerFactory(pool), 7);
-		controller2.startNonBlocking(new CrawlerFactory(pool1), 7);
-		controller3.startNonBlocking(new CrawlerFactory(pool3), 7);
-		controller4.startNonBlocking(new CrawlerFactory(pool4), 7);
+		//controller2.startNonBlocking(new CrawlerFactory(pool1), 7);
+		//controller3.startNonBlocking(new CrawlerFactory(pool3), 7);
+		//controller4.startNonBlocking(new CrawlerFactory(pool4), 7);
 
 		pool.close();
 		System.out.println("Crawler finished");
