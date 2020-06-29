@@ -208,7 +208,6 @@ public class MyWebCrawler extends WebCrawler {
 						try {
 							date = formatter.parse(cat.child(1).select("div.time > time").text());
 							sqlDate = new java.sql.Date(date.getTime());  
-							//System.out.println(jobtype);
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
@@ -219,18 +218,6 @@ public class MyWebCrawler extends WebCrawler {
 						//System.out.println(cat.child(1).select("div.time > time").text());
 						dBService.saveJobPost(jobtitle, jobtype, industry, minSalary, maxSalary, companyname, sourceUrl, sqlDate, 
 								years, "", joblocation, companyimageUrl, "CareerBuilder", desc);
-
-
-						/*
-							System.out.println(cat.child(0).child(1).child(0).select("a").attr("href"));
-							System.out.println(cat.child(0).child(1).child(0).select("a").attr("title"));
-							System.out.println(cat.child(0).child(1).child(1).select("p.company-name").text());
-							System.out.println(cat.child(0).child(1).child(1).select("p.salary").text().substring(2));
-
-							System.out.println(cat.child(0).child(1).child(1).select("div.location > ul > li").text());
-							System.out.println(cat.child(1).select("div.time > time").text());
-							System.out.println("------");
-						 */
 
 					}
 				}
