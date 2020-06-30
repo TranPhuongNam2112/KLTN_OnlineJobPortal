@@ -92,7 +92,7 @@ public class MyWebCrawler extends WebCrawler {
 								industries = post.select("#info-career-desktop > ul > li:nth-child(5) > div > a");
 								Elements industrynames = industries;
 								jobtype = post.select("#info-career-desktop > ul > li:nth-child(2) > div").text();
-								Element description = post.select("\"body > main > section.search-result-list-detail > div > div > div.col-lg-7.col-xl-8 > div > section > div.template-200 > div.left-col > div:nth-child(2) > div > ul").first();
+								Element description = post.select("body > main > section.search-result-list-detail > div > div > div.col-lg-7.col-xl-8 > div > section > div.template-200 > div.left-col > div:nth-child(2) > div > ul").first();
 								desc = description.children().text();
 
 								String experiencetype = post.select("#info-career-desktop > ul > li:nth-child(6) > div").text();
