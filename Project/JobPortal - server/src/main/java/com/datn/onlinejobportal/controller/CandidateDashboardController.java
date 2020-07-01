@@ -1,12 +1,8 @@
 package com.datn.onlinejobportal.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,9 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriUtils;
 
 import com.datn.onlinejobportal.dto.CandidateStats;
 import com.datn.onlinejobportal.dto.EmployerSummary;
@@ -40,6 +33,7 @@ import com.datn.onlinejobportal.dto.JobPostSummary;
 import com.datn.onlinejobportal.event.SaveCandidateEvent;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
 import com.datn.onlinejobportal.model.Candidate;
+import com.datn.onlinejobportal.model.CandidateApplication;
 import com.datn.onlinejobportal.model.CandidateHistory;
 import com.datn.onlinejobportal.model.DBFile;
 import com.datn.onlinejobportal.model.Education;
@@ -55,6 +49,7 @@ import com.datn.onlinejobportal.payload.EducationsRequest;
 import com.datn.onlinejobportal.payload.ExperienceResponse;
 import com.datn.onlinejobportal.payload.ExperiencesRequest;
 import com.datn.onlinejobportal.payload.JobPostDetails;
+import com.datn.onlinejobportal.repository.CandidateApplicationRepository;
 import com.datn.onlinejobportal.repository.CandidateHistoryRepository;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EducationRepository;
@@ -108,12 +103,15 @@ public class CandidateDashboardController {
 
 	@Autowired
 	private IndustryRepository industryRepository;
-	
+
 	@Autowired
 	private EmployerRepository employerRepository;
-	
+
 	@Autowired
 	private CandidateStatisticService candidateStatisticService;
+	
+	@Autowired
+	private CandidateApplicationRepository candidateApplicationRepository;
 
 
 	@GetMapping("/myprofile")
@@ -313,7 +311,7 @@ public class CandidateDashboardController {
 	}
 
 	@GetMapping("/jobtypes")
-//	@PreAuthorize("hasRole('CANDIDATE')")
+	//	@PreAuthorize("hasRole('CANDIDATE')")
 	public List<String> getAllJobTypes(@CurrentUser UserPrincipal currentUser) {
 		return jobTypeRepository.getAllJobTypes();
 	}
@@ -379,7 +377,7 @@ public class CandidateDashboardController {
 	public List<JobPostSummary> getAllViewedJobPost(@CurrentUser UserPrincipal currentUser) {
 		return candidateHistoryRepository.getAllCandidatHistory(candidateRepository.getCandidateIdByUserId(currentUser.getId()));
 	}
-	
+
 	@GetMapping("/allemployers")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<EmployerSummary> getAllEmployers(@CurrentUser UserPrincipal currentUser,  @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
@@ -388,7 +386,7 @@ public class CandidateDashboardController {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return employerRepository.getAllEmployers(pageable);
 	}
-	
+
 	@GetMapping("/mystats")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public CandidateStats getCandidateStats(@CurrentUser UserPrincipal currentUser) {
@@ -397,9 +395,9 @@ public class CandidateDashboardController {
 		candidate.setSavedEmployersCount(candidateStatisticService.countSavedProfileEmployers(currentUser));
 		return candidate;
 	}
-	
 
-	
+
+
 	@GetMapping("/employerjobposts/{companyname}")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getAllJobPostByEmployers(@CurrentUser UserPrincipal currentUser, @PathVariable("companyname") String companyname, 
@@ -409,7 +407,7 @@ public class CandidateDashboardController {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return jobPostRepository.getAllJobPostsByEmployer(companyname, pageable);
 	}
-	
+
 	@GetMapping("/{industry}/{websitename}")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getJobPostsByIndustryAndWebsiteName(@PathVariable("industry") String industry, @PathVariable("websitename") String websitename, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
@@ -418,7 +416,7 @@ public class CandidateDashboardController {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return jobPostRepository.getAllJobPostsByIndustryAndWebsitename(industry, websitename, pageable);
 	}
-	
+
 	@GetMapping("/getJobPostby/{industry}")
 	@PreAuthorize("hasRole('CANDIDATE')")
 	public Page<JobPostSummary> getJobPostsByIndustry(@PathVariable("industry") String industry, 
@@ -428,12 +426,25 @@ public class CandidateDashboardController {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return jobPostRepository.getAllJobPostsByIndustry(industry, pageable);
 	}
-	
-	@GetMapping("/industries")
 
+	@GetMapping("/industries")
 	public List<String> getAllIndustries(@CurrentUser UserPrincipal currentUser) {
 		return industryRepository.getAllIndustriesName();
 	}
-	
+
+	@PostMapping("jobposts/{jobpostId}/apply") 
+	public ResponseEntity<?> applyJobPost(@PathVariable("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
+		if (jobPostRepository.checkJobPostIsCrawledById(jobpostId) != null) {
+			Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
+			CandidateApplication candidateapplication = new CandidateApplication(candidate, jobPostRepository.getOne(jobpostId), LocalDate.now());
+			candidate.getCandidateapplications().add(candidateapplication);
+			JobPost jobpost = jobPostRepository.getOne(jobpostId);
+			jobpost.getCandidateapplications().add(candidateapplication);
+			candidateApplicationRepository.save(candidateapplication);
+			candidateRepository.save(candidate);
+			jobPostRepository.save(jobpost);
+			return ResponseEntity.ok("Đã nộp hồ sơ thành công!");
+	}
+
 
 }

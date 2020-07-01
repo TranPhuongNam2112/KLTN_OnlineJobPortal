@@ -167,5 +167,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "Where j.expirationDate >= CURRENT_DATE AND i.id = ?1")
 	Page<JobPostSummary> getAllJobPostsByIndustryId(Long industryid, Pageable pageable); 
 	
+	@Query("Select jp From JobPost jp Where jp.id = :jobpostId AND jp.sourceUrl IS NULL")
+	JobPost checkJobPostIsCrawledById(@Param("jobpostId") Long jobpostId);
 }
 

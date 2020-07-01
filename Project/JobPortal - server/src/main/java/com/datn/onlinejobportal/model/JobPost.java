@@ -69,6 +69,10 @@ public class JobPost extends DateAudit {
 	@JsonIgnore
     private Set<CandidateHistory> candidatehistories;
 	
+	@OneToMany(mappedBy = "jobpost", cascade = CascadeType.MERGE)
+	@JsonIgnore
+    private Set<CandidateApplication> candidateapplications;
+	
 	private Long requiredexperienceyears;
 	
 	@NotNull
@@ -86,6 +90,16 @@ public class JobPost extends DateAudit {
 		super();
 	}
 	
+
+	public Set<CandidateApplication> getCandidateapplications() {
+		return candidateapplications;
+	}
+
+
+	public void setCandidateapplications(Set<CandidateApplication> candidateapplications) {
+		this.candidateapplications = candidateapplications;
+	}
+
 
 	public String getSourceWebsite() {
 		return sourceWebsite;

@@ -53,4 +53,7 @@ public interface EmployerRepository extends JpaRepository<Employer, Long>, JpaSp
 	@Transactional
 	@Query("DELETE FROM Employer e Where e.companyname = :companyname")
 	void deleteDuplicateEmployer(@Param("companyname") String companyname);
+	
+	@Query("Select e From Employer e Where e.companyname = :companyname")
+	Employer getDuplicateEmployer(@Param("companyname") String companyname);
 }

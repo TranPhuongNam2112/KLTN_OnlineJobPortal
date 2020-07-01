@@ -59,6 +59,9 @@ public class Candidate extends DateAudit {
 	
 	@OneToMany(mappedBy = "candidate", cascade = CascadeType.MERGE)
 	private Set<EmployerHistory> employerhistories = new HashSet<>();
+	
+	@OneToMany(mappedBy = "candidate", cascade = CascadeType.MERGE)
+	private Set<CandidateApplication> candidateapplications = new HashSet<>();
 
 	@OneToMany(
 			mappedBy = "candidate",
@@ -99,6 +102,14 @@ public class Candidate extends DateAudit {
 	
 	private Boolean profile_visible;
 	
+	public Set<CandidateApplication> getCandidateapplications() {
+		return candidateapplications;
+	}
+
+	public void setCandidateapplications(Set<CandidateApplication> candidateapplications) {
+		this.candidateapplications = candidateapplications;
+	}
+
 	public Set<Industry> getIndustries() {
 		return industries;
 	}

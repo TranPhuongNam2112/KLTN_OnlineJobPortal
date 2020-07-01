@@ -76,10 +76,10 @@ public class AuthController {
 
 	@Autowired
 	private TokenProvider tokenProvider;
-	
+
 	@Autowired
 	private PasswordResetTokenRepository tokenRepository;
-	
+
 	@Autowired
 	private ConfirmationTokenRepository confirmationTokenRepository;
 
@@ -88,10 +88,10 @@ public class AuthController {
 
 	@Autowired
 	private CandidateRepository candidateRepository;
-	
+
 	@Autowired
 	private EmailService emailService;
-	
+
 	@Autowired
 	private JobPostRepository jobPostRepository;
 
@@ -109,25 +109,24 @@ public class AuthController {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		String token = tokenProvider.createToken(authentication);
-		
+
 		UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 		/*
-		
 		if (!userRepository.findByEmail(userDetails.getEmail()).getEmailVerified()) {
 			throw new BadRequestException("Email của người dùng chưa được xác thực!");
 		}
-*/
-		
+		 */
+
 		return ResponseEntity.ok(new JwtResponse(token, 
-												 userDetails.getId(), 
-												 userDetails.getFullname(), 
-												 userDetails.getEmail(), 
-												 roles));
+				userDetails.getId(), 
+				userDetails.getFullname(), 
+				userDetails.getEmail(), 
+				roles));
 	}
-	
+
 	@PostMapping("/signupforemployer")
 	public ResponseEntity<?> registerEmployer(@Valid @RequestBody EmployerSignUpRequest employersignUpRequest) {
 		if(userRepository.existsByEmail(employersignUpRequest.getEmail())) {
@@ -148,9 +147,12 @@ public class AuthController {
 		user.setRoles(roles);
 		user.setCreatedAt(LocalDate.now());
 		User result = userRepository.save(user);
-		
-		employerRepository.deleteDuplicateEmployer(employersignUpRequest.getCompanyname());
-		jobPostRepository.deleteJobPostsByEmployer(employersignUpRequest.getCompanyname());
+		if (employerRepository.getDuplicateEmployer(employersignUpRequest.getCompanyname()) != null) {
+
+			jobPostRepository.deleteJobPostsByEmployer(employersignUpRequest.getCompanyname());
+			employerRepository.deleteDuplicateEmployer(employersignUpRequest.getCompanyname());
+
+		}
 
 		Employer company = new Employer();
 		company.setCompanyname(employersignUpRequest.getCompanyname());
@@ -195,8 +197,8 @@ public class AuthController {
 		// Generate random 36-character string token for confirmation link
 		ConfirmationToken token = new ConfirmationToken();
 		token.setConfirmationToken(UUID.randomUUID().toString());
-        token.setUser(user);
-        confirmationTokenRepository.save(token);
+		token.setUser(user);
+		confirmationTokenRepository.save(token);
 
 		String appUrl = request.getScheme() + "://" + request.getServerName() + ":8080";
 
@@ -214,7 +216,7 @@ public class AuthController {
 		candidate.setUser(user);
 		candidateRepository.save(candidate);
 
-		
+
 
 		URI location = ServletUriComponentsBuilder
 				.fromCurrentContextPath().path("/candidate/me")
@@ -223,7 +225,7 @@ public class AuthController {
 		return ResponseEntity.created(location)
 				.body(new ApiResponse(true, "User registered successfully!"));
 	}
-	
+
 	@GetMapping("/confirm")
 	public ResponseEntity<Object> processConfirmationPage(@RequestParam("token") String token)
 			throws URISyntaxException {
@@ -303,7 +305,7 @@ public class AuthController {
 		return ResponseEntity.created(location)
 				.body(new ApiResponse(true, "User registered successfully!"));
 	}
-	
+
 	@PostMapping("/forgotpassword")
 	public ResponseEntity<?> resetUserPassword(@Valid @RequestBody EmailPasswordResetRequest emailPasswordResetRequest, HttpServletRequest request) {
 		String appUrl = request.getScheme() + "://" + request.getServerName() + ":8080";
@@ -314,26 +316,26 @@ public class AuthController {
 		{
 			return ResponseEntity.ok("We couldn't find your account with the email you have typed in!");
 		}
-		
+
 		PasswordResetToken token = new PasswordResetToken();
 		token.setToken(UUID.randomUUID().toString());
-        token.setUser(user);
-        token.setExpiryDate(30);
-        tokenRepository.save(token);
+		token.setUser(user);
+		token.setExpiryDate(30);
+		tokenRepository.save(token);
 		SimpleMailMessage registrationEmail = new SimpleMailMessage();
 		registrationEmail.setTo(emailPasswordResetRequest.getEmail());
 		registrationEmail.setSubject("Password reset request");
 		registrationEmail.setText("To reset yourpassword, please click the link below:\n"
 				+ redirectUrl + "/resetpassword?reset_token=" + token.getToken()
-				
+
 				);
 		registrationEmail.setFrom("no-reply@memorynotfound.com");
 
 		emailService.sendEmail(registrationEmail);
-		
+
 		return ResponseEntity.ok("Please check your email for further instructions.");
 	}
-	
+
 	@PostMapping("/resetpassword")
 	public ResponseEntity<?> resetPassword(@RequestParam("token") String token, @RequestBody ResetPasswordRequest resetPasswordRequest)
 	{
@@ -343,14 +345,14 @@ public class AuthController {
 		}
 		else {
 			PasswordResetToken usertoken = tokenRepository.findByToken(token);
-	        User user = usertoken.getUser();
-	        String updatedPassword = passwordEncoder.encode(resetPasswordRequest.getNewpassword());
-	        userRepository.updatePassword(updatedPassword, user.getId());
-	        tokenRepository.delete(usertoken);
-	        return ResponseEntity.ok("Password updated successfully!");
+			User user = usertoken.getUser();
+			String updatedPassword = passwordEncoder.encode(resetPasswordRequest.getNewpassword());
+			userRepository.updatePassword(updatedPassword, user.getId());
+			tokenRepository.delete(usertoken);
+			return ResponseEntity.ok("Password updated successfully!");
 		}
 	}
-	
-	
+
+
 
 }
