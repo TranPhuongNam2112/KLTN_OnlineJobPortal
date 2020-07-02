@@ -74,7 +74,7 @@ public class MyWebCrawler extends WebCrawler {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			if (page.getWebURL().toString().contains("https://careerbuilder.vn/")) {
 				Document doc = Jsoup.parseBodyFragment(htmlParseData.getHtml());
-				Element jobcategories = doc.select("body > main > section.search-result-list > div > div.row > div.col-lg-8.col-xl-9 > section").first();
+				Element jobcategories = doc.select("body > main > section.search-result-list > div > div > div.col-lg-8.col-custom-xxl-9 > div.main-slide > div > div > div > div.jobs-side-list").first();
 				Elements cats = jobcategories.children();
 				for (Element cat: cats) {
 					if (cat.hasAttr("id")) {
