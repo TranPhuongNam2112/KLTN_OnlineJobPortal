@@ -417,9 +417,9 @@ public class CandidateDashboardController {
 		return jobPostRepository.getAllJobPostsByIndustryAndWebsitename(industry, websitename, pageable);
 	}
 
-	@GetMapping("/getJobPostby/{industry}")
+	@GetMapping("/getJobPostby")
 	@PreAuthorize("hasRole('CANDIDATE')")
-	public Page<JobPostSummary> getJobPostsByIndustry(@PathVariable("industry") String industry, 
+	public Page<JobPostSummary> getJobPostsByIndustry(@RequestParam(value = "industry",required = true) String industry,  
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = "10")int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {

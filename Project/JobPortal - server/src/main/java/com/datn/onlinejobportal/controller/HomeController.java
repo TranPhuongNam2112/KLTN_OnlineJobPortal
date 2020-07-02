@@ -20,6 +20,7 @@ import com.datn.onlinejobportal.model.Employer;
 import com.datn.onlinejobportal.payload.EmployerProfile;
 import com.datn.onlinejobportal.repository.EmployerRepository;
 import com.datn.onlinejobportal.repository.IndustryRepository;
+import com.datn.onlinejobportal.repository.JobLocationRepository;
 import com.datn.onlinejobportal.repository.JobPostRepository;
 import com.datn.onlinejobportal.repository.UserRepository;
 import com.datn.onlinejobportal.security.CurrentUser;
@@ -33,6 +34,9 @@ public class HomeController {
 
 	@Autowired
 	private JobPostRepository jobPostRepository;
+	
+	@Autowired
+	private JobLocationRepository jobLocationRepository;
 
 	@Autowired
 	private EmployerRepository employerRepository;
@@ -121,10 +125,19 @@ public class HomeController {
 	public Page<JobPostSummary> getJobPostsByIndustryAndWebsiteName(@PathVariable("industry") String industry, @PathVariable("websitename") String websitename, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+		
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return jobPostRepository.getAllJobPostsByIndustryAndWebsitename(industry, websitename, pageable);
 	}
 	
+	@GetMapping("/allLocations")
+	public List<String> getAllJobLocations(@CurrentUser UserPrincipal currentUser) {
+		return jobLocationRepository.getAllJobLocations();
+	}
+	@GetMapping("/allKeywords")
+	public List<String> getAllKeyWords(@CurrentUser UserPrincipal currentUser) {
+		return jobPostRepository.getAllKeyWords();
+	}
 	@GetMapping("/{industry}")
 	public Page<JobPostSummary> getJobPostsByIndustry(@PathVariable("industry") String industry, @RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
