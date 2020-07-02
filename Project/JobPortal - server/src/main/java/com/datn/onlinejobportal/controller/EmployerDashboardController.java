@@ -45,6 +45,7 @@ import com.datn.onlinejobportal.payload.EmployerProfile;
 import com.datn.onlinejobportal.payload.EmployerRequest;
 import com.datn.onlinejobportal.payload.ExperienceResponse;
 import com.datn.onlinejobportal.payload.JobPostRequest;
+import com.datn.onlinejobportal.repository.CandidateApplicationRepository;
 import com.datn.onlinejobportal.repository.CandidateRepository;
 import com.datn.onlinejobportal.repository.EducationRepository;
 import com.datn.onlinejobportal.repository.EmployerHistoryRepository;
@@ -107,6 +108,9 @@ public class EmployerDashboardController {
 	
 	@Autowired
 	private EmployerHistoryRepository employerHistoryRepository;
+	
+	@Autowired
+	private CandidateApplicationRepository candidateApplicationRepository;
 
 	@PostMapping("/createpost")
 	@PreAuthorize("hasRole('EMPLOYER')")
@@ -338,6 +342,27 @@ public class EmployerDashboardController {
 	@GetMapping("/history")
 	public List<CandidateSummary> getAllViewedCandidateProfiles(@CurrentUser UserPrincipal currentUser) {
 		return employerHistoryRepository.getAllViewedCandidateProfiles(employerRepository.getEmployerIdByAccount_Id(currentUser.getId()));
+	}
+	
+	@GetMapping("/appliedcandidates")
+	public List<CandidateSummary> getAllAppliedCandidate(@CurrentUser UserPrincipal currentUser) {
+		Long employerId = employerRepository.getEmployerIdByAccount_Id(currentUser.getId());
+		return candidateApplicationRepository.getAllAppliedCandidates(employerId);
+	}
+	
+	@GetMapping("/search")
+	public Page<CandidateSummary> searchCandidates(@CurrentUser UserPrincipal currentUser, 
+			@RequestParam(value = "name",required=false) String name,
+			@RequestParam(value="experience", required=false) Long experience,
+			@RequestParam(value="worktitle", required=false) String worktitle,
+			@RequestParam(value = "industry",required = false) String industry, 
+			@RequestParam(value = "jobtype",required = false) String jobtype, 
+			@RequestParam(value = "location",required = false) String location,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "name") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
+		return candidateRepository.searchCandidate(name, experience, worktitle, industry, jobtype, location, pageable);
 	}
 
 }

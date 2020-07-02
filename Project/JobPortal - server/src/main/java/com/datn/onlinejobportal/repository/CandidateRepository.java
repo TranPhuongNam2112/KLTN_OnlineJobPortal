@@ -45,4 +45,14 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 			+ "Where u.createdAt = CURRENT_DATE")
 	Long getCurrentDateNewCandidatesCount();
 	
+	@Query("Select new com.datn.onlinejobportal.dto.CandidateSummary(c.id, f.data, u.name, c.city_province, c.work_title, c.updatedAt, u.imageUrl) From Candidate c "
+			+ "LEFT JOIN c.savedCandidates sc "
+			+ "LEFT JOIN c.user u "
+			+ "LEFT JOIN u.files f "
+			+ "LEFT JOIN c.industries i "
+			+ "LEFT JOIN c.jobtypes j "
+			+ "WHERE lower(u.name) LIKE lower(concat('%', ?1,'%')) OR c.yearsofexperience >= ?2 OR (lower(c.work_title) LIKE lower(concat('%', ?3,'%'))) "
+			+ "OR i.industryname = ?3 OR j.job_type_name = ?4 OR c.city_province = ?5")
+	Page<CandidateSummary> searchCandidate(String name, Long experienceyears, String worktitle, String industry, String jobtype, String cityprovince, Pageable pageable);
+	
 }
