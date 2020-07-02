@@ -27,7 +27,6 @@ public class Industry {
 
 	
 	@ManyToMany(mappedBy="industries")
-	@JsonIgnore
     private Set<Candidate> industry;
 
 	public Industry() {

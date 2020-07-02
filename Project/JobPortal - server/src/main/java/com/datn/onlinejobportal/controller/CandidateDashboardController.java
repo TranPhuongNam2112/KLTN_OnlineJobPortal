@@ -109,7 +109,7 @@ public class CandidateDashboardController {
 
 	@Autowired
 	private CandidateStatisticService candidateStatisticService;
-	
+
 	@Autowired
 	private CandidateApplicationRepository candidateApplicationRepository;
 
@@ -434,17 +434,14 @@ public class CandidateDashboardController {
 
 	@PostMapping("jobposts/{jobpostId}/apply") 
 	public ResponseEntity<?> applyJobPost(@PathVariable("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
-		if (jobPostRepository.checkJobPostIsCrawledById(jobpostId) != null) {
-			Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
-			CandidateApplication candidateapplication = new CandidateApplication(candidate, jobPostRepository.getOne(jobpostId), LocalDate.now());
-			candidate.getCandidateapplications().add(candidateapplication);
-			JobPost jobpost = jobPostRepository.getOne(jobpostId);
-			jobpost.getCandidateapplications().add(candidateapplication);
-			candidateApplicationRepository.save(candidateapplication);
-			candidateRepository.save(candidate);
-			jobPostRepository.save(jobpost);
-			return ResponseEntity.ok("Đã nộp hồ sơ thành công!");
+		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
+		CandidateApplication candidateapplication = new CandidateApplication(candidate, jobPostRepository.getOne(jobpostId), LocalDate.now());
+		candidate.getCandidateapplications().add(candidateapplication);
+		JobPost jobpost = jobPostRepository.getOne(jobpostId);
+		jobpost.getCandidateapplications().add(candidateapplication);
+		candidateApplicationRepository.save(candidateapplication);
+		candidateRepository.save(candidate);
+		jobPostRepository.save(jobpost);
+		return ResponseEntity.ok("Đã nộp hồ sơ thành công!");
 	}
-
-
 }

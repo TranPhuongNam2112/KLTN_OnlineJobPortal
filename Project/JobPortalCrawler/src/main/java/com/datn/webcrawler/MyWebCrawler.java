@@ -74,7 +74,7 @@ public class MyWebCrawler extends WebCrawler {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			if (page.getWebURL().toString().contains("https://careerbuilder.vn/")) {
 				Document doc = Jsoup.parseBodyFragment(htmlParseData.getHtml());
-				Element jobcategories = doc.select("body > main > section.search-result-list > div > div.row > div.col-lg-8.col-xl-9 > section").first();
+				Element jobcategories = doc.select("body > main > section.search-result-list > div > div > div.col-lg-8.col-custom-xxl-9 > div.main-slide > div > div > div > div.jobs-side-list").first();
 				Elements cats = jobcategories.children();
 				for (Element cat: cats) {
 					if (cat.hasAttr("id")) {
@@ -92,11 +92,20 @@ public class MyWebCrawler extends WebCrawler {
 								industries = post.select("#info-career-desktop > ul > li:nth-child(5) > div > a");
 								Elements industrynames = industries;
 								jobtype = post.select("#info-career-desktop > ul > li:nth-child(2) > div").text();
-								Element description = post.select("body > main > section.search-result-list-detail > div > div > div.col-lg-7.col-xl-8 > div > section > div.template-200 > div.left-col > div:nth-child(2) > div > ul").first();
-								desc = description.children().text();
-
+								
+								if (post.select("body > main > section.search-result-list-detail > div > div > div.col-lg-7.col-xl-8 > div > section > div.template-200 > div.left-col > div:nth-child(2) > div > ul").size() != 0) {
+								Element description = post.select("body > main > section.search-result-list-detail > div > div > div.col-lg-7.col-xl-8 > div > section > div.template-200 > div.left-col > div:nth-child(2) > div > ul").first();		
+								desc = description.html();
+								}
+								else {
+									Element description = post.select("body > main > section.search-result-list-detail > div > div > div.col-lg-7.col-xl-8 > div > section > div.template-15 > div.left-col > div > div:nth-child(6) > div").first();
+									desc = description.html();
+								}
+								
+								
+								
+								
 								String experiencetype = post.select("#info-career-desktop > ul > li:nth-child(6) > div").text();
-								//System.out.println(experiencetype);
 								if (experiencetype.contains("Không yêu cầu kinh nghiệm") || experiencetype.contains("Chưa"))
 								{
 									years = 0;
@@ -127,7 +136,7 @@ public class MyWebCrawler extends WebCrawler {
 								for (Element industryname: industrynames) {
 									industry.add(industryname.text());
 								}
-								desc = post.select("#tab-1 > section > div:nth-child(3) > h3").first().children().text();
+								desc = post.select("#tab-1 > section > div:nth-child(3) > h3").first().html();
 							}
 
 						} catch (IOException e1) {
