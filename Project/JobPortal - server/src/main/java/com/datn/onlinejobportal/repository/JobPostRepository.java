@@ -182,7 +182,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN j.joblocation jl "
 			+ "LEFT JOIN j.jobtype jt "
 			+ "LEFT JOIN j.industries i "
-			+ "Where j.id IN (SELECT j.id FROM JobPost j LEFT JOIN j.candidateapplication ca Where ca.candidate.id = ?1)")
+			+ "Where j.id IN (SELECT j.id FROM JobPost j LEFT JOIN j.candidateapplications ca Where ca.candidate.id = ?1)")
 	Page<JobPostSummary> getAllAppliedJobPostByCandidateId(Long candidateId, Pageable pageable);
 
 }
