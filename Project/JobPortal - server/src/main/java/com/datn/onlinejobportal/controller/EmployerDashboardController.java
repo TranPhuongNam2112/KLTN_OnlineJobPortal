@@ -359,9 +359,8 @@ public class EmployerDashboardController {
 			@RequestParam(value = "jobtype",required = false) String jobtype, 
 			@RequestParam(value = "location",required = false) String location,
 			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
-			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
-			@RequestParam(defaultValue = "name") String sortBy) {
-		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.unsorted());
 		return candidateRepository.searchCandidate(name, experience, worktitle, industry, jobtype, location, pageable);
 	}
 
