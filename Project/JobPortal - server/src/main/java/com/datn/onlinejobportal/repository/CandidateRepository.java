@@ -52,7 +52,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 			+ "LEFT JOIN c.industries i "
 			+ "LEFT JOIN c.jobtypes j "
 			+ "WHERE lower(u.name) LIKE lower(concat('%', ?1,'%')) OR c.yearsofexperience >= ?2 OR (lower(c.work_title) LIKE lower(concat('%', ?3,'%'))) "
-			+ "OR i.industryname = ?3 OR j.job_type_name = ?4 OR c.city_province = ?5")
+			+ "OR i.industryname = ?3 OR (j IN (SELECT j FROM JobType Where j.job_type_name = ?4))  OR c.city_province = ?5")
 	Page<CandidateSummary> searchCandidate(String name, Long experienceyears, String worktitle, String industry, String jobtype, String cityprovince, Pageable pageable);
 	
 }

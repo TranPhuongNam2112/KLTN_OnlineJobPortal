@@ -14,7 +14,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.datn.onlinejobportal.dto.CountSearchJobPosts;
 import com.datn.onlinejobportal.dto.CrawledJobPostSummary;
 import com.datn.onlinejobportal.dto.JobPostSummary;
 import com.datn.onlinejobportal.dto.MyJobPostSummary;
@@ -87,7 +86,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "AND j.sourceWebsite IN :pagenames")
 	Page<CrawledJobPostSummary> getCrawledJobPostByWebsiteNames(@Param("pagenames") List<String> pagenames, Pageable pageable);
 	
-	@Query("Select new com.datn.onlinejobportal.dto.CountSearchJobPosts(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl, COUNT(j.id)) "
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
 			+ "From JobPost j "
 			+ "LEFT JOIN j.employer e "
 			+ "LEFT JOIN e.user u "
@@ -97,8 +96,19 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN j.industries i "
 			+ "Where j.expirationDate >= CURRENT_DATE AND lower(j.job_title) LIKE lower(concat('%', ?1,'%')) OR (i IN (Select i From Industry i Where i.industryname = ?2) "
 			+ "OR jt.job_type_name = ?3 OR jl.city_province = ?4) ")
-	Page<CountSearchJobPosts> getJobPostsByJobTitleAndIndustryAndJobTypeAndJobLocation(String jobtitle, String industry, String job_type_name, String city_province, Pageable pageable);
+	Page<JobPostSummary> getJobPostsByJobTitleAndIndustryAndJobTypeAndJobLocation(String jobtitle, String industry, String job_type_name, String city_province, Pageable pageable);
 	
+	@Query("Select COUNT(j.id) "
+			+ "From JobPost j "
+			+ "LEFT JOIN j.employer e "
+			+ "LEFT JOIN e.user u "
+			+ "LEFT JOIN u.files f "
+			+ "LEFT JOIN j.joblocation jl "
+			+ "LEFT JOIN j.jobtype jt "
+			+ "LEFT JOIN j.industries i "
+			+ "Where j.expirationDate >= CURRENT_DATE AND lower(j.job_title) LIKE lower(concat('%', ?1,'%')) OR (i IN (Select i From Industry i Where i.industryname = ?2) "
+			+ "OR jt.job_type_name = ?3 OR jl.city_province = ?4) ")
+	Long countSearchJobPosts(String jobtitle, String industry, String job_type_name, String city_province);
 	
 	@Query("Select jp.id FROM JobPost jp "
 			+ "LEFT JOIN jp.candidatehistories ch "
@@ -185,6 +195,8 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN j.industries i "
 			+ "Where j.id IN (SELECT j.id FROM JobPost j LEFT JOIN j.candidateapplications ca Where ca.candidate.id = ?1)")
 	Page<JobPostSummary> getAllAppliedJobPostByCandidateId(Long candidateId, Pageable pageable);
+	
+	
 
 }
 

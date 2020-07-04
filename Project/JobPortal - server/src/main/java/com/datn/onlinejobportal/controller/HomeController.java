@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.datn.onlinejobportal.dto.CountSearchJobPosts;
 import com.datn.onlinejobportal.dto.CrawledJobPostSummary;
 import com.datn.onlinejobportal.dto.JobPostSummary;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
@@ -95,7 +94,7 @@ public class HomeController {
 	
 
 	@GetMapping("/search/jobposts")
-	public Page<CountSearchJobPosts> getFilterJobPosts(
+	public Page<JobPostSummary> getFilterJobPosts(
 			@RequestParam(value = "jobtitle",required=false) String jobtitle, 
 			@RequestParam(value = "industry",required = false) String industry, 
 			@RequestParam(value = "jobtype",required = false) String jobtype, 
@@ -153,6 +152,15 @@ public class HomeController {
 			@RequestParam(defaultValue = "expirationDate") String sortBy) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
 		return jobPostRepository.getAllJobPostsByIndustryId(industryRepository.getIndustryJobPostCounts().get(0).getId(), pageable);
+	}
+	
+	@GetMapping("/searchresults")
+	public Long getSearchCounts(
+			@RequestParam(value = "jobtitle",required=false) String jobtitle, 
+			@RequestParam(value = "industry",required = false) String industry, 
+			@RequestParam(value = "jobtype",required = false) String jobtype, 
+			@RequestParam(value = "joblocation",required = false) String joblocation) {
+		return jobPostRepository.countSearchJobPosts(jobtitle, industry, jobtype, joblocation);
 	}
 
 }
