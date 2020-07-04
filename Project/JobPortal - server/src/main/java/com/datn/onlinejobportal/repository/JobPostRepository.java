@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.datn.onlinejobportal.dto.CountSearchJobPosts;
 import com.datn.onlinejobportal.dto.CrawledJobPostSummary;
 import com.datn.onlinejobportal.dto.JobPostSummary;
 import com.datn.onlinejobportal.dto.MyJobPostSummary;
@@ -96,7 +97,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN j.industries i "
 			+ "Where j.expirationDate >= CURRENT_DATE AND lower(j.job_title) LIKE lower(concat('%', ?1,'%')) OR (i IN (Select i From Industry i Where i.industryname = ?2) "
 			+ "OR jt.job_type_name = ?3 OR jl.city_province = ?4) ")
-	Page<JobPostSummary> getJobPostsByJobTitleAndIndustryAndJobTypeAndJobLocation(String jobtitle, String industry, String job_type_name, String city_province, Pageable pageable);
+	Page<CountSearchJobPosts> getJobPostsByJobTitleAndIndustryAndJobTypeAndJobLocation(String jobtitle, String industry, String job_type_name, String city_province, Pageable pageable);
 	
 	
 	@Query("Select jp.id FROM JobPost jp "

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.datn.onlinejobportal.dto.CountSearchJobPosts;
 import com.datn.onlinejobportal.dto.CrawledJobPostSummary;
 import com.datn.onlinejobportal.dto.JobPostSummary;
 import com.datn.onlinejobportal.exception.ResourceNotFoundException;
@@ -94,7 +95,7 @@ public class HomeController {
 	
 
 	@GetMapping("/search/jobposts")
-	public Page<JobPostSummary> getFilterJobPosts(
+	public Page<CountSearchJobPosts> getFilterJobPosts(
 			@RequestParam(value = "jobtitle",required=false) String jobtitle, 
 			@RequestParam(value = "industry",required = false) String industry, 
 			@RequestParam(value = "jobtype",required = false) String jobtype, 
