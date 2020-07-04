@@ -133,7 +133,7 @@ public class CandidateDashboardController {
 			candidateProfile.setCV_Uri(fileDownloadUri);
 			candidateProfile.setCV_name(candidate.getFiles().getFileName());
 		}
-		candidateProfile.setIndustries(industryRepository.getCandidateIndustryNames());
+		candidateProfile.setIndustries(industryRepository.getCandidateIndustryNames(candidate.getId()));
 		candidateProfile.setName(currentUser.getFullname());
 		candidateProfile.setAddress(candidate.getHomeaddress());
 		candidateProfile.setGender(candidate.getGender());

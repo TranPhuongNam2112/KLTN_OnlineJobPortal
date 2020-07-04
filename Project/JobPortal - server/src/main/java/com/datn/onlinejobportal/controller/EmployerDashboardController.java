@@ -149,6 +149,8 @@ public class EmployerDashboardController {
 		jobpost.setCreatedAt(LocalDate.now());
 		jobpost.setExpirationDate(jobPostRequest.getExpiredDate());    
 		jobpost.setRequiredexpreienceyears(jobPostRequest.getRequiredexperience());
+		jobpost.setMin_salary(jobPostRequest.getMinSalary());
+		jobpost.setMax_salary(jobPostRequest.getMaxSalary());
 
 		JobPost updatedJobPost = jobPostRepository.save(jobpost);
 		return updatedJobPost;

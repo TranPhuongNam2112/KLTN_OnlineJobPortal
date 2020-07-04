@@ -22,8 +22,9 @@ public interface IndustryRepository extends JpaRepository<Industry, Long>{
 	Set<Industry> getAllIndustriesByNames(@Param("names") List<String> names);
 	
 	@Query("Select i.industryname From Candidate c "
-			+ "LEFT JOIN c.industries i")
-	List<String> getCandidateIndustryNames();
+			+ "LEFT JOIN c.industries i "
+			+ "Where c.id = ?1")
+	List<String> getCandidateIndustryNames(Long candidateId);
 	
 	@Query("Select i.industryname From Industry i")
 	List<String> getAllIndustriesName();
