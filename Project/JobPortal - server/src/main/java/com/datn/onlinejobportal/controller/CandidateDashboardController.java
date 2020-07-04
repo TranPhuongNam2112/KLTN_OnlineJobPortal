@@ -444,4 +444,13 @@ public class CandidateDashboardController {
 		jobPostRepository.save(jobpost);
 		return ResponseEntity.ok("Đã nộp hồ sơ thành công!");
 	}
+	
+	@GetMapping("/myappliedjobposts")
+	public Page<JobPostSummary> getAllMyAppliedJobPosts(@CurrentUser UserPrincipal currentUser, 
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int pageNo,
+			@RequestParam(defaultValue = AppConstants.DEFAULT_PAGE_SIZE)int pageSize,
+			@RequestParam(defaultValue = "expirationDate") String sortBy) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+		return jobPostRepository.getAllAppliedJobPostByCandidateId(candidateRepository.getCandidateIdByUserId(currentUser.getId()), pageable);
+	}
 }

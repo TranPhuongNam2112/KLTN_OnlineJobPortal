@@ -86,7 +86,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "AND j.sourceWebsite IN :pagenames")
 	Page<CrawledJobPostSummary> getCrawledJobPostByWebsiteNames(@Param("pagenames") List<String> pagenames, Pageable pageable);
 	
-	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
+	@Query("Select new com.datn.onlinejobportal.dto.CountSearchJobPosts(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl, COUNT(j.id)) "
 			+ "From JobPost j "
 			+ "LEFT JOIN j.employer e "
 			+ "LEFT JOIN e.user u "
@@ -95,8 +95,9 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN j.jobtype jt "
 			+ "LEFT JOIN j.industries i "
 			+ "Where j.expirationDate >= CURRENT_DATE AND lower(j.job_title) LIKE lower(concat('%', ?1,'%')) OR (i IN (Select i From Industry i Where i.industryname = ?2) "
-			+ "OR jt.job_type_name = ?3 OR jl.city_province = ?4)")
+			+ "OR jt.job_type_name = ?3 OR jl.city_province = ?4) ")
 	Page<JobPostSummary> getJobPostsByJobTitleAndIndustryAndJobTypeAndJobLocation(String jobtitle, String industry, String job_type_name, String city_province, Pageable pageable);
+	
 	
 	@Query("Select jp.id FROM JobPost jp "
 			+ "LEFT JOIN jp.candidatehistories ch "
@@ -172,6 +173,17 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 	
 	@Query("Select distinct j.job_title FROM JobPost j")
 	List<String> getAllKeyWords();
+	
+	@Query("Select new com.datn.onlinejobportal.dto.JobPostSummary(j.id, f.data, e.imageUrl, e.companyname, j.job_title, j.requiredexperienceyears, jl.city_province, jt.job_type_name, j.expirationDate, j.min_salary, j.max_salary, j.sourceUrl) "
+			+ "From JobPost j "
+			+ "LEFT JOIN j.employer e "
+			+ "LEFT JOIN e.user u "
+			+ "LEFT JOIN u.files f "
+			+ "LEFT JOIN j.joblocation jl "
+			+ "LEFT JOIN j.jobtype jt "
+			+ "LEFT JOIN j.industries i "
+			+ "Where j.id IN (SELECT j.id FROM JobPost j LEFT JOIN j.candidateapplication ca Where ca.candidate.id = ?1)")
+	Page<JobPostSummary> getAllAppliedJobPostByCandidateId(Long candidateId, Pageable pageable);
 
 }
 
