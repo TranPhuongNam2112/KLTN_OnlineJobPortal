@@ -47,7 +47,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 			+ "Where u.createdAt = CURRENT_DATE")
 	Long getCurrentDateNewCandidatesCount();
 	
-	@Query("Select new com.datn.onlinejobportal.dto.CandidateSummary(c.id, f.data, u.name, c.city_province, c.work_title, c.updatedAt, u.imageUrl) From Candidate c "
+	@Query("Select DISTINCT new com.datn.onlinejobportal.dto.CandidateSummary(c.id, f.data, u.name, c.city_province, c.work_title, c.updatedAt, u.imageUrl) From Candidate c "
 			+ "LEFT JOIN c.savedCandidates sc "
 			+ "LEFT JOIN c.user u "
 			+ "LEFT JOIN u.files f "

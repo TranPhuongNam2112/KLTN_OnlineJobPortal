@@ -26,7 +26,7 @@ public interface IndustryRepository extends JpaRepository<Industry, Long>{
 			+ "Where c.id = ?1")
 	List<String> getCandidateIndustryNames(Long candidateId);
 	
-	@Query("Select i.industryname From Industry i")
+	@Query("Select DISTINCT i.industryname From Industry i")
 	List<String> getAllIndustriesName();
 	
 	@Query("Select new com.datn.onlinejobportal.dto.IndustryJobPostCount(i.id, COUNT(j.id)) From Industry i "
