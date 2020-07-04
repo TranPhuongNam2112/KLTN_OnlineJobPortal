@@ -1,6 +1,8 @@
 package com.datn.onlinejobportal.repository;
 
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -56,4 +58,6 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 			+ "OR lower(c.city_province) LIKE lower(concat('%', ?5, '%'))")
 	Page<CandidateSummary> searchCandidate(String name, Long experienceyears, String worktitle, String industry, String jobtype, String cityprovince, Pageable pageable);
 	
+	@Query("Select DISTINCT c.work_title From Candidate c")
+	List<String> getAllWorkTitles();
 }

@@ -364,6 +364,10 @@ public class EmployerDashboardController {
 		return candidateRepository.searchCandidate(name, experience, worktitle, industry, jobtype, location, pageable);
 	}
 	
+	@GetMapping("/worktitles")
+	public List<String> getAllWorkTitles(@CurrentUser UserPrincipal currentUser) {
+		return candidateRepository.getAllWorkTitles();
+	}
 
 
 }
