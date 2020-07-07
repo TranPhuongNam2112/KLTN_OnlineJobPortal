@@ -432,7 +432,7 @@ public class CandidateDashboardController {
 		return industryRepository.getAllIndustriesName();
 	}
 
-	@PostMapping("jobposts/{jobpostId}/apply") 
+	@PostMapping("jobposts/apply/{jobpostId}")
 	public ResponseEntity<?> applyJobPost(@PathVariable("jobpostId") Long jobpostId, @CurrentUser UserPrincipal currentUser) {
 		Candidate candidate = candidateRepository.getCandidateByUserId(currentUser.getId());
 		CandidateApplication candidateapplication = new CandidateApplication(candidate, jobPostRepository.getOne(jobpostId), LocalDate.now());
