@@ -46,7 +46,7 @@ public class CrawlerController {
 	private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
 
 
-	@Scheduled(cron = "0 58 22 * * ?")
+	@Scheduled(cron = "0 30 23 * * ?")
 	public static void TimViecNhanhcrawlSchedule() throws Exception {
 		System.out.println("Start crawling");
 		String crawlStorageFolder = "/tmp/crawler4j/";
@@ -97,21 +97,20 @@ public class CrawlerController {
 		Elements categories = timvn.select("#province-content");
 
 		
-//		for (Element category:categories) {
-//			Elements joblinks = category.select("li > a");
-//			for (Element joblink: joblinks) {
-//				controller1.addSeed(joblink.attr("href"));
-//				if (Jsoup.connect(joblink.attr("href")+"?page="+2).get().select("#job_fields_list > div > div > div.list-job-field-has-thumbnail.col-xs-6.offset20 > div > a.bold.title-link-visited > span").hasText()) {
-//					int i = 2;
-//					do {
-//						controller1.addSeed(joblink.attr("href")+"?page="+i);
-//						i++;
-//					} while (Jsoup.connect(joblink.attr("href")+"?page="+i).get().select("#job_fields_list").size() !=0);
-//				}
-//			}
-//		}
+		for (Element category:categories) {
+			Elements joblinks = category.select("li > a");
+			for (Element joblink: joblinks) {
+				controller1.addSeed(joblink.attr("href"));
+				if (Jsoup.connect(joblink.attr("href")+"?page="+2).get().select("#job_fields_list > div > div > div.list-job-field-has-thumbnail.col-xs-6.offset20 > div > a.bold.title-link-visited > span").hasText()) {
+					int i = 2;
+					do {
+						controller1.addSeed(joblink.attr("href")+"?page="+i);
+						i++;
+					} while (Jsoup.connect(joblink.attr("href")+"?page="+i).get().select("#job_fields_list").size() !=0);
+				}
+			}
+		}
 		
-		controller1.addSeed("https://careerbuilder.vn/viec-lam/tiep-thi-marketing-c4-vi.html");
 
 		
 		Document doc = Jsoup.connect("https://careerbuilder.vn/tim-viec-lam.html").get();
@@ -169,8 +168,8 @@ public class CrawlerController {
 		pool4.setMinPoolSize(10);
 		pool4.setInitialPoolSize(10);
 
-		controller1.startNonBlocking(new CrawlerFactory(pool), 7);
-		//controller2.startNonBlocking(new CrawlerFactory(pool1), 7);
+		//controller1.startNonBlocking(new CrawlerFactory(pool), 7);
+		controller2.startNonBlocking(new CrawlerFactory(pool1), 7);
 		//controller3.startNonBlocking(new CrawlerFactory(pool3), 7);
 		//controller4.startNonBlocking(new CrawlerFactory(pool4), 7);
 

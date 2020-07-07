@@ -74,8 +74,7 @@ public class MyWebCrawler extends WebCrawler {
 			HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
 			if (page.getWebURL().toString().contains("https://careerbuilder.vn/")) {
 				Document doc = Jsoup.parseBodyFragment(htmlParseData.getHtml());
-				Element jobcategories = doc.select("body > main > section.search-result-list > div > div > div.col-lg-8.col-custom-xxl-9 > div.main-slide > div > div > div > div.jobs-side-list").first();
-				Elements cats = jobcategories.children();
+				Elements cats = doc.select("body > main > section.search-result-list > div > div > div.col-lg-8.col-custom-xxl-9 > div.main-slide > div > div > div > div.jobs-side-list").first().children();
 				for (Element cat: cats) {
 					if (cat.hasAttr("id")) {
 						List<String> industry = new ArrayList<String>();
@@ -100,10 +99,7 @@ public class MyWebCrawler extends WebCrawler {
 								else {
 									Element description = post.select("body > main > section.search-result-list-detail > div > div > div.col-lg-7.col-xl-8 > div > section > div.template-15 > div.left-col > div > div:nth-child(6) > div").first();
 									desc = description.html();
-								}
-								
-								
-								
+								}		
 								
 								String experiencetype = post.select("#info-career-desktop > ul > li:nth-child(6) > div").text();
 								if (experiencetype.contains("Không yêu cầu kinh nghiệm") || experiencetype.contains("Chưa"))

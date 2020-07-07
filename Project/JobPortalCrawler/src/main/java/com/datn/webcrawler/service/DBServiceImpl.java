@@ -36,7 +36,7 @@ public class DBServiceImpl implements DBService {
 				"(?,?)", Statement.RETURN_GENERATED_KEYS);
 
 		selectDuplicateJobPost = comboPooledDataSource.getConnection().prepareStatement("select job_post.id from job_post,joblocation,employer where job_post.joblocation_id = joblocation.id AND job_post.posted_by = employer.id AND "
-				+ "job_post.source_Url LIKE ? OR (job_post.work_title LIKE ? AND job_post.max_salary = ? AND job_post.min_salary = ? AND joblocation LIKE ?) ");
+				+ "job_post.source_Url LIKE ? OR (job_post.job_title LIKE ? AND job_post.max_salary = ? AND job_post.min_salary = ? AND joblocation.city_province LIKE ?) ");
 		selectJobTypeStatement = comboPooledDataSource.getConnection().prepareStatement("select id from job_type where "
 				+ "job_type_name LIKE ?");
 		insertNewJobTypeStatement = comboPooledDataSource.getConnection().prepareStatement("insert into job_type(job_type_name) values "
