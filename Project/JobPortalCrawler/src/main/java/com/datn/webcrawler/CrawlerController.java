@@ -46,7 +46,7 @@ public class CrawlerController {
 	private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
 
 
-	@Scheduled(cron = "0 37 20 * * ?")
+	@Scheduled(cron = "0 04 19 * * ?")
 	public static void CrawlScheduler() throws Exception {
 		System.out.println("Start crawling");
 		String crawlStorageFolder = "/tmp/crawler4j/";
@@ -85,13 +85,13 @@ public class CrawlerController {
 		CrawlController controller3 = new CrawlController(config3, pageFetcher3, robotstxtServer);
 		CrawlController controller4 = new CrawlController(config4, pageFetcher4, robotstxtServer);
 
-//		for (int i = 1; i <= MAX_PAGES_TO_SEARCH; i++) {
-//			controller3.addSeed("https://jobsgo.vn/viec-lam-trang-" + i + ".html");
-//		}
-//		
-//		for (int j = 1; j <= MAX_PAGES_TO_SEARCH; j++) {
-//			controller4.addSeed("https://timviec365.vn/tin-tuyen-dung-viec-lam.html?page="+j);
-//		}
+		for (int i = 1; i <= MAX_PAGES_TO_SEARCH; i++) {
+			controller3.addSeed("https://jobsgo.vn/viec-lam-trang-" + i + ".html");
+		}
+		
+		for (int j = 1; j <= MAX_PAGES_TO_SEARCH; j++) {
+			controller4.addSeed("https://timviec365.vn/tin-tuyen-dung-viec-lam.html?page="+j);
+		}
 
 		Document timvn = Jsoup.connect("https://www.timviecnhanh.com/viec-lam/nganh-nghe").get();
 		Elements categories = timvn.select("#province-content");
@@ -112,31 +112,31 @@ public class CrawlerController {
 		}
 		
 
-//		
-//		Document doc = Jsoup.connect("https://careerbuilder.vn/tim-viec-lam.html").get();
-//		Element jobcategories = doc.select("body > main > section.find-jobsby-categories.cb-section > div > div > div.col-xl-9 > div.row.list-of-working-positions").first();
-//		Elements cats = jobcategories.children();
-//		
-//		for (Element cat: cats) {
-//			Elements types = cat.child(1).select("li").select("a");
-//			for (Element type: types) {
-//				controller2.addSeed(type.attr("href"));
-//				if (Jsoup.connect(insertString(type.attr("href"), "-trang-"+2, findLastIndex(type.attr("href"), '-') -1)).get().select("body > main > section.search-result-list > div > div.row > div.col-lg-8.col-xl-9 > section").hasText()) {
-//					int i =2;
-//					do {
-//						controller2.addSeed(insertString(type.attr("href"), "-trang-"+i, findLastIndex(type.attr("href"), '-') -1));
-//						i++;
-//					} while (Jsoup.connect(insertString(type.attr("href"), "-trang-"+i, findLastIndex(type.attr("href"), '-') -1)).get().select("body > main > section.search-result-list > div > div.row > div.col-lg-8.col-xl-9 > section").size() !=0);
-//				}
-//
-//			}			
-//		}
-//		
+		
+		Document doc = Jsoup.connect("https://careerbuilder.vn/tim-viec-lam.html").get();
+		Element jobcategories = doc.select("body > main > section.find-jobsby-categories.cb-section > div > div > div.col-xl-9 > div.row.list-of-working-positions").first();
+		Elements cats = jobcategories.children();
+		
+		for (Element cat: cats) {
+			Elements types = cat.child(1).select("li").select("a");
+			for (Element type: types) {
+				controller2.addSeed(type.attr("href"));
+				if (Jsoup.connect(insertString(type.attr("href"), "-trang-"+2, findLastIndex(type.attr("href"), '-') -1)).get().select("body > main > section.search-result-list > div > div.row > div.col-lg-8.col-xl-9 > section").hasText()) {
+					int i =2;
+					do {
+						controller2.addSeed(insertString(type.attr("href"), "-trang-"+i, findLastIndex(type.attr("href"), '-') -1));
+						i++;
+					} while (Jsoup.connect(insertString(type.attr("href"), "-trang-"+i, findLastIndex(type.attr("href"), '-') -1)).get().select("body > main > section.search-result-list > div > div.row > div.col-lg-8.col-xl-9 > section").size() !=0);
+				}
+
+			}			
+		}
+		
 		ComboPooledDataSource pool = new ComboPooledDataSource();
 		pool.setDriverClass("com.mysql.cj.jdbc.Driver");
 		pool.setJdbcUrl("jdbc:mysql://localhost:3306/jobportal?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&useUnicode=yes&characterEncoding=UTF-8");
 		pool.setUser("root");
-		pool.setPassword("123456789");
+		pool.setPassword("1234");
 		pool.setMaxPoolSize(10);
 		pool.setMinPoolSize(10);
 		pool.setInitialPoolSize(10);
