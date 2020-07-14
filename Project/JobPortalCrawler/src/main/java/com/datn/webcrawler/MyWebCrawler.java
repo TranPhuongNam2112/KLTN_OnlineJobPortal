@@ -96,10 +96,14 @@ public class MyWebCrawler extends WebCrawler {
 								Element description = post.select("body > main > section.search-result-list-detail > div > div > div.col-lg-7.col-xl-8 > div > section > div.template-200 > div.left-col > div:nth-child(2) > div > ul").first();		
 								desc = description.html();
 								}
-								else {
+								else if (post.select("body > main > section.search-result-list-detail > div > div > div.col-lg-7.col-xl-8 > div > section > div.template-15 > div.left-col > div > div:nth-child(6) > div").hasText()){
 									Element description = post.select("body > main > section.search-result-list-detail > div > div > div.col-lg-7.col-xl-8 > div > section > div.template-15 > div.left-col > div > div:nth-child(6) > div").first();
 									desc = description.html();
-								}		
+								}
+								else {
+									Element description = post.select("#tab-1 > section > div:nth-child(3)").first();
+									desc = description.html();
+								}
 								
 								String experiencetype = post.select("#info-career-desktop > ul > li:nth-child(6) > div").text();
 								if (experiencetype.contains("Không yêu cầu kinh nghiệm") || experiencetype.contains("Chưa"))

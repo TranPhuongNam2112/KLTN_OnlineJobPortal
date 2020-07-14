@@ -46,8 +46,8 @@ public class CrawlerController {
 	private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
 
 
-	@Scheduled(cron = "0 30 23 * * ?")
-	public static void TimViecNhanhcrawlSchedule() throws Exception {
+	@Scheduled(cron = "0 04 19 * * ?")
+	public static void CrawlScheduler() throws Exception {
 		System.out.println("Start crawling");
 		String crawlStorageFolder = "/tmp/crawler4j/";
 		int MAX_PAGES_TO_SEARCH = 150;
@@ -168,8 +168,8 @@ public class CrawlerController {
 		pool4.setMinPoolSize(10);
 		pool4.setInitialPoolSize(10);
 
-		//controller1.startNonBlocking(new CrawlerFactory(pool), 7);
-		controller2.startNonBlocking(new CrawlerFactory(pool1), 7);
+		controller1.startNonBlocking(new CrawlerFactory(pool), 7);
+		//controller2.startNonBlocking(new CrawlerFactory(pool1), 7);
 		//controller3.startNonBlocking(new CrawlerFactory(pool3), 7);
 		//controller4.startNonBlocking(new CrawlerFactory(pool4), 7);
 
