@@ -51,9 +51,11 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long>, JpaSpec
 			+ "LEFT JOIN u.files f "
 			+ "LEFT JOIN j.joblocation jl "
 			+ "LEFT JOIN j.jobtype jt "
+			+ "LEFT JOIN j.industries i "
 			+ "Where jt IN (SELECT jt FROM Candidate c LEFT JOIN c.jobtypes jt WHERE c.id = :candidateId ) AND "
 			+ "j.max_salary >= (SELECT c.expectedsalary FROM Candidate c WHERE c.id = :candidateId) AND j.min_salary >= (SELECT c.expectedsalary FROM Candidate c WHERE c.id = :candidateId) "
-			+ "AND jl.city_province = (SELECT c.city_province FROM Candidate c WHERE c.id = :candidateId) AND j.expirationDate >= CURRENT_DATE")
+			+ "AND jl.city_province = (SELECT c.city_province FROM Candidate c WHERE c.id = :candidateId) AND j.expirationDate >= CURRENT_DATE "
+			+ "AND i IN (SELECT i FROM Candidate c LEFT JOIN c.industries i Where c.id =:candidateId)")
 	Page<JobPostSummary> getRecommendedJobPostsByUser(@Param("candidateId") Long candidateId, Pageable pageable); 
 	
 	@Query("Select j from JobPost j Where j.id = :jobpostId")
