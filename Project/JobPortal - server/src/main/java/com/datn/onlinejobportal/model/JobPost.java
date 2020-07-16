@@ -53,6 +53,7 @@ public class JobPost extends DateAudit {
 	@JoinTable(name = "jobpost_industry", 
 	joinColumns = @JoinColumn(name = "jobpost_id"), 
 	inverseJoinColumns = @JoinColumn(name = "industry_id"))
+	@JsonIgnore
 	private Set<Industry> industries = new HashSet<>();
 	
 	private String job_description;
